@@ -1,0 +1,10 @@
+{
+  "name": "simpartic",
+  "version": "0.0.1",
+  "description": "Particulary simple old school singe page web framework",
+  "main": "index.js",
+  "repository": "https://github.com/magynhard/simpartic.git",
+  "author": "Matthäus J. N. Beyrle",
+  "license": "MIT",
+  "private": false
+}
