@@ -6,10 +6,10 @@
   "license": "MIT",
   "homepage": "https://github.com/magynhard/simpartic#readme",
   "exports": {
-    ".": "./src/lucky-case/lucky-case.js",
-    "./": "./src/lucky-case/"
+    ".": "./src/simpartic/simpartic.js",
+    "./": "./src/simpartic/"
   },
-  "main": "src/lucky-case/lucky-case.js",
+  "main": "src/simpartic/simpartic.js",
   "scripts": {
     "test": "jasmine",
     "build": "node tools/build.js"
