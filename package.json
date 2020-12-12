@@ -2,9 +2,40 @@
   "name": "simpartic",
   "version": "0.0.1",
   "description": "Particulary simple old school singe page web framework",
-  "main": "index.js",
-  "repository": "https://github.com/magynhard/simpartic.git",
-  "author": "Matthäus J. N. Beyrle",
+  "author": "Matthäus J. N. Beyrle <simpartic@mail.magynhard.de>",
   "license": "MIT",
-  "private": false
+  "homepage": "https://github.com/magynhard/simpartic#readme",
+  "exports": {
+    ".": "./src/lucky-case/lucky-case.js",
+    "./": "./src/lucky-case/"
+  },
+  "main": "src/lucky-case/lucky-case.js",
+  "scripts": {
+    "test": "jasmine",
+    "build": "node tools/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/magynhard/simpartic.git"
+  },
+  "bugs": {
+    "url": "https://github.com/magynhard/simpartic/issues"
+  },
+  "private": false,
+  "keywords": [
+    "javascript",
+    "web",
+    "framework",
+    "clever",
+    "simple",
+    "old school"
+  ],
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-plugin-transform-es3-member-expression-literals": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
+    "chalk": "^4.1.0",
+    "jasmine": "^3.6.3",
+    "uglify-js": "^3.12.1"
+  }
 }
