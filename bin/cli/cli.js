@@ -9,19 +9,28 @@ const optionDefinitions = [
     { name: 'timeout', alias: 't', type: Number }
 ]
 
-const options = commandLineArgs(optionDefinitions)
+const options = commandLineArgs(optionDefinitions, { partial: true });
 
 // ASCII-Font: Calvin S
 const logo = chalk.yellow(`                                  
    ┌─┐ ┬ ┌┬┐ ┌─┐ ┌─┐ ┬─┐ ┌┬┐ ┬ ┌─┐
    └─┐ │ │││ ├─┘ ├─┤ ├┬┘  │  │ │  
    └─┘ ┴ ┴ ┴ ┴   ┴ ┴ ┴└─  ┴  ┴ └─┘
-   Partycular simple web framework                                                                                                                     
+   Partycular simple web framework
 `);
 
 console.log(logo);
-console.log(options);
 
-if(!options.command) {
-    let a = require('./help');
+if(!options.command || options.command && (options.command.includes('help') || options.command.includes('h'))) {
+    const SimparticCliHelp = require('./_help');
+    SimparticCliHelp.help(options.command);
 }
+
+if(options.command) {
+    if(options.command.includes('about') || options.command.includes('a')) {
+        const SimparticCliAbout = require('./_about');
+        SimparticCliAbout.about();
+    }
+}
+
+console.log(options);
