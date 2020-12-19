@@ -1,18 +1,23 @@
 {
   "name": "simpartic",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Particulary simple old school singe page web framework",
   "author": "Matthäus J. N. Beyrle <simpartic@mail.magynhard.de>",
   "license": "MIT",
   "homepage": "https://github.com/magynhard/simpartic#readme",
+  "preferGlobal": true,
   "exports": {
     ".": "./src/simpartic/simpartic.js",
     "./": "./src/simpartic/"
   },
   "main": "src/simpartic/simpartic.js",
+  "bin": {
+    "simpartic": "./bin/cli/cli.js",
+    "sipa": "./bin/cli/cli.js"
+  },
   "scripts": {
     "test": "jasmine",
-    "build": "node tools/build.js"
+    "build": "node bin/build.js"
   },
   "repository": {
     "type": "git",
@@ -35,6 +40,8 @@
     "babel-plugin-transform-es3-member-expression-literals": "^6.22.0",
     "babel-preset-env": "^1.7.0",
     "chalk": "^4.1.0",
+    "command-line-args": "^5.1.1",
+    "command-line-usage": "^6.1.1",
     "jasmine": "^3.6.3",
     "uglify-js": "^3.12.1"
   }
