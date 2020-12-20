@@ -11,6 +11,15 @@ class SimparticCliHelp {
         const usage = commandLineUsage(section);
         console.log(usage);
     }
+
+    static unknown(option) {
+        const self = SimparticCliHelp;
+        let section = self.SECTIONS.unknown;
+        section[0].content = section[0].content.replace('{{option}}', chalk.red(option));
+        section = SimparticCliTools.colorizeValues(section, ['name', 'alias', 'example'], 'green');
+        const usage = commandLineUsage(section);
+        console.log(usage);
+    }
 }
 
 SimparticCliHelp.SECTIONS = {};
@@ -65,6 +74,13 @@ SimparticCliHelp.SECTIONS.help = [
                 desc: 'Full length command, shortcut option'
             }
         ]
+    }
+];
+
+SimparticCliHelp.SECTIONS.unknown = [
+    {
+        header: 'Invalid option',
+        content: `The given option {{option}} is invalid. Run the command with option ${chalk.green('help')} to get information about valid command line options.`
     }
 ];
 
