@@ -5,8 +5,8 @@ const chalk = require('chalk');
 
 const optionDefinitions = [
     { name: 'command', type: String, multiple: true, defaultOption: true },
-    { name: 'verbose', alias: 'v', type: Boolean },
-    { name: 'timeout', alias: 't', type: Number }
+    { name: 'version', alias: 'v', type: Boolean },
+    { name: 'about', alias: 'a', type: Boolean }
 ]
 
 const options = commandLineArgs(optionDefinitions, { partial: true });
@@ -26,8 +26,8 @@ if(!options.command || options.command && (options.command.includes('help') || o
     SimparticCliHelp.help(options.command);
 }
 
-if(options.command) {
-    if(options.command.includes('about') || options.command.includes('a')) {
+if(options.command || options.version || options.about) {
+    if(options.version || options.about || options.command.includes('about') || options.command.includes('a') || options.command.includes('version') || options.command.includes('v')) {
         const SimparticCliAbout = require('./_about');
         SimparticCliAbout.about();
     }
