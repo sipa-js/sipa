@@ -7,23 +7,9 @@ const SimparticCliTools = require('./../_tools');
 class SimparticCliHelp {
     static help(command_list) {
         const self = SimparticCliHelp;
-        if (command_list && (command_list[0] === 'help' || command_list[0] === 'h')) {
-            command_list.shift();
-        } else if (command_list && command_list.length !== 0) {
-            throw `Invalid help command parameter!`;
-        }
-        let command = command_list ? command_list[0] || 'help' : 'help';
-        if (!self._isValidSection(command)) {
-            command = 'help';
-        }
-        let section = SimparticCliTools.colorizeValues(self.SECTIONS[command], ['name', 'alias', 'example'], 'green');
+        let section = SimparticCliTools.colorizeValues(self.SECTIONS.help, ['name', 'alias', 'example'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
-    }
-
-    static _isValidSection(section) {
-        const self = SimparticCliHelp;
-        return typeof self.SECTIONS[section] !== 'undefined';
     }
 }
 
