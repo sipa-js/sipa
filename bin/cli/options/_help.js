@@ -2,7 +2,7 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SimparticCliTools = require('./_tools');
+const SimparticCliTools = require('./../_tools');
 
 class SimparticCliHelp {
     static help(command_list) {
@@ -16,7 +16,7 @@ class SimparticCliHelp {
         if (!self._isValidSection(command)) {
             command = 'help';
         }
-        let section = SimparticCliTools._colorize(self.SECTIONS[command], ['name', 'alias', 'example'], 'green');
+        let section = SimparticCliTools.colorizeValues(self.SECTIONS[command], ['name', 'alias', 'example'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
     }
@@ -31,12 +31,13 @@ SimparticCliHelp.SECTIONS = {};
 SimparticCliHelp.SECTIONS.help = [
     {
         header: 'Simpartic CLI',
-        content: `The Simpartic CLI provides several interactive commands to ensure programmers happiness. 
-        
-                  You can either use the full command ${chalk.green('simpartic')} or use its shortcut ${chalk.green('sipa')} to run the CLI.`
+        content: `The Simpartic CLI provides several interactive options to ensure programmers happiness. 😊`
     },
     {
         header: 'Usage',
+        content: `Use either the full length command ${chalk.green('simpartic')} or its shortcut ${chalk.green('sipa')}.`
+    },
+    {
         content: [
             {name: 'simpartic <option>', summary: 'Using the full length command'},
             {name: 'sipa <option>', summary: 'Using the shortcut command'},
@@ -52,8 +53,10 @@ SimparticCliHelp.SECTIONS.help = [
             {name: 'build', alias: 'b', summary: 'Build release'},
             {name: 'generate', alias: 'g', summary: 'Start interactive asset generator (page, ...)'},
             {name: 'help', alias: 'h', summary: 'Print this usage guide'},
+            {name: 'license', alias: 'l', summary: 'Print the license'},
             {name: 'new', alias: 'n', summary: 'Create new project in current directory'},
             {name: 'start', alias: 's', summary: 'Start live development server'},
+            {name: 'update', alias: 'u', summary: 'Check for updates'},
         ]
     },
     {

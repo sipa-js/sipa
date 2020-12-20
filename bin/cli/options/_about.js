@@ -2,19 +2,19 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SimparticCliTools = require('./_tools');
+const SimparticCliTools = require('./../_tools');
 const fs = require('fs');
 
 class SimparticCliAbout {
     static about() {
         const self = SimparticCliAbout;
-        let section = SimparticCliTools._colorize(self.SECTIONS.about,['desc'],'green');
+        let section = SimparticCliTools.colorizeValues(self.SECTIONS.about,['desc'],'green');
         const usage = commandLineUsage(section);
         console.log(usage);
     }
 }
 
-const package_json = JSON.parse(fs.readFileSync(__dirname + '/../../package.json','utf-8'));
+const package_json = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json','utf-8'));
 
 SimparticCliAbout.SECTIONS = {};
 SimparticCliAbout.SECTIONS.about = [
@@ -47,13 +47,9 @@ SimparticCliAbout.SECTIONS.about = [
             },
             {
                 desc: 'License',
-                summary: package_json.license
+                summary: package_json.license + "\nFor full license text run command with option " + chalk.green('license')
             },
         ]
-    },
-    {
-        header: 'License',
-        content: fs.readFileSync(__dirname + '/../../LICENSE','utf-8')
     }
 ];
 
