@@ -20,7 +20,7 @@ console.log(SimparticCliTools.logo());
 //
 if(!options.command || options.command && (options.command.includes('help') || options.command.includes('h'))) {
     const SimparticCliHelp = require('./options/_help');
-    SimparticCliHelp.help(options.command);
+    SimparticCliHelp.help();
 }
 
 //

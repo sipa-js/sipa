@@ -5,7 +5,7 @@ const commandLineUsage = require('command-line-usage');
 const SimparticCliTools = require('./../_tools');
 
 class SimparticCliHelp {
-    static help(command_list) {
+    static help() {
         const self = SimparticCliHelp;
         let section = SimparticCliTools.colorizeValues(self.SECTIONS.help, ['name', 'alias', 'example'], 'green');
         const usage = commandLineUsage(section);
