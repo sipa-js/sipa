@@ -1,5 +1,6 @@
 {
-  "name": "{{project}}",
-  "version": "0.0.1",
-  "license": "{{license}}"
+  "name": "{{project_name_dash_case}}",
+  "description": "{{original_project_name}}",
+  "author": "{{author}}",
+  "version": "0.0.1"
 }
