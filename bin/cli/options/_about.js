@@ -20,7 +20,7 @@ SimparticCliAbout.SECTIONS = {};
 SimparticCliAbout.SECTIONS.about = [
     {
         header: 'Description',
-        content: package_json.description
+        content: package_json.description + ' 🤓'
     },
     {
         header: 'About',
@@ -39,7 +39,7 @@ SimparticCliAbout.SECTIONS.about = [
             },
             {
                 desc: 'Website',
-                summary: `{underline ${package_json.homepage}}`
+                summary: `{underline.blue ${package_json.homepage}}`
             },
             {
                 desc: '',

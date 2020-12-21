@@ -32,6 +32,13 @@ else if (options.license || options.command && (options.command[0] === 'license'
     SimparticCliLicense.license();
 }
 //
+// new
+//
+else if (options.new || options.command && (options.command[0] === 'new' || options.command[0] === 'n')) {
+    const SimparticCliNew = require('./options/_new');
+    SimparticCliNew.new();
+}
+//
 // help
 //
 else if (Object.keys(options).length === 0 || options.help || options.command && (options.command[0] === 'help' || options.command[0] === 'h')) {
