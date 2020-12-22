@@ -1,3 +1,7 @@
 # {{project}}
 
-This is the readme for my project.
+This is my project created with [Simpartic](https://github.com/magynhard/simpartic#readme)!
+
+## Getting started
+
+Run `simpartic start` or the short cut `sipa s` in your project root to run the development live webserver! 
