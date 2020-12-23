@@ -10,11 +10,12 @@ class SimparticCliTools {
     static logo() {
         // ASCII-Font: Calvin S
         // Sub title font: Source Code Pro Bold
-        return chalk.yellow.bold("\n" +
-            "   ┌─┐ ┬ ┌┬┐ ┌─┐ ┌─┐ ┬─┐ ┌┬┐ ┬ ┌─┐\n" +
-            "   └─┐ │ │││ ├─┘ ├─┤ ├┬┘  │  │ │  \n" +
-            "   └─┘ ┴ ┴ ┴ ┴   ┴ ┴ ┴└─  ┴  ┴ └─┘\n" +
-            "  Particularly simple web framework\n"
+        return chalk.yellow.bgGray.bold("\n                                       \n" +
+            "    ┌─┐ ┬ ┌┬┐ ┌─┐ ┌─┐ ┬─┐ ┌┬┐ ┬ ┌─┐    \n" +
+            "    └─┐ │ │││ ├─┘ ├─┤ ├┬┘  │  │ │      \n" +
+            "    └─┘ ┴ ┴ ┴ ┴   ┴ ┴ ┴└─  ┴  ┴ └─┘    \n" + chalk.white(
+            "   Particularly simple web framework   \n") +
+            "                                       \n"
         );
     }
 
