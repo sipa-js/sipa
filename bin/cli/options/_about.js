@@ -8,7 +8,7 @@ const fs = require('fs');
 class SimparticCliAbout {
     static about() {
         const self = SimparticCliAbout;
-        let section = SimparticCliTools.colorizeValues(self.SECTIONS.about,['desc'],'green');
+        let section = self.SECTIONS.about; // SimparticCliTools.colorizeValues(self.SECTIONS.about,['desc'],'green');
         const usage = commandLineUsage(section);
         console.log(usage);
     }
