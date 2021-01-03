@@ -35,7 +35,7 @@ SimparticCliAbout.SECTIONS.about = [
             },
             {
                 desc: 'Author',
-                summary: package_json.author
+                summary: package_json.author.name + ' <' + package_json.author.email + '>'
             },
             {
                 desc: 'Website',

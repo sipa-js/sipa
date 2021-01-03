@@ -5,7 +5,6 @@ const chalk = require('chalk');
 
 const SimparticCliTools = require('./_tools');
 const SimparticCliHelp = require('./options/_help');
-const SimparticCliAbout = require('./options/_about');
 
 const optionDefinitions = [
     {name: 'command', type: String, multiple: true, defaultOption: true},
@@ -22,6 +21,7 @@ console.log(SimparticCliTools.logo());
 // about / version
 //
 if (options.version || options.about || options.command && (options.command[0] === 'about' || options.command[0] === 'a' || options.command[0] === 'version' || options.command[0] === 'v')) {
+    const SimparticCliAbout = require('./options/_about');
     SimparticCliAbout.about();
 }
 //
