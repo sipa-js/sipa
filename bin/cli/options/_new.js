@@ -94,7 +94,9 @@ SimparticCliNew.SECTIONS.new_ready = [
             '',
             `If you have no idea how to get started, read the documentation 📄 at {underline.blue https://github.com/magynhard/simpartic#readme}`,
             '',
-            "And don't forget to tell one person today, that you love him or her! ❤️"
+            "And don't forget to tell one person today, that you love him or her! ❤️",
+            '',
+            "To start and run your development live web server {yellow cd} into your project dir and then run {yellow sipa s}!"
         ]
     }
 ];
