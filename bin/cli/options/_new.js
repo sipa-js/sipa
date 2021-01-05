@@ -38,7 +38,7 @@ class SimparticCliNew {
         tools.printLine();
         // copy project template
         tools.print(`Copying default project template ...`);
-        const template_src = tools.projectRootPath() + '/lib/templates/project/default';
+        const template_src = tools.simparticRootPath() + '/lib/templates/project/default';
         fs.copySync(template_src, project_dir);
         tools.printLine(chalk.green('done'));
         // fit project files
@@ -96,7 +96,7 @@ SimparticCliNew.SECTIONS.new_ready = [
             '',
             "And don't forget to tell one person today, that you love him or her! ❤️",
             '',
-            "To start and run your development live web server {yellow cd} into your project dir and then run {yellow sipa s}!"
+            "To start and run your development live web server {green cd} into your project dir and then run {green sipa s}!"
         ]
     }
 ];

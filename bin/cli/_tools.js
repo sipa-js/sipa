@@ -4,6 +4,7 @@ const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
 const prompt = require('prompt-sync')();
 const path = require('path');
+const fs = require('fs');
 
 class SimparticCliTools {
 
@@ -112,9 +113,25 @@ class SimparticCliTools {
         process.stdout.write('  ' + text);
     }
 
-    static projectRootPath() {
+    static isRunningInsideValidSimparticProject() {
+        const self = SimparticCliTools;
+        return fs.existsSync(self.CONFIG_FILE_PATH);
+    }
+
+    static simparticRootPath() {
         return path.resolve(__dirname + '/../../');
     }
+
+    static projectRootPath() {
+        return process.cwd();
+    }
+
+    static projectSimparticConfig() {
+        const self = SimparticCliTools;
+        return JSON.parse(fs.readFileSync(self.CONFIG_FILE_PATH));
+    }
 }
+
+SimparticCliTools.CONFIG_FILE_PATH = SimparticCliTools.projectRootPath() + '/simpartic.json';
 
 module.exports = SimparticCliTools;
