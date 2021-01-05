@@ -4,56 +4,71 @@ const commandLineArgs = require('command-line-args');
 const chalk = require('chalk');
 
 const SimparticCliTools = require('./_tools');
-const SimparticCliHelp = require('./options/_help');
+const SimparticCliHelp = require('./tasks/_help');
 
-const optionDefinitions = [
+const taskDefinitions = [
     {name: 'command', type: String, multiple: true, defaultOption: true},
-    {name: 'version', alias: 'v', type: Boolean},
     {name: 'about', alias: 'a', type: Boolean},
     {name: 'license', alias: 'l', type: Boolean},
     {name: 'server', alias: 's', type: Boolean},
+    {name: 'version', alias: 'v', type: Boolean},
 ]
 
-const options = commandLineArgs(optionDefinitions, {partial: true});
+const tasks = commandLineArgs(taskDefinitions, {partial: true});
 
-console.log(SimparticCliTools.logo());
+function logo() {
+    console.log(SimparticCliTools.logo());
+}
 
 //
-// about / version
+// about
 //
-if (options.version || options.about || options.command && (options.command[0] === 'about' || options.command[0] === 'a' || options.command[0] === 'version' || options.command[0] === 'v')) {
-    const SimparticCliAbout = require('./options/_about');
+if (tasks.about || tasks.command && (tasks.command[0] === 'about' || tasks.command[0] === 'a')) {
+    logo();
+    const SimparticCliAbout = require('./tasks/_about');
     SimparticCliAbout.about();
+}
+//
+// version
+//
+else if (tasks.version || tasks.command && (tasks.command[0] === 'version' || tasks.command[0] === 'v')) {
+    const SimparticCliVersion = require('./tasks/_version');
+    SimparticCliVersion.version();
 }
 //
 // license
 //
-else if (options.license || options.command && (options.command[0] === 'license' || options.command[0] === 'l')) {
-    const SimparticCliLicense = require('./options/_license');
+else if (tasks.license || tasks.command && (tasks.command[0] === 'license' || tasks.command[0] === 'l')) {
+    logo();
+    const SimparticCliLicense = require('./tasks/_license');
     SimparticCliLicense.license();
 }
 //
 // new
 //
-else if (options.new || options.command && (options.command[0] === 'new' || options.command[0] === 'n')) {
-    const SimparticCliNew = require('./options/_new');
+else if (tasks.new || tasks.command && (tasks.command[0] === 'new' || tasks.command[0] === 'n')) {
+    logo();
+    const SimparticCliNew = require('./tasks/_new');
     SimparticCliNew.new();
 }
 //
 // new
 //
-else if (options.server || options.command && (options.command[0] === 'server' || options.command[0] === 's')) {
-    const SimparticCliServer = require('./options/_server');
+else if (tasks.server || tasks.command && (tasks.command[0] === 'server' || tasks.command[0] === 's')) {
+    logo();
+    const SimparticCliServer = require('./tasks/_server');
     SimparticCliServer.server();
 }
 //
 // help
 //
-else if (Object.keys(options).length === 0 || options.help || options.command && (options.command[0] === 'help' || options.command[0] === 'h')) {
+else if (Object.keys(tasks).length === 0 || tasks.help || tasks.command && (tasks.command[0] === 'help' || tasks.command[0] === 'h')) {
+    logo();
     SimparticCliHelp.help();
 } else {
-    let unknown_option = options ? options.command ? options.command[0] : options._unknown[0].replace(/-/g,'') : options._unknown[0].replace(/-/g,'');
+    logo();
+    let unknown_option = tasks ? tasks.command ? tasks.command[0] : tasks._unknown[0].replace(/-/g,'') : tasks._unknown[0].replace(/-/g,'');
     SimparticCliHelp.unknown(unknown_option);
 }
 
-console.log(options);
+console.log(tasks);

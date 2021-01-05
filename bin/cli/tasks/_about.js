@@ -47,7 +47,7 @@ SimparticCliAbout.SECTIONS.about = [
             },
             {
                 desc: 'License',
-                summary: package_json.license + "\nFor full license text run command with option " + chalk.green('license') + '.'
+                summary: package_json.license + "\nFor full license text run " + chalk.green('simpartic license') + '.'
             },
         ]
     }

@@ -21,7 +21,8 @@
   },
   "scripts": {
     "test": "jasmine",
-    "build": "node bin/build.js"
+    "build": "node bin/build.js",
+    "publish": "npm publish"
   },
   "repository": {
     "type": "git",

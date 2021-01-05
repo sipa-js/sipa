@@ -12,10 +12,10 @@ class SimparticCliHelp {
         console.log(usage);
     }
 
-    static unknown(option) {
+    static unknown(task) {
         const self = SimparticCliHelp;
         let section = self.SECTIONS.unknown;
-        section[0].content = section[0].content.replace('{{option}}', chalk.red(option));
+        section[0].content = section[0].content.replace('{{task}}', chalk.red(task));
         section = SimparticCliTools.colorizeValues(section, ['name', 'alias', 'example'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
@@ -26,7 +26,7 @@ SimparticCliHelp.SECTIONS = {};
 SimparticCliHelp.SECTIONS.help = [
     {
         header: 'Simpartic CLI',
-        content: `The Simpartic CLI provides several interactive options to ensure programmers happiness. 😊`
+        content: `The Simpartic CLI provides several interactive tasks to ensure programmers happiness. 😊`
     },
     {
         header: 'Usage',
@@ -39,8 +39,8 @@ SimparticCliHelp.SECTIONS.help = [
         ]
     },
     {
-        header: 'Available options',
-        content: 'Use either the full length option or its one character shortcut.'
+        header: 'Available tasks',
+        content: 'Use either the full length task or its one character shortcut.'
     },
     {
         content: [
@@ -52,6 +52,7 @@ SimparticCliHelp.SECTIONS.help = [
             {name: 'new', alias: 'n', summary: 'Create new project in current directory'},
             {name: 'server', alias: 's', summary: 'Start live development server'},
             {name: 'update', alias: 'u', summary: 'Check for updates'},
+            {name: 'version', alias: 'v', summary: 'Display build version'},
         ]
     },
     {
@@ -79,8 +80,8 @@ SimparticCliHelp.SECTIONS.help = [
 
 SimparticCliHelp.SECTIONS.unknown = [
     {
-        header: 'Invalid option',
-        content: `The given option {{option}} is invalid. Run the command with option ${chalk.green('help')} to get information about valid command line options.`
+        header: 'Invalid task',
+        content: `The given task {{task}} is invalid. Run the command with task ${chalk.green('help')} to get information about valid tasks.`
     }
 ];
 
