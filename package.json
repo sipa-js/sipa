@@ -53,6 +53,7 @@
     "live-server": "^1.2.1",
     "lucky-case": "^1.1.0",
     "prompt-sync": "^4.2.0",
+    "sass": "^1.32.0",
     "uglify-js": "^3.12.1"
   }
 }

@@ -1,6 +1,10 @@
 {
   "development_server": {
     "host": "0.0.0.0",
-    "port": "7000"
+    "port": "7000",
+    "sass_watch_paths": [
+      "app/assets/style",
+      "app/views"
+    ]
   }
 }
