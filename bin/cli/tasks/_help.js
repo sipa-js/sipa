@@ -34,8 +34,8 @@ SimparticCliHelp.SECTIONS.help = [
     },
     {
         content: [
-            {name: 'simpartic <option>', summary: 'Using the full length command'},
-            {name: 'sipa <option>', summary: 'Using the shortcut command'},
+            {name: 'simpartic <task>', summary: 'Using the full length command'},
+            {name: 'sipa <task>', summary: 'Using the shortcut command'},
         ]
     },
     {
@@ -45,13 +45,13 @@ SimparticCliHelp.SECTIONS.help = [
     {
         content: [
             {name: 'about', alias: 'a', summary: 'About Simpartic'},
-            {name: 'build', alias: 'b', summary: 'Build release'},
-            {name: 'generate', alias: 'g', summary: 'Start interactive asset generator (page, ...)'},
+            {name: 'build', alias: 'b', summary: 'Build app release'},
+            {name: 'generate', alias: 'g', summary: 'Start interactive app asset generator (page, ...)'},
             {name: 'help', alias: 'h', summary: 'Print this usage guide'},
             {name: 'license', alias: 'l', summary: 'Print the license'},
             {name: 'new', alias: 'n', summary: 'Create new project in current directory'},
             {name: 'server', alias: 's', summary: 'Start live development server'},
-            {name: 'update', alias: 'u', summary: 'Check for updates'},
+            {name: 'update', alias: 'u', summary: 'Check for Simpartic updates'},
             {name: 'version', alias: 'v', summary: 'Display build version'},
         ]
     },
@@ -60,19 +60,19 @@ SimparticCliHelp.SECTIONS.help = [
         content: [
             {
                 example: 'sipa generate',
-                desc: 'Shortcut command, full length option'
+                desc: 'Shortcut command, full length task'
             },
             {
                 example: 'sipa h',
-                desc: 'Shortcut command and option'
+                desc: 'Shortcut command and task'
             },
             {
                 example: 'simpartic new',
-                desc: 'Full length command and option'
+                desc: 'Full length command and task'
             },
             {
                 example: 'simpartic b',
-                desc: 'Full length command, shortcut option'
+                desc: 'Full length command, shortcut task'
             }
         ]
     }
