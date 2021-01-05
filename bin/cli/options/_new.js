@@ -20,7 +20,8 @@ class SimparticCliNew {
         const self = SimparticCliNew;
         self.options.project_name = tools.cliQuestion('Please enter your project name', null, null, true);
         self.options.project_version = tools.cliQuestion('Please enter your initial project version', null, self.options.project_version);
-        self.options.author = tools.cliQuestion('Please enter your project author (Full Name <email@company.com>)', null, '');
+        self.options.author = tools.cliQuestion('Please enter your project author name', null, '');
+        self.options.email = tools.cliQuestion('Please enter your project author email address', null, '');
     }
 
     static _createProjectStructure() {
@@ -48,7 +49,7 @@ class SimparticCliNew {
             name: LuckyCase.toDashCase(self.options.project_name),
             description: self.options.project_name,
             version: self.options.project_version,
-            author: self.options.author
+            author: { name: self.options.author, email: self.options.email }
         };
         const final_json = JSON.stringify(package_json, null, 2);
         fs.writeFileSync(project_dir + '/package.json', final_json);

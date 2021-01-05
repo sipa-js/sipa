@@ -1,6 +1,10 @@
 {
+  "__info__": "This file will be completely overwritten by the 'new' task",
   "name": "{{project_name_dash_case}}",
   "description": "{{original_project_name}}",
-  "author": "{{author}}",
+  "author": {
+    "name": "{{author}}",
+    "email": "{{email}}"
+  },
   "version": "0.0.1"
 }
