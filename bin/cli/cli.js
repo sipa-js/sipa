@@ -10,7 +10,8 @@ const optionDefinitions = [
     {name: 'command', type: String, multiple: true, defaultOption: true},
     {name: 'version', alias: 'v', type: Boolean},
     {name: 'about', alias: 'a', type: Boolean},
-    {name: 'license', alias: 'l', type: Boolean}
+    {name: 'license', alias: 'l', type: Boolean},
+    {name: 'server', alias: 's', type: Boolean},
 ]
 
 const options = commandLineArgs(optionDefinitions, {partial: true});

@@ -50,7 +50,7 @@ SimparticCliHelp.SECTIONS.help = [
             {name: 'help', alias: 'h', summary: 'Print this usage guide'},
             {name: 'license', alias: 'l', summary: 'Print the license'},
             {name: 'new', alias: 'n', summary: 'Create new project in current directory'},
-            {name: 'start', alias: 's', summary: 'Start live development server'},
+            {name: 'server', alias: 's', summary: 'Start live development server'},
             {name: 'update', alias: 'u', summary: 'Check for updates'},
         ]
     },
