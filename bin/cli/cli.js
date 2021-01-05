@@ -39,6 +39,13 @@ else if (options.new || options.command && (options.command[0] === 'new' || opti
     SimparticCliNew.new();
 }
 //
+// new
+//
+else if (options.server || options.command && (options.command[0] === 'server' || options.command[0] === 's')) {
+    const SimparticCliServer = require('./options/_server');
+    SimparticCliServer.server();
+}
+//
 // help
 //
 else if (Object.keys(options).length === 0 || options.help || options.command && (options.command[0] === 'help' || options.command[0] === 'h')) {
