@@ -10,10 +10,6 @@
   "license": "MIT",
   "homepage": "https://github.com/magynhard/simpartic#readme",
   "preferGlobal": true,
-  "exports": {
-    ".": "./src/simpartic/simpartic.js",
-    "./": "./src/simpartic/"
-  },
   "main": "bin/cli/cli.js",
   "bin": {
     "simpartic": "./bin/cli/cli.js",
