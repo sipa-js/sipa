@@ -319,13 +319,14 @@ class SipaPage {
         }
         options = SipaHelper.mergeOptions(default_options, options);
         const type = self.typeOptions(options.type);
+        const id_split = template.split('/');
+        const file_name = id_split[id_split.length-1];
         let full_path = SipaHelper.cutLeadingCharacters(template, '/');
+        full_path = SipaHelper.cutTrailingCharacters(full_path, type.file_ext);
         if (!full_path.startsWith(type.prefix)) {
             full_path = type.prefix + full_path;
         }
-        if (!full_path.endsWith(type.file_ext)) {
-            full_path += type.file_ext;
-        }
+        full_path += '/' + file_name + type.file_ext;
         return full_path;
     }
 
@@ -405,7 +406,7 @@ SipaPage.initHistoryState();
 /**
  * @type {SipaPageConfig}
  */
-PageLoadService.config = null;
+SipaPage.config = null;
 
 /**
  * Custom type definitions for excellent IDE auto complete support
