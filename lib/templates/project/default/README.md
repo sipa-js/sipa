@@ -1,4 +1,4 @@
-# {{project}}
+# {{project_name}}
 
 This is my project created with [Simpartic](https://github.com/magynhard/simpartic#readme)!
 

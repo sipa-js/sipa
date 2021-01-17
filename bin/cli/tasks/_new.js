@@ -5,6 +5,8 @@ const commandLineUsage = require('command-line-usage');
 const tools = require('./../_tools');
 const fs = require('fs-extra');
 const LuckyCase = require('lucky-case/string');
+const glob = require('glob');
+const CurlyBracketParser = require('curly-bracket-parser');
 
 class SimparticCliNew {
     static new() {
@@ -53,6 +55,16 @@ class SimparticCliNew {
         };
         const final_json = JSON.stringify(package_json, null, 2);
         fs.writeFileSync(project_dir + '/package.json', final_json);
+        // replace vars in files
+        const file_variables = {
+            version: package_json.version,
+            project_name: package_json.name,
+        }
+        glob(project_dir + "/**/*", options, function (er, files) {
+            files.forEach((file) => {
+                CurlyBracketParser.parseFileWrite(file,file_variables);
+            });
+        });
         tools.printLine(chalk.green('done'));
         // final message
         section = tools.colorizeValues(self.SECTIONS.new_ready, ['desc'], 'green');
