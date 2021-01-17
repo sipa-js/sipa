@@ -45,6 +45,7 @@
     "chalk": "^4.1.0",
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.1",
+    "curly-bracket-parser": "^1.0.1",
     "fs-extra": "^9.0.1",
     "jasmine": "^3.6.3",
     "live-server": "^1.2.1",
