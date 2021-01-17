@@ -366,6 +366,10 @@ class SipaPage {
         ]);
         const original_url = SipaUrl.getUrl();
         let params = {page: state.page_id};
+        console.log("URL");
+        console.log(original_url);
+        console.log("PARAMS");
+        console.log(params);
         if (replace_state) {
             window.history.replaceState(state, '', SipaUrl.setParamsOfUrl(original_url, params));
         } else {
