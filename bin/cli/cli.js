@@ -70,5 +70,3 @@ else if (Object.keys(tasks).length === 0 || tasks.help || tasks.command && (task
     let unknown_option = tasks ? tasks.command ? tasks.command[0] : tasks._unknown[0].replace(/-/g,'') : tasks._unknown[0].replace(/-/g,'');
     SimparticCliHelp.unknown(unknown_option);
 }
-
-console.log(tasks);
