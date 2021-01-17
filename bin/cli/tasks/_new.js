@@ -60,9 +60,9 @@ class SimparticCliNew {
             version: package_json.version,
             project_name: package_json.name,
         }
-        glob(project_dir + "/**/*", options, function (er, files) {
+        glob(project_dir + "/**/*", { nodir: true }, function (er, files) {
             files.forEach((file) => {
-                CurlyBracketParser.parseFileWrite(file,file_variables);
+                CurlyBracketParser.parseFileWrite(file,file_variables, { unresolved_vars: 'keep' });
             });
         });
         tools.printLine(chalk.green('done'));
