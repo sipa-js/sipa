@@ -268,9 +268,9 @@ class SipaPage {
         const page_class = self.getClassNameOfTemplate(page_id, {type: 'page'});
         const class_exists = eval(`typeof ${page_class} !== 'undefined'`);
         if (class_exists) {
-            const method_exists = eval(`typeof ${page_class}.${function_name} === 'function'`);
+            const method_exists = eval(`typeof ${page_class}.${method_name} === 'function'`);
             if (method_exists) {
-                eval(`${page_class}.${function_name}(...parameters);`)
+                eval(`${page_class}.${method_name}(...parameters);`)
             }
         }
     }
@@ -292,9 +292,9 @@ class SipaPage {
         const layout_class = self.getClassNameOfTemplate(layout_id, {type: 'layout'});
         const class_exists = eval(`typeof ${layout_class} !== 'undefined'`);
         if (class_exists) {
-            const method_exists = eval(`typeof ${layout_class}.${function_name} === 'function'`);
+            const method_exists = eval(`typeof ${layout_class}.${method_name} === 'function'`);
             if (method_exists) {
-                eval(`${layout_class}.${function_name}(...parameters);`)
+                eval(`${layout_class}.${method_name}(...parameters);`)
             }
         }
     }
