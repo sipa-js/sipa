@@ -5,6 +5,7 @@
     "sass_watch_paths": [
       "app/assets/style",
       "app/views"
-    ]
+    ],
+    "auto_update_index_sources": true
   }
 }
