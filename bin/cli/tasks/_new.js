@@ -86,8 +86,6 @@ SimparticCliNew.SECTIONS.new_begin = [
         content: [
             'Welcome to the project wizard to create a new Simpartic project! 🧙',
             'Answer the questions wisely!',
-            '',
-            'Suggestions made within [' + chalk.yellow('brackets') + '] can be applied by just pressing ENTER.'
         ]
     },
     {

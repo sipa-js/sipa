@@ -55,6 +55,10 @@ class SimparticCliTools {
      */
     static cliQuestion(question, options, default_option, mandatory = false) {
         const self = SimparticCliTools;
+        if(self.first_question) {
+            console.log('  Suggestions made within [' + chalk.green('brackets') + '] can be applied by just pressing ENTER.\n');
+            self.first_question = false;
+        }
         let options_string = null;
         if(options) {
             options_string = ' (' + options.join('|') + ')';
@@ -63,7 +67,7 @@ class SimparticCliTools {
         }
         let default_string = null;
         if(default_option) {
-            default_string = ' [' + chalk.yellow(default_option) + ']';
+            default_string = ' [' + chalk.green(default_option) + ']';
         } else {
             default_string = '';
         }
@@ -133,5 +137,6 @@ class SimparticCliTools {
 }
 
 SimparticCliTools.CONFIG_FILE_PATH = SimparticCliTools.projectRootPath() + '/simpartic.json';
+SimparticCliTools.first_question = true;
 
 module.exports = SimparticCliTools;

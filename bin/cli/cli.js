@@ -10,6 +10,8 @@ const taskDefinitions = [
     {name: 'command', type: String, multiple: true, defaultOption: true},
     {name: 'about', alias: 'a', type: Boolean},
     {name: 'license', alias: 'l', type: Boolean},
+    {name: 'new', alias: 'n', type: Boolean},
+    {name: 'generate', alias: 'g', type: Boolean},
     {name: 'server', alias: 's', type: Boolean},
     {name: 'version', alias: 'v', type: Boolean},
 ]
@@ -52,7 +54,15 @@ else if (tasks.new || tasks.command && (tasks.command[0] === 'new' || tasks.comm
     SimparticCliNew.new();
 }
 //
-// new
+// generate
+//
+else if (tasks.generate || tasks.command && (tasks.command[0] === 'generate' || tasks.command[0] === 'g')) {
+    logo();
+    const SimparticCliGenerate = require('./tasks/_generate');
+    SimparticCliGenerate.generate();
+}
+//
+// server
 //
 else if (tasks.server || tasks.command && (tasks.command[0] === 'server' || tasks.command[0] === 's')) {
     logo();
