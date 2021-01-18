@@ -20,7 +20,17 @@ class SimparticCliNew {
 
     static _enterVariables() {
         const self = SimparticCliNew;
-        self.options.project_name = tools.cliQuestion('Please enter your project name', null, null, true);
+        let project_name = null;
+        while(true) {
+            project_name = tools.cliQuestion('Please enter your project name', null, null, true);
+            const project_dir = process.cwd() + '/' + project_name.toDashCase();
+            if(fs.existsSync(project_dir)) {
+                console.log(chalk.red(`  Invalid project name '${project_name}'. There is already a directory '${project_name.toDashCase()}'.`));
+            } else {
+                break;
+            }
+        }
+        self.options.project_name = project_name;
         self.options.project_version = tools.cliQuestion('Please enter your initial project version', null, self.options.project_version);
         self.options.author = tools.cliQuestion('Please enter your project author name', null, '');
         self.options.email = tools.cliQuestion('Please enter your project author email address', null, '');

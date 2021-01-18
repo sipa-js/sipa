@@ -189,3 +189,9 @@ class SipaHelper {
  * @property {string} param_name
  * @property {string} expected_type, e.g. 'Object', 'String, 'Array', ...
  */
+
+//<!-- MODULE -->//
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SipaHelper;
+}
+//<!-- /MODULE -->//

@@ -46,6 +46,7 @@ SimparticCliHelp.SECTIONS.help = [
         content: [
             {name: 'about', alias: 'a', summary: 'About Simpartic'},
             {name: 'build', alias: 'b', summary: 'Build app release'},
+            {name: 'delete', alias: 'd', summary: 'Start interactive app asset deletion (page, ...)'},
             {name: 'generate', alias: 'g', summary: 'Start interactive app asset generator (page, ...)'},
             {name: 'help', alias: 'h', summary: 'Print this usage guide'},
             {name: 'license', alias: 'l', summary: 'Print the license'},

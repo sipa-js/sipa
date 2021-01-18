@@ -140,7 +140,7 @@ class SipaPage {
             type: 'page'
         }
         options = SipaHelper.mergeOptions(default_options, options);
-        const id = self.extractIdOfTemplate(template, options).replaceAll('/', '_');
+        const id = CurlyBracketParser._replaceAll(self.extractIdOfTemplate(template, options),'/', '_');
         return LuckyCase.toPascalCase(id + '_' + options.type);
     }
 

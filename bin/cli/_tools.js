@@ -48,44 +48,48 @@ class SimparticCliTools {
     /**
      * Prompt user for input
      *
-     * @param {string} question
-     * @param {Array<string>} options
-     * @param {string} default_option
+     * @param {string} question to ask the user for
+     * @param {Array<string>} options set only valid options (optional)
+     * @param {string} preselected_option preselected option
+     * @param {boolean} mandatory if true, option can not be asked with empty string
      * @returns {string} input
      */
-    static cliQuestion(question, options, default_option, mandatory = false) {
+    static cliQuestion(question, options, preselected_option, mandatory = false) {
         const self = SimparticCliTools;
         if(self.first_question) {
             console.log('  Any preselection in [' + chalk.green('brackets') + '] can be confirmed with ENTER.\n');
             self.first_question = false;
         }
-        let options_string = null;
-        if(options) {
-            options_string = ' (' + options.join('|') + ')';
-        } else {
-            options_string = '';
-        }
         let default_string = null;
-        if(default_option) {
-            default_string = ' [' + chalk.green(default_option) + ']';
+        if(preselected_option) {
+            default_string = ' [' + chalk.green(preselected_option) + ']';
         } else {
             default_string = '';
         }
-        let input = default_option;
+        let input = preselected_option;
         while(true) {
-            input = prompt('  ' + question + options_string + default_string + ': ') || default_option;
+            input = prompt('  ' + question + default_string + ': ') || preselected_option;
             if(options) {
                 if(options && typeof options[0] !== "undefined") {
                     if(options.includes(input)) {
                         break;
                     } else {
-                        self.printLine(chalk.red(`\nInvalid input '${input}'.`) + `\nValid options are: ${options.map((e) => { return chalk.green(e); }).join(' | ')}`);
+                        // CTRL+C
+                        if(input === null) {
+                            process.exit(1);
+                        }
+                        // invalid input value
+                        self.printLine(chalk.red(`\n  Invalid input '${input}'.`) + `\n  Valid options are: ${options.map((e) => { return chalk.green(e); }).join(' | ')}\n`);
                     }
                 } else {
                     break;
                 }
             } else if(mandatory && !input) {
-                self.printLine(chalk.red('Mandatory option, please enter a valid text.'));
+                // CTRL+C
+                if(input === null) {
+                    process.exit(1);
+                }
+                self.printLine(chalk.red('Mandatory option, please enter a valid text.' + JSON.stringify(input)));
             } else {
                 break;
             }
@@ -122,6 +126,26 @@ class SimparticCliTools {
         return fs.existsSync(self.CONFIG_FILE_PATH);
     }
 
+    static errorNotInsideValidSimparticProject() {
+        const self = SimparticCliTools;
+        const usage = commandLineUsage(self.SECTIONS.not_inside_valid_project);
+        console.log(usage);
+    }
+
+    /**
+     * Get only the deepest dirs, without dirs between
+     * @param {Array<String>} dirs to filter
+     */
+    static filterDeepDirsOnly(dirs) {
+        let filtered = [];
+        dirs.forEach((dir, i) => {
+           if(dirs.filter((e) => { return e.includes(dir); }).length === 1) {
+               filtered.push(dir);
+           }
+        });
+        return filtered;
+    }
+
     static simparticRootPath() {
         return path.resolve(__dirname + '/../../');
     }
@@ -138,5 +162,17 @@ class SimparticCliTools {
 
 SimparticCliTools.CONFIG_FILE_PATH = SimparticCliTools.projectRootPath() + '/simpartic.json';
 SimparticCliTools.first_question = true;
+
+SimparticCliTools.SECTIONS = {};
+SimparticCliTools.SECTIONS.not_inside_valid_project = [
+    {
+        header: 'Invalid project directory',
+        content: [
+            '{red You can run this command at the root of a valid simpartic project only.}',
+            '',
+            `Current directory:\n {green ${SimparticCliTools.projectRootPath()}}`
+        ]
+    }
+];
 
 module.exports = SimparticCliTools;

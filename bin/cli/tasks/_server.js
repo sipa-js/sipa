@@ -19,8 +19,7 @@ class SimparticCliServer {
             self._runLiveServerAndSass();
 
         } else {
-            const usage = commandLineUsage(self.SECTIONS.not_inside_valid_project);
-            console.log(usage);
+            SimparticCliTools.errorNotInsideValidSimparticProject();
         }
     }
 
@@ -76,15 +75,5 @@ class SimparticCliServer {
 }
 
 SimparticCliServer.SECTIONS = {};
-SimparticCliServer.SECTIONS.not_inside_valid_project = [
-    {
-        header: 'Invalid project directory',
-        content: [
-            '{red You can run this command at the root of a valid simpartic project only.}',
-            '',
-            `Current directory:\n {green ${SimparticCliTools.projectRootPath()}}`
-        ]
-    }
-]
 
 module.exports = SimparticCliServer;
