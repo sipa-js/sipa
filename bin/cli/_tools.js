@@ -56,7 +56,7 @@ class SimparticCliTools {
     static cliQuestion(question, options, default_option, mandatory = false) {
         const self = SimparticCliTools;
         if(self.first_question) {
-            console.log('  Suggestions made within [' + chalk.green('brackets') + '] can be applied by just pressing ENTER.\n');
+            console.log('  Any preselection in [' + chalk.green('brackets') + '] can be confirmed with ENTER.\n');
             self.first_question = false;
         }
         let options_string = null;
