@@ -1,3 +1,12 @@
+/*
+    !!! WARNING !!!
+
+    Never touch this .css file, as it will be overwritten by
+    the compiled .scss variant
+
+    !!! WARNING !!!
+*/
+
 body {
     font-family: sans-serif;
     background: #666666;
