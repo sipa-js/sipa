@@ -8,8 +8,10 @@ const LuckyCase = require('lucky-case/string');
 const glob = require('glob');
 const CurlyBracketParser = require('curly-bracket-parser');
 const SimparticCliTools = require('./../_tools');
+const SimparticIndexManager = require('./../_index-manager');
 
 const SipaHelper = require('./../../../src/simpartic/tools/sipa-helper');
+const SipaPage = require('./../../../src/simpartic/tools/sipa-page');
 
 class SimparticCliGenerate {
     static generate() {
@@ -91,14 +93,13 @@ class SimparticCliGenerate {
         fs.copySync(template_src, final_page_dir);
         const page_files = glob.sync(final_page_dir + '/*.*', {});
         const page_id_last_segment = page_id.substr(page_id.lastIndexOf('/') + 1);
-        const page_class = LuckyCase.toPascalCase(CurlyBracketParser._replaceAll(page_id, '/', '_'));
         page_files.forEach((file) => {
             const file_ext = file.substr(file.lastIndexOf('.'));
             const page_dir = file.substr(0, file.lastIndexOf('/'));
             const page_id_file_name = page_id_last_segment + file_ext;
             CurlyBracketParser.parseFileWrite(file, {
                 page_id: page_id,
-                page_class: page_class,
+                page_class: SipaPage.getClassNameOfTemplate(page_id),
                 page_id_last_segment: page_id_last_segment
             });
             fs.renameSync(file, page_dir + '/' + page_id_file_name);
@@ -106,7 +107,8 @@ class SimparticCliGenerate {
         tools.printLine(chalk.green(page_id));
         // modify index.html
         console.log(commandLineUsage(self.SECTIONS.generate_include));
-        console.log(chalk.red('NOT IMPLEMENTED YET'));
+        SimparticIndexManager.appendEntry('PAGE-JS',final_page_dir + '/' + page_id_last_segment + '.js');
+        SimparticIndexManager.appendEntry('PAGE-CSS',final_page_dir + '/' + page_id_last_segment + '.css');
         console.log(`  ${chalk.green('done')}`);
     }
 

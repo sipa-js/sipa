@@ -1,3 +1,11 @@
+//<!-- MODULE -->//
+if (typeof module !== 'undefined' && module.exports) {
+    var CurlyBracketParser = require('curly-bracket-parser');
+    var LuckyCase = require('lucky-case');
+    var SipaHelper = require('./sipa-helper');
+}
+//<!-- /MODULE -->//
+
 /**
  * SipaPage
  *
@@ -173,7 +181,7 @@ class SipaPage {
      * @returns {string} page id
      */
     static currentPageId() {
-        return $('body[data-page]').val();
+        return $('body').attr('data-page-id');
     }
 
     /**
@@ -182,7 +190,7 @@ class SipaPage {
      * @returns {string}
      */
     static currentLayoutId() {
-        return $('body[data-layout]').val();
+        return $('body').attr('data-layout-id');
     }
 
     /**
@@ -190,7 +198,7 @@ class SipaPage {
      *
      * @param {string} layout_id to load
      * @param {Object} options
-     * @param {boolean} options.fade_effect=true
+     * @param {boolean} options.fade_effect=true fade effect on layout change
      * @param {boolean} options.keep_page=false keep the loaded page, but change the layout only
      */
     static loadLayout(layout_id, options = {}) {
@@ -405,7 +413,11 @@ class SipaPage {
 }
 
 SipaPage.page_container_css_selector = '#page-container';
-SipaPage.initHistoryState();
+
+// init only when running in browser
+if(typeof window !== 'undefined') {
+    SipaPage.initHistoryState();
+}
 
 /**
  * @type {SipaPageConfig}
@@ -425,3 +437,8 @@ SipaPage.config = null;
  * @param {Object} default_layouts
  */
 
+//<!-- MODULE -->//
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SipaPage;
+}
+//<!-- /MODULE -->//
