@@ -30,11 +30,11 @@ class SimparticCliGenerate {
         switch (choice) {
             case 'page':
             case 'p':
-                self._generatePage();
+                self._generateView({ type: 'page'});
                 break;
             case 'layout':
             case 'l':
-                self._generateLayout();
+                self._generateView({ type: 'layout'});
                 break;
             case 'style':
             case 's':
@@ -48,72 +48,82 @@ class SimparticCliGenerate {
         console.log(commandLineUsage(self.SECTIONS.generate_created));
     }
 
-    static _generatePage() {
+    /**
+     * Generate new view (page or layout)
+     * @param {Object} options
+     * @param {('page','layout')} options.type='page'
+     * @private
+     */
+    static _generateView(options = { type: 'page'}) {
         const self = SimparticCliGenerate;
+        const default_options = {
+            type: 'page'
+        }
+        options = SipaHelper.mergeOptions(default_options, options);
+        const singular_type = LuckyCase.toLowerCase(options.type);
+        const plural_type = singular_type + 's';
         const project_dir = SimparticCliTools.projectRootPath();
         // list existing pages
-        const page_prefix = "app/views/pages/"
-        const dirs = glob.sync(project_dir + "/app/views/pages/**/*.js", {});
+        const page_prefix = `app/views/${plural_type}/`;
+        const dirs = glob.sync(project_dir + `/app/views/${plural_type}/**/*.js`, {});
         console.log(commandLineUsage(self.SECTIONS.generate_example_pages));
         console.log(commandLineUsage(self.SECTIONS.generate_existing_pages));
-        let existing_pages = [];
+        let existing_views = [];
         dirs.forEach((dir) => {
             let relative_dir = dir;
             if (relative_dir.indexOf(page_prefix) !== -1) {
                 relative_dir = relative_dir.split(page_prefix)[1];
                 relative_dir = relative_dir.substr(0, relative_dir.lastIndexOf('/'));
-                existing_pages.push(relative_dir);
+                existing_views.push(relative_dir);
                 console.log('  → ' + relative_dir.split('/').map((e) => {
                     return chalk.green(e);
                 }).join('/'));
             }
         });
-        existing_pages = existing_pages.sort();
+        existing_views = existing_views.sort();
         console.log();
-        let page_input = null;
+        let view_input = null;
         while (true) {
-            page_input = tools.cliQuestion('Enter the id of the new page', null, null, true).trim();
-            if (existing_pages.includes(page_input)) {
-                console.log(chalk.red(`  There is already a page with id '${page_input}'`));
+            view_input = tools.cliQuestion(`Enter the id of the new ${singular_type}`, null, null, true).trim();
+            if (existing_views.includes(view_input)) {
+                console.log(chalk.red(`  There is already a ${singular_type} with id '${view_input}'`));
             } else {
                 break;
             }
         }
-        let page_id = CurlyBracketParser._replaceAll(page_input, "\\", '/').split('/').map((e) => {
+        let view_id = CurlyBracketParser._replaceAll(view_input, "\\", '/').split('/').map((e) => {
             return LuckyCase.toDashCase(e);
         }).join('/');
-        page_id = SipaHelper.cutLeadingCharacters(page_id, '/');
-        page_id = SipaHelper.cutTrailingCharacters(page_id, '/');
+        view_id = SipaHelper.cutLeadingCharacters(view_id, '/');
+        view_id = SipaHelper.cutTrailingCharacters(view_id, '/');
         console.log(commandLineUsage(self.SECTIONS.generate_generate));
-        const final_page_dir = SimparticCliTools.projectRootPath() + '/app/views/pages/' + page_id;
+        const final_page_dir = SimparticCliTools.projectRootPath() + `/app/views/${plural_type}/` + view_id;
         fs.mkdirSync(final_page_dir, {recursive: true});
-        tools.printLine(`Generate new ${chalk.green('page')} by default page template ...`);
+        tools.printLine(`Generate new ${chalk.green(singular_type)} by default ${singular_type} template ...`);
         tools.printLine();
-        const template_src = tools.simparticRootPath() + '/lib/templates/page/default';
+        const template_src = tools.simparticRootPath() + `/lib/templates/${singular_type}/default`;
         fs.copySync(template_src, final_page_dir);
         const page_files = glob.sync(final_page_dir + '/*.*', {});
-        const page_id_last_segment = page_id.substr(page_id.lastIndexOf('/') + 1);
+        const page_id_last_segment = view_id.substr(view_id.lastIndexOf('/') + 1);
         page_files.forEach((file) => {
             const file_ext = file.substr(file.lastIndexOf('.'));
             const page_dir = file.substr(0, file.lastIndexOf('/'));
             const page_id_file_name = page_id_last_segment + file_ext;
             CurlyBracketParser.parseFileWrite(file, {
-                page_id: page_id,
-                page_class: SipaPage.getClassNameOfTemplate(page_id),
-                page_id_last_segment: page_id_last_segment
+                id: view_id,
+                class: SipaPage.getClassNameOfTemplate(view_id, { type: singular_type}),
+                id_last_segment: page_id_last_segment,
+                plural_type: plural_type,
+                project_name: SimparticCliTools.projectName()
             });
             fs.renameSync(file, page_dir + '/' + page_id_file_name);
         });
-        tools.printLine(chalk.green(page_id));
+        tools.printLine(chalk.green(view_id));
         // modify index.html
         console.log(commandLineUsage(self.SECTIONS.generate_include));
-        SimparticIndexManager.appendEntry('PAGE-JS',final_page_dir + '/' + page_id_last_segment + '.js');
-        SimparticIndexManager.appendEntry('PAGE-CSS',final_page_dir + '/' + page_id_last_segment + '.css');
+        SimparticIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-JS`),final_page_dir + '/' + page_id_last_segment + '.js');
+        SimparticIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-CSS`),final_page_dir + '/' + page_id_last_segment + '.css');
         console.log(`  ${chalk.green('done')}`);
-    }
-
-    static _generateLayout() {
-
     }
 
     static _generateStyle() {
@@ -153,9 +163,9 @@ SimparticCliGenerate.SECTIONS.generate_overview = [
 ];
 SimparticCliGenerate.SECTIONS.generate_example_pages = [
     {
-        header: 'Page id format',
+        header: 'Id format',
         content: [
-            'The page id must be in lower (dash) case, and can be structured in different directories by slashes (/).',
+            'The id must be in lower (dash) case, and can be structured in different directories by slashes (/).',
             '',
             '{bold Examples:}',
             '  → {green settings}/{green my-account}',
@@ -166,9 +176,9 @@ SimparticCliGenerate.SECTIONS.generate_example_pages = [
 ];
 SimparticCliGenerate.SECTIONS.generate_existing_pages = [
     {
-        header: 'Existing pages',
+        header: 'Existing ids',
         content: [
-            'An overview about the existing pages (ids) to make the choice for a new page id easier.',
+            'An overview about the existing ids to make the choice for a new id easier.',
         ]
     }
 ];

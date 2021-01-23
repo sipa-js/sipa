@@ -123,7 +123,7 @@ class SimparticCliTools {
 
     static isRunningInsideValidSimparticProject() {
         const self = SimparticCliTools;
-        return fs.existsSync(self.CONFIG_FILE_PATH);
+        return fs.existsSync(self.SIMPARTIC_CONFIG_FILE_PATH);
     }
 
     static errorNotInsideValidSimparticProject() {
@@ -154,13 +154,24 @@ class SimparticCliTools {
         return process.cwd();
     }
 
+    static projectName() {
+        const self = SimparticCliTools;
+        return self.projectPackageJson().name;
+    }
+
     static projectSimparticConfig() {
         const self = SimparticCliTools;
-        return JSON.parse(fs.readFileSync(self.CONFIG_FILE_PATH));
+        return JSON.parse(fs.readFileSync(self.SIMPARTIC_CONFIG_FILE_PATH));
+    }
+
+    static projectPackageJson() {
+        const self = SimparticCliTools;
+        return JSON.parse(fs.readFileSync(self.PACKAGE_JSON_FILE_PATH));
     }
 }
 
-SimparticCliTools.CONFIG_FILE_PATH = SimparticCliTools.projectRootPath() + '/simpartic.json';
+SimparticCliTools.SIMPARTIC_CONFIG_FILE_PATH = SimparticCliTools.projectRootPath() + '/simpartic.json';
+SimparticCliTools.PACKAGE_JSON_FILE_PATH = SimparticCliTools.projectRootPath() + '/package.json';
 SimparticCliTools.first_question = true;
 
 SimparticCliTools.SECTIONS = {};
