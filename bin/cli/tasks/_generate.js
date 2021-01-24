@@ -68,7 +68,7 @@ class SimparticCliGenerate {
         console.log(commandLineUsage(self.SECTIONS['generate_existing_' + plural_type]));
         let existing_views = self._listExistingFilesOrDirs(project_dir + `/app/views/${plural_type}/**/*.js`, { prefix: `app/views/${plural_type}/`, cut_file_names: true, print_paths: true });
         console.log();
-        let view_input = self._prompt(`${singular_type} id`);
+        let view_input = self._prompt(`${singular_type} id`, existing_views);
         let view_id = CurlyBracketParser._replaceAll(view_input, "\\", '/').split('/').map((e) => {
             return LuckyCase.toDashCase(e);
         }).join('/');
@@ -250,6 +250,8 @@ SimparticCliGenerate.SECTIONS.generate_overview = [
         header: 'Generate project asset',
         content: [
             'Welcome to the generator to create new assets for your project! 📦',
+            '',
+            'If you want to add existing style or javascript libraries, run the task {green indexer}.'
         ],
     },
     {

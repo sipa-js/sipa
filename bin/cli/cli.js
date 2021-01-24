@@ -42,6 +42,14 @@ else if (tasks.build || tasks.command && (tasks.command[0] === 'build' || tasks.
     SimparticCliBuild.build();
 }
 //
+// indexer
+//
+else if (tasks.indexer || tasks.command && (tasks.command[0] === 'indexer' || tasks.command[0] === 'i')) {
+    logo();
+    const SimparticCliIndexer = require('./tasks/_indexer');
+    SimparticCliIndexer.index();
+}
+//
 // version
 //
 else if (tasks.version || tasks.command && (tasks.command[0] === 'version' || tasks.command[0] === 'v')) {

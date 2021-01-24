@@ -57,7 +57,9 @@ class SimparticCliTools {
     static cliQuestion(question, options, preselected_option, mandatory = false) {
         const self = SimparticCliTools;
         if(self.first_question) {
-            console.log('  Any preselection in [' + chalk.green('brackets') + '] can be confirmed with ENTER.\n');
+            if(preselected_option) {
+                console.log('  Preselection in [' + chalk.green('brackets') + '] can be confirmed with ENTER.\n');
+            }
             self.first_question = false;
         }
         let default_string = null;
@@ -68,7 +70,10 @@ class SimparticCliTools {
         }
         let input = preselected_option;
         while(true) {
-            input = prompt('  ' + question + default_string + ': ') || preselected_option;
+            input = prompt('  ' + question + default_string + ': ');
+            if(input === '') {
+                input = preselected_option !== null ? preselected_option : input;
+            }
             if(options) {
                 if(options && typeof options[0] !== "undefined") {
                     if(options.includes(input)) {
@@ -91,10 +96,14 @@ class SimparticCliTools {
                 }
                 self.printLine(chalk.red('Mandatory option, please enter a valid text.' + JSON.stringify(input)));
             } else {
+                // CTRL+C
+                if(input === null) {
+                    process.exit(1);
+                }
                 break;
             }
         }
-        return input;
+        return input || '';
     }
 
     /**
@@ -119,6 +128,10 @@ class SimparticCliTools {
             text = '';
         }
         process.stdout.write('  ' + text);
+    }
+
+    static uniqArray(array) {
+        return [...new Set(array)];
     }
 
     static isRunningInsideValidSimparticProject() {
@@ -156,17 +169,27 @@ class SimparticCliTools {
 
     static projectName() {
         const self = SimparticCliTools;
-        return self.projectPackageJson().name;
+        return self.readProjectPackageJson().name;
     }
 
-    static projectSimparticConfig() {
+    static readProjectSimparticConfig() {
         const self = SimparticCliTools;
         return JSON.parse(fs.readFileSync(self.SIMPARTIC_CONFIG_FILE_PATH));
     }
 
-    static projectPackageJson() {
+    static writeProjectSimparticConfig(content) {
+        const self = SimparticCliTools;
+        return fs.writeFileSync(self.SIMPARTIC_CONFIG_FILE_PATH, JSON.stringify(content, null, 2));
+    }
+
+    static readProjectPackageJson() {
         const self = SimparticCliTools;
         return JSON.parse(fs.readFileSync(self.PACKAGE_JSON_FILE_PATH));
+    }
+
+    static writeProjectPackageJson(content) {
+        const self = SimparticCliTools;
+        return fs.writeFileSync(self.PACKAGE_JSON_FILE_PATH, JSON.stringify(content, null, 2));
     }
 }
 

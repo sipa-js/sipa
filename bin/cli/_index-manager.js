@@ -6,6 +6,7 @@ const prompt = require('prompt-sync')();
 const path = require('path');
 const fs = require('fs');
 const LuckyCase = require('lucky-case');
+const glob = require('glob');
 
 const SimparticCliTools = require('./_tools');
 
@@ -21,11 +22,89 @@ class SimparticCliIndexManager {
      */
     static appendEntry(section, path) {
         const self = SimparticCliIndexManager;
-        const tag_name = self._makeTag(path, { type: self._getTypeBySection(section)});
+        const tag_name = self._makeTag(path, { type: self._getAssetTypeBySection(section)});
         const section_close_tag_regex = new RegExp(`(\\s*)\\<\\!\\-\\-\\s*\\/${LuckyCase.toUpperCase(section)}\\s*\\-\\-\\>`, "gm");
-        let index_content = fs.readFileSync(self.index_path,'utf8').toString();
+        let index_content = self._readIndexFile();
         index_content = index_content.replace(section_close_tag_regex, "$1" + tag_name + index_content.match(section_close_tag_regex));
-        fs.writeFileSync(self.index_path, index_content);
+        self._writeIndexFile(index_content);
+    }
+
+    static removeEntry(path) {
+        const self = SimparticCliIndexManager;
+        let entry_regex = null;
+        if(path.endsWith('.js')) {
+            entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.script_tag_regex.source.replace('src\\=\\"([^"]+)"','src\\=\\"' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
+        } else if(path.endsWith('.css')) {
+            entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.style_tag_regex.source.replace('href="([^"]+)"','href="' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
+        }
+        let index_content = self._readIndexFile();
+        index_content = index_content.replace(entry_regex, '');
+        self._writeIndexFile(index_content);
+    }
+
+    static getJsEntries() {
+        const self = SimparticCliIndexManager;
+        let index_content = self._readIndexFile();
+        return [...index_content.matchAll(self.script_tag_regex)].map((e) => { return e[1]; });
+    }
+
+    static getJsFiles() {
+        const self = SimparticCliIndexManager;
+        const dir_prefix = SimparticCliTools.projectRootPath() + '/app/';
+        let files = glob.sync(dir_prefix + '**/*.js', {});
+        // make paths relative to index.html
+        return files.map((e) => { return e.substr(dir_prefix.length); });
+    }
+
+    static missingJsEntries() {
+        const self = SimparticCliIndexManager;
+        const files = self.getJsFiles();
+        const entries = self.getJsEntries();
+        return files.map(e => e.trim()).filter(x => !entries.includes(x.trim()));
+    }
+
+    static getJsEntriesOrderedBySection() {
+        const self = SimparticCliIndexManager;
+        const entries = self.getJsEntries();
+        let sections = {};
+        sections['LIB-JS'] = entries.filter((e) => { e.startsWith('lib/'); });
+        sections['ASSET-JS'] = entries.filter((e) => { e.startsWith('assets/js/'); });
+        sections['PAGE-JS'] = entries.filter((e) => { e.startsWith('views/pages/'); });
+        sections['LAYOUT-JS'] = entries.filter((e) => { e.startsWith('views/layouts/'); });
+        sections['APP-INIT-JS'] = entries.filter((e) => { e.startsWith('config/'); });
+        return sections;
+    }
+
+    static getStyleEntries() {
+        const self = SimparticCliIndexManager;
+        let index_content = self._readIndexFile();
+        return [...index_content.matchAll(self.style_tag_regex)].map((e) => { return e[1]; });
+    }
+
+    static getStyleFiles() {
+        const self = SimparticCliIndexManager;
+        const dir_prefix = SimparticCliTools.projectRootPath() + '/app/';
+        let files = glob.sync(dir_prefix + '**/*.css', {});
+        // make paths relative to index.html
+        return files.map((e) => { return e.substr(dir_prefix.length); });
+    }
+
+    static missingStyleEntries() {
+        const self = SimparticCliIndexManager;
+        const files = self.getStyleFiles();
+        const entries = self.getStyleEntries();
+        return files.filter(x => !entries.includes(x));
+    }
+
+    static getStyleEntriesOrderedBySection() {
+        const self = SimparticCliIndexManager;
+        const entries = self.getStyleEntries();
+        let sections = {};
+        sections['LIB-CSS'] = entries.filter((e) => { e.startsWith('lib/'); });
+        sections['ASSET-CSS'] = entries.filter((e) => { e.startsWith('assets/style/'); });
+        sections['PAGE-CSS'] = entries.filter((e) => { e.startsWith('views/pages/'); });
+        sections['LAYOUT-CSS'] = entries.filter((e) => { e.startsWith('views/layouts/'); });
+        return sections;
     }
 
     /**
@@ -33,7 +112,7 @@ class SimparticCliIndexManager {
      *
      * @param {string} path
      * @param {Object} options
-     * @param {('page','layout','javascript','style')} options.type='page'
+     * @param {('page','layout','javascript','style','app-init')} options.type='page'
      * @returns {string} html tag to include js or css
      * @private
      */
@@ -59,7 +138,7 @@ class SimparticCliIndexManager {
      *
      * @param {string} path
      * @param {Object} options
-     * @param {('page','layout','javascript','style')} options.type='page'
+     * @param {('page','layout','javascript','style','app-init')} options.type='page'
      * @param {('views/pages','assets/js','assets/style')} options.relative_prefix='views/pages'
      * @private
      */
@@ -85,6 +164,10 @@ class SimparticCliIndexManager {
                 break;
             case 'style':
                 relative_prefix = 'assets/style';
+                break;
+            case 'app-init':
+                relative_prefix = 'config';
+                break;
         }
         let final_path = path;
         if(final_path.startsWith(absolute_prefix)) {
@@ -112,7 +195,7 @@ class SimparticCliIndexManager {
      * @returns {('page','layout','javascript','style')}
      * @private
      */
-    static _getTypeBySection(section) {
+    static _getAssetTypeBySection(section) {
         switch (section) {
             case 'PAGE-JS':
             case 'PAGE-CSS':
@@ -124,12 +207,50 @@ class SimparticCliIndexManager {
                 return 'javascript';
             case 'ASSET-CSS':
                 return 'style';
+            case 'APP-INIT-JS':
+                return 'app-init';
             default:
                 throw `Invalid section '${section}'`;
         }
     }
+
+    static _getSectionByPath(path) {
+        const dir_prefix = SimparticCliTools.projectRootPath() + '/app/';
+        const rel_path = path.replace(dir_prefix,'');
+        if(rel_path.startsWith('views/pages') && rel_path.endsWith('.js')) {
+            return 'PAGE-JS';
+        } else if(rel_path.startsWith('views/pages') && rel_path.endsWith('.css')) {
+            return 'PAGE-CSS';
+        } else if(rel_path.startsWith('views/layouts') && rel_path.endsWith('.js')) {
+            return 'LAYOUT-JS';
+        } else if(rel_path.startsWith('views/layouts') && rel_path.endsWith('.css')) {
+            return 'LAYOUT-CSS';
+        } else if(rel_path.startsWith('assets/js') && rel_path.endsWith('.js')) {
+            return 'ASSET-JS';
+        } else if(rel_path.startsWith('assets/style') && rel_path.endsWith('.css')) {
+            return 'ASSET-CSS';
+        } else if(rel_path.startsWith('lib/') && rel_path.endsWith('.js')) {
+            return 'LIB-JS';
+        } else if(rel_path.startsWith('lib/') && rel_path.endsWith('.css')) {
+            return 'LIB-CSS';
+        } else if(rel_path.startsWith('config/') && rel_path.endsWith('.js')) {
+            return 'APP-INIT-JS';
+        }
+    }
+
+    static _readIndexFile() {
+        const self = SimparticCliIndexManager;
+        return fs.readFileSync(self.index_path,'utf8').toString();
+    }
+
+    static _writeIndexFile(content) {
+        const self = SimparticCliIndexManager;
+        return fs.writeFileSync(self.index_path, content);
+    }
 }
 
 SimparticCliIndexManager.index_path = SimparticCliTools.projectRootPath() + '/app/index.html';
+SimparticCliIndexManager.script_tag_regex = /\<\s*script\s*.*\s*src\=\"([^"]+)"\s*\>\s*\<\/\s*script\s*\>/gm;
+SimparticCliIndexManager.style_tag_regex = /<\s*link\s*rel="stylesheet"\s*href="([^"]+)"\s*>/gm;
 
 module.exports = SimparticCliIndexManager;

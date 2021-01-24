@@ -25,8 +25,8 @@ class SimparticCliServer {
 
     static _runLiveServerAndSass() {
         (async function run() {
-            const host = SimparticCliTools.projectSimparticConfig().development_server.host;
-            const port = SimparticCliTools.projectSimparticConfig().development_server.port;
+            const host = SimparticCliTools.readProjectSimparticConfig().development_server.host;
+            const port = SimparticCliTools.readProjectSimparticConfig().development_server.port;
             const server_command = `node ${SimparticCliTools.simparticRootPath()}/node_modules/live-server/live-server.js --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
             const sass_command = `node ${SimparticCliTools.simparticRootPath()}/node_modules/sass/sass.js --watch --update ./app/assets/style ./app/views --no-source-map`;
             // await exec_prom(server_command + ' & ' + sass_command).then(() => {
@@ -44,7 +44,7 @@ class SimparticCliServer {
     }
 
     static _sectionServerStart() {
-        const config = SimparticCliTools.projectSimparticConfig();
+        const config = SimparticCliTools.readProjectSimparticConfig();
         return [
             {
                 header: 'Running live development web server',
