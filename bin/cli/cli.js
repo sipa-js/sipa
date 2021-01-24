@@ -7,11 +7,14 @@ const SimparticCliTools = require('./_tools');
 const SimparticCliHelp = require('./tasks/_help');
 
 const taskDefinitions = [
-    {name: 'command', type: String, multiple: true, defaultOption: true},
+    {name: 'command', type: String, multiple: true, defaultOption: true}, // fall back command
     {name: 'about', alias: 'a', type: Boolean},
+    {name: 'build', alias: 'b', type: Boolean},
+    {name: 'generate', alias: 'g', type: Boolean},
+    {name: 'help', alias: 'h', type: Boolean},
+    {name: 'indexer', alias: 'i', type: Boolean},
     {name: 'license', alias: 'l', type: Boolean},
     {name: 'new', alias: 'n', type: Boolean},
-    {name: 'generate', alias: 'g', type: Boolean},
     {name: 'server', alias: 's', type: Boolean},
     {name: 'version', alias: 'v', type: Boolean},
 ]
@@ -29,6 +32,14 @@ if (tasks.about || tasks.command && (tasks.command[0] === 'about' || tasks.comma
     logo();
     const SimparticCliAbout = require('./tasks/_about');
     SimparticCliAbout.about();
+}
+//
+// build
+//
+else if (tasks.build || tasks.command && (tasks.command[0] === 'build' || tasks.command[0] === 'b')) {
+    logo();
+    const SimparticCliBuild = require('./tasks/_build');
+    SimparticCliBuild.build();
 }
 //
 // version

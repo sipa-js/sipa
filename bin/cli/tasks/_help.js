@@ -49,6 +49,7 @@ SimparticCliHelp.SECTIONS.help = [
             {name: 'delete', alias: 'd', summary: 'Start interactive app asset deletion (page, ...)'},
             {name: 'generate', alias: 'g', summary: 'Start interactive app asset generator (page, ...)'},
             {name: 'help', alias: 'h', summary: 'Print this usage guide'},
+            {name: 'indexer', alias: 'i', summary: 'Start interactive indexer tool'},
             {name: 'license', alias: 'l', summary: 'Print the license'},
             {name: 'new', alias: 'n', summary: 'Create new project in current directory'},
             {name: 'server', alias: 's', summary: 'Start live development server'},

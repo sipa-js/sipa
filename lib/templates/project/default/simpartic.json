@@ -6,6 +6,11 @@
       "app/assets/style",
       "app/views"
     ],
-    "auto_update_index_sources": true
+    "index_sources": {
+      "auto_update": true,
+      "ignored_files": [
+
+      ]
+    }
   }
 }
