@@ -18,7 +18,8 @@ const build_exclusion_markers = [
 const version_regex = /"version":\s*"([^"]*)"/sgm;
 
 const release_header_template = `/**
- * SIPA
+ * 
+ * Sipa
  *
  * Particularly simple old school single page lightweight web framework for clever javascript developers.
  *
