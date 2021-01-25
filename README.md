@@ -1,0 +1,164 @@
+![SIMPARTIC Particularly simple web framework](doc/_raw/logo_doc.svg)
+[![NPM version](https://img.shields.io/npm/v/simpartic?_color=default&style=plastic&logo=npm)](https://www.npmjs.com/package/simpartic)
+![NPM downloads](https://img.shields.io/npm/dt/simpartic?color=blue&style=plastic)
+[![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-gold.svg?style=plastic&logo=mit)](LICENSE)
+
+> Particularly simple old school single page lightweight web framework for clever javascript developers.
+
+You need to be clever to understand why this framework is that party(cular) you want to have.
+
+But I allow you to use it anyway!
+
+```diff
+- under heavy development, first beta version is planned to be released at the end of January 2021
+```
+
+**TALBE OF CONTENTS**
+* [Why simpartic?](#why-simpartic)
+    * [Main features](#main-features)
+    * [Shipped libraries](#shipped-libraries)
+* [Installation](#installation)
+* [Setup a new project](#setup-a-new-project)
+* [Documentation](#documentation)
+* [TODOs](#todos)
+* [Contributing](#contributing)
+
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="why-simpartic"></a>
+## Why simpartic?
+I just want to develop with Vanilla JS and HTML the old way, I want to directly run and debug the code I code in the browser.
+
+I don't want to learn a new framework world.
+I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid easy.
+
+... and at the end I want to be happy! :-)
+
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="main-features"></a>
+### Main features
+* Solid basic project structure ![State](https://img.shields.io/badge/-done-default)
+* Simple but powerful page pattern with loader / router ![State](https://img.shields.io/badge/-done-default)
+* Live development web server for JavaScript and SCSS ![State](https://img.shields.io/badge/-done-default)
+* Life cycle with hook feature ![State](https://img.shields.io/badge/-progress-yellow)
+* Internationalization out of the box ![State](https://img.shields.io/badge/-todo-blue)
+* EJS template engine ![State](https://img.shields.io/badge/-progress-yellow)
+* Builder to create compressed and minified .js and .css for production ![State](https://img.shields.io/badge/-todo-blue)
+
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="shipped-libraries"></a>
+### Shipped libraries
+* `CurlyBracketParser` for url parsing
+* `LuckyCase` for name case transformations
+* `EJS` for embedded javascript template rendering
+* `jQuery` for having fun easily the old way
+
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="installation"></a>
+## Installation
+### Prerequisites
+[NodeJS](https://nodejs.org/en/download/) and [Yarn](https://classic.yarnpkg.com/en/docs/install/) **1.x** are installed.
+You may use npm instead of yarn.
+
+### Install the framework with yarn
+```bash
+yarn add global simpartic
+```
+
+You have to ensure, that the path of yarns bin directory is added to PATH.
+
+So if the command `simpartic` is not available after installation, add the following line to your shell config (`~/.bashrc`, `~/.zshrc`/...):
+```shell
+export PATH="$(yarn global bin):$PATH"
+```
+
+
+
+### Install the framework with npm
+```bash
+npm install -g simpartic
+```
+
+Depending on your global npm directory, you may need to run this command with sudo or as root:
+```bash
+sudo npm install -g simpartic
+```
+
+### After installing with yarn or npm
+
+That's it!
+
+The command `simpartic` and its shortcut `sipa` is now available on the command line.
+
+Run `sipa help` for more information.
+
+Or get started with our tutorial [here]() (TODO).
+
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="setup-a-new-project"></a>
+## Setup a new project
+On the commandline run
+```bash
+simpartic new
+```
+to get an interactive setup and answer the questions.
+
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="documentation"></a>
+## Documentation
+Check out the doc at ... to be done. ;-)
+
+> Either checking for mark down solution or even a github page. Github page may be generated from mark down sources.
+
+> Check for nice documentation templates
+
+> Check the need and technical options for translations (=> create the doc with the framework itself?)
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="todos"></a>
+## TODOs:
+- [x] generators ![State](https://img.shields.io/badge/-done-default)
+    - [x] page generator ![State](https://img.shields.io/badge/-done-default)
+    - [x] layout generator ![State](https://img.shields.io/badge/-done-default)
+    - [x] style asset generator ![State](https://img.shields.io/badge/-done-default)
+    - [x] javascript asset generator ![State](https://img.shields.io/badge/-done-default)
+- [ ] app release builder ![State](https://img.shields.io/badge/-progress-yellow)
+- [x] automatic index.html source manager ![State](https://img.shields.io/badge/-done-default)
+- [ ] index.html src update before build and before live development server start ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] file watcher to automatically trigger index.html src update for live development server ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] developer documentation (github page?) ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] simpartic updater (`update` task) ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] built-in ejs rendering for pages and layouts ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] built-in translation service ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] test on naked linux platform (VM) ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] add unit tests ![State](https://img.shields.io/badge/-todo-blue)
+
+
+
+<!-- -------------------------- SECTION -------------------------- -->
+<a name="contributing"></a>
+## Contributing
+
+Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/simpartic. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+
+
+
