@@ -1,6 +1,6 @@
-![SIMPARTIC Particularly simple web framework](doc/_raw/logo_doc.svg)
-[![NPM version](https://img.shields.io/npm/v/simpartic?_color=default&style=plastic&logo=npm)](https://www.npmjs.com/package/simpartic)
-![NPM downloads](https://img.shields.io/npm/dt/simpartic?color=blue&style=plastic)
+![SIPA Particularly simple web framework](doc/_raw/logo_doc.svg)
+[![NPM version](https://img.shields.io/npm/v/sipa?_color=default&style=plastic&logo=npm)](https://www.npmjs.com/package/sipa)
+![NPM downloads](https://img.shields.io/npm/dt/sipa?color=blue&style=plastic)
 [![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-gold.svg?style=plastic&logo=mit)](LICENSE)
 
 > Particularly simple old school single page lightweight web framework for clever javascript developers.
@@ -14,7 +14,7 @@ But I allow you to use it anyway!
 ```
 
 **TALBE OF CONTENTS**
-* [Why simpartic?](#why-simpartic)
+* [Why Sipa?](#why-sipa)
     * [Main features](#main-features)
     * [Shipped libraries](#shipped-libraries)
 * [Installation](#installation)
@@ -27,8 +27,8 @@ But I allow you to use it anyway!
 
 
 <!-- -------------------------- SECTION -------------------------- -->
-<a name="why-simpartic"></a>
-## Why simpartic?
+<a name="why-sipa"></a>
+## Why Sipa?
 I just want to develop with Vanilla JS and HTML the old way, I want to directly run and debug the code I code in the browser.
 
 I don't want to learn a new framework world.
@@ -73,12 +73,12 @@ You may use npm instead of yarn.
 
 ### Install the framework with yarn
 ```bash
-yarn add global simpartic
+yarn add global sipa
 ```
 
 You have to ensure, that the path of yarns bin directory is added to PATH.
 
-So if the command `simpartic` is not available after installation, add the following line to your shell config (`~/.bashrc`, `~/.zshrc`/...):
+So if the command `sipa` is not available after installation, add the following line to your shell config (`~/.bashrc`, `~/.zshrc`/...):
 ```shell
 export PATH="$(yarn global bin):$PATH"
 ```
@@ -87,19 +87,19 @@ export PATH="$(yarn global bin):$PATH"
 
 ### Install the framework with npm
 ```bash
-npm install -g simpartic
+npm install -g sipa
 ```
 
 Depending on your global npm directory, you may need to run this command with sudo or as root:
 ```bash
-sudo npm install -g simpartic
+sudo npm install -g sipa
 ```
 
 ### After installing with yarn or npm
 
 That's it!
 
-The command `simpartic` and its shortcut `sipa` is now available on the command line.
+The command `sipa` and its shortcut `sipa` is now available on the command line.
 
 Run `sipa help` for more information.
 
@@ -113,7 +113,7 @@ Or get started with our tutorial [here]() (TODO).
 ## Setup a new project
 On the commandline run
 ```bash
-simpartic new
+sipa new
 ```
 to get an interactive setup and answer the questions.
 
@@ -144,7 +144,7 @@ Check out the doc at ... to be done. ;-)
 - [ ] index.html src update before build and before live development server start ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] file watcher to automatically trigger index.html src update for live development server ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] developer documentation (github page?) ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] simpartic updater (`update` task) ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] sipa updater (`update` task) ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] built-in ejs rendering for pages and layouts ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] built-in translation service ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
@@ -157,7 +157,7 @@ Check out the doc at ... to be done. ;-)
 <a name="contributing"></a>
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/simpartic. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/sipa. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 
 

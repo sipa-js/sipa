@@ -8,9 +8,9 @@ const LuckyCase = require('lucky-case/string');
 const glob = require('glob');
 const CurlyBracketParser = require('curly-bracket-parser');
 
-class SimparticCliNew {
+class SipaCliNew {
     static new() {
-        const self = SimparticCliNew;
+        const self = SipaCliNew;
         let section = tools.colorizeValues(self.SECTIONS.new_begin, ['desc'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
@@ -19,7 +19,7 @@ class SimparticCliNew {
     }
 
     static _enterVariables() {
-        const self = SimparticCliNew;
+        const self = SipaCliNew;
         let project_name = null;
         while(true) {
             project_name = tools.cliQuestion('Please enter your project name', null, null, true);
@@ -37,7 +37,7 @@ class SimparticCliNew {
     }
 
     static _createProjectStructure() {
-        const self = SimparticCliNew;
+        const self = SipaCliNew;
         let section = tools.colorizeValues(self.SECTIONS.new_create, ['desc'], 'green');
         let usage = commandLineUsage(section);
         console.log(usage);
@@ -51,7 +51,7 @@ class SimparticCliNew {
         tools.printLine();
         // copy project template
         tools.print(`Copying default project template ...`);
-        const template_src = tools.simparticRootPath() + '/lib/templates/project/default';
+        const template_src = tools.sipaRootPath() + '/lib/templates/project/default';
         fs.copySync(template_src, project_dir);
         tools.printLine(chalk.green('done'));
         // fit project files
@@ -83,18 +83,18 @@ class SimparticCliNew {
     }
 }
 
-SimparticCliNew.options = {
+SipaCliNew.options = {
     project_name: null,
     project_version: '0.0.1',
     author: null
 };
 
-SimparticCliNew.SECTIONS = {};
-SimparticCliNew.SECTIONS.new_begin = [
+SipaCliNew.SECTIONS = {};
+SipaCliNew.SECTIONS.new_begin = [
     {
         header: 'Create new project',
         content: [
-            'Welcome to the project wizard to create a new Simpartic project! 🧙',
+            'Welcome to the project wizard to create a new Sipa project! 🧙',
             'Answer the questions wisely!',
         ]
     },
@@ -102,24 +102,24 @@ SimparticCliNew.SECTIONS.new_begin = [
         header: "Let's get started ...",
     }
 ];
-SimparticCliNew.SECTIONS.new_create = [
+SipaCliNew.SECTIONS.new_create = [
     {
         header: 'Creating project ...'
     }
 ];
-SimparticCliNew.SECTIONS.new_ready = [
+SipaCliNew.SECTIONS.new_ready = [
     {
         header: 'Ready to start!',
         content: [
             `Hey, your basic project has been created, it's time to have fun again! 🎁`,
             '',
-            `If you have no idea how to get started, read the documentation 📄 at {underline.blue https://github.com/magynhard/simpartic#readme}`,
+            `If you have no idea how to get started, read the documentation 📄 at {underline.blue https://github.com/magynhard/sipa#readme}`,
             '',
             "And don't forget to tell one person today, that you love him or her! ❤️",
             '',
-            "To start and run your development live web server {green cd} into your project dir and then run {green simpartic server} or only its shortcut {green sipa s}!"
+            "To start and run your development live web server {green cd} into your project dir and then run {green sipa server} or only its shortcut {green sipa s}!"
         ]
     }
 ];
 
-module.exports = SimparticCliNew;
+module.exports = SipaCliNew;

@@ -1,9 +1,9 @@
 /**
- * Simpartic
+ * Sipa
  *
  * Framework core class to provide core functionality.
  */
-class Simpartic {
+class Sipa {
     /**
      * Function to fire to init the whole app
      *

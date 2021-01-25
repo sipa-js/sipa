@@ -6,17 +6,18 @@ const prompt = require('prompt-sync')();
 const path = require('path');
 const fs = require('fs');
 
-class SimparticCliTools {
+class SipaCliTools {
 
     static logo() {
         // ASCII-Font: Calvin S
         // Sub title font: Source Code Pro Bold
-        return chalk.yellow.bgGray.bold("\n                                       \n" +
-            "    ┌─┐ ┬ ┌┬┐ ┌─┐ ┌─┐ ┬─┐ ┌┬┐ ┬ ┌─┐    \n" +
-            "    └─┐ │ │││ ├─┘ ├─┤ ├┬┘  │  │ │      \n" +
-            "    └─┘ ┴ ┴ ┴ ┴   ┴ ┴ ┴└─  ┴  ┴ └─┘    \n" + chalk.white(
-            "   Particularly simple web framework   \n") +
-            "                                       \n"
+        return chalk.yellow.bgGray.bold("\n                         \n" +
+            "     ┏━┓ ┳ ┏━┓ ┏━┓       \n" +
+            "     ┗━┓ ┃ ┣━┛ ┣━┫       \n" +
+            "     ┗━┛ ┻ ┻   ┻ ┻       \n" + chalk.reset.white.bgGray(
+            "  Particularly Simple    \n") + chalk.bold.green.bgGray(
+            "     web framework       \n") +
+            "                         \n"
         );
     }
 
@@ -30,7 +31,7 @@ class SimparticCliTools {
      * @private
      */
     static colorizeValues(hash, keys, color) {
-        const self = SimparticCliTools;
+        const self = SipaCliTools;
         if (typeof keys === 'string') {
             keys = [keys];
         }
@@ -55,7 +56,7 @@ class SimparticCliTools {
      * @returns {string} input
      */
     static cliQuestion(question, options, preselected_option, mandatory = false) {
-        const self = SimparticCliTools;
+        const self = SipaCliTools;
         if(self.first_question) {
             if(preselected_option) {
                 console.log('  Preselection in [' + chalk.green('brackets') + '] can be confirmed with ENTER.\n');
@@ -134,13 +135,13 @@ class SimparticCliTools {
         return [...new Set(array)];
     }
 
-    static isRunningInsideValidSimparticProject() {
-        const self = SimparticCliTools;
-        return fs.existsSync(self.SIMPARTIC_CONFIG_FILE_PATH);
+    static isRunningInsideValidSipaProject() {
+        const self = SipaCliTools;
+        return fs.existsSync(self.SIPA_CONFIG_FILE_PATH);
     }
 
-    static errorNotInsideValidSimparticProject() {
-        const self = SimparticCliTools;
+    static errorNotInsideValidSipaProject() {
+        const self = SipaCliTools;
         const usage = commandLineUsage(self.SECTIONS.not_inside_valid_project);
         console.log(usage);
     }
@@ -159,7 +160,7 @@ class SimparticCliTools {
         return filtered;
     }
 
-    static simparticRootPath() {
+    static sipaRootPath() {
         return path.resolve(__dirname + '/../../');
     }
 
@@ -168,45 +169,45 @@ class SimparticCliTools {
     }
 
     static projectName() {
-        const self = SimparticCliTools;
+        const self = SipaCliTools;
         return self.readProjectPackageJson().name;
     }
 
-    static readProjectSimparticConfig() {
-        const self = SimparticCliTools;
-        return JSON.parse(fs.readFileSync(self.SIMPARTIC_CONFIG_FILE_PATH));
+    static readProjectSipaConfig() {
+        const self = SipaCliTools;
+        return JSON.parse(fs.readFileSync(self.SIPA_CONFIG_FILE_PATH));
     }
 
-    static writeProjectSimparticConfig(content) {
-        const self = SimparticCliTools;
-        return fs.writeFileSync(self.SIMPARTIC_CONFIG_FILE_PATH, JSON.stringify(content, null, 2));
+    static writeProjectSipaConfig(content) {
+        const self = SipaCliTools;
+        return fs.writeFileSync(self.SIPA_CONFIG_FILE_PATH, JSON.stringify(content, null, 2));
     }
 
     static readProjectPackageJson() {
-        const self = SimparticCliTools;
+        const self = SipaCliTools;
         return JSON.parse(fs.readFileSync(self.PACKAGE_JSON_FILE_PATH));
     }
 
     static writeProjectPackageJson(content) {
-        const self = SimparticCliTools;
+        const self = SipaCliTools;
         return fs.writeFileSync(self.PACKAGE_JSON_FILE_PATH, JSON.stringify(content, null, 2));
     }
 }
 
-SimparticCliTools.SIMPARTIC_CONFIG_FILE_PATH = SimparticCliTools.projectRootPath() + '/simpartic.json';
-SimparticCliTools.PACKAGE_JSON_FILE_PATH = SimparticCliTools.projectRootPath() + '/package.json';
-SimparticCliTools.first_question = true;
+SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
+SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package.json';
+SipaCliTools.first_question = true;
 
-SimparticCliTools.SECTIONS = {};
-SimparticCliTools.SECTIONS.not_inside_valid_project = [
+SipaCliTools.SECTIONS = {};
+SipaCliTools.SECTIONS.not_inside_valid_project = [
     {
         header: 'Invalid project directory',
         content: [
-            '{red You can run this command at the root of a valid simpartic project only.}',
+            '{red You can run this command at the root of a valid Sipa project only.}',
             '',
-            `Current directory:\n {green ${SimparticCliTools.projectRootPath()}}`
+            `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`
         ]
     }
 ];
 
-module.exports = SimparticCliTools;
+module.exports = SipaCliTools;

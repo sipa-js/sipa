@@ -1,18 +1,17 @@
 {
-  "name": "simpartic",
-  "version": "0.2.5",
+  "name": "sipa",
+  "version": "0.3.0",
   "date": "2021-01-23T20:20:00.000Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
-    "email": "simpartic@mail.magynhard.de"
+    "email": "sipa.npm@mail.magynhard.de"
   },
   "license": "MIT",
-  "homepage": "https://github.com/magynhard/simpartic#readme",
+  "homepage": "https://github.com/magynhard/sipa#readme",
   "preferGlobal": true,
   "main": "bin/cli/cli.js",
   "bin": {
-    "simpartic": "./bin/cli/cli.js",
     "sipa": "./bin/cli/cli.js"
   },
   "scripts": {
@@ -22,13 +21,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/magynhard/simpartic.git"
+    "url": "git+https://github.com/magynhard/sipa.git"
   },
   "bugs": {
-    "url": "https://github.com/magynhard/simpartic/issues"
+    "url": "https://github.com/magynhard/sipa/issues"
   },
   "private": false,
   "keywords": [
+    "sipa",
     "javascript",
     "web",
     "framework",
@@ -36,7 +36,8 @@
     "simple",
     "old school",
     "node-js",
-    "single page app"
+    "single page app",
+    "particularly"
   ],
   "dependencies": {
     "babel-cli": "^6.26.0",

@@ -2,19 +2,22 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SimparticCliTools = require('./../_tools');
+const SipaCliTools = require('./../_tools');
 const fs = require('fs');
 
-class SimparticCliBuild {
+class SipaCliBuild {
     static build() {
-        const self = SimparticCliBuild;
-        let section = SimparticCliTools.colorizeValues(self.SECTIONS.build,['desc'],'green');
-        console.log(commandLineUsage(section));
+        const self = SipaCliBuild;
+        if (!SipaCliTools.isRunningInsideValidSipaProject()) {
+            SipaCliTools.errorNotInsideValidSipaProject();
+            return;
+        }
+        console.log(commandLineUsage(self.SECTIONS.build));
     }
 }
 
-SimparticCliBuild.SECTIONS = {};
-SimparticCliBuild.SECTIONS.build = [
+SipaCliBuild.SECTIONS = {};
+SipaCliBuild.SECTIONS.build = [
     {
         header: 'Make production build',
         content: [
@@ -25,4 +28,4 @@ SimparticCliBuild.SECTIONS.build = [
     }
 ];
 
-module.exports = SimparticCliBuild;
+module.exports = SipaCliBuild;

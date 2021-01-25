@@ -2,21 +2,21 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SimparticCliTools = require('./../_tools');
+const SipaCliTools = require('./../_tools');
 const fs = require('fs');
 const tools = require('./../_tools');
 
-const SimparticIndexManager = require('./../_index-manager');
+const SipaIndexManager = require('./../_index-manager');
 
-class SimparticCliIndexer {
+class SipaCliIndexer {
     static index() {
-        const self = SimparticCliIndexer;
-        const sim = SimparticIndexManager;
+        const self = SipaCliIndexer;
+        const sim = SipaIndexManager;
         console.log(commandLineUsage(self.SECTIONS.index));
         console.log(commandLineUsage(self.SECTIONS.examples));
         console.log(commandLineUsage(self.SECTIONS.files_not_included));
         let missing_entries = sim.missingJsEntries().concat(sim.missingStyleEntries());
-        const ignored_entries = tools.readProjectSimparticConfig().ignored_index_inclusion_files;
+        const ignored_entries = tools.readProjectSipaConfig().ignored_index_inclusion_files;
         missing_entries.forEach((el, i) => {
            if(ignored_entries.includes(el)) {
                delete missing_entries[i];
@@ -38,13 +38,13 @@ class SimparticCliIndexer {
                     console.log(chalk.green(`  + ${entry}`));
                 }
             } else if (input === '-') {
-                let config = tools.readProjectSimparticConfig();
+                let config = tools.readProjectSipaConfig();
                 for (let entry of missing_entries) {
                     config.ignored_index_inclusion_files.push(entry);
                     console.log(chalk.red(`  - ${entry}`));
                 }
                 config.ignored_index_inclusion_files = tools.uniqArray(config.ignored_index_inclusion_files).sort();
-                tools.writeProjectSimparticConfig(config);
+                tools.writeProjectSipaConfig(config);
             } else {
                 const all_numbers = input.split(',');
                 const add_numbers = all_numbers.filter(e => !e.startsWith('-')).map(e => parseInt(e.replace('+', '')));
@@ -56,14 +56,14 @@ class SimparticCliIndexer {
                     console.log(chalk.green(`  + ${entry}`));
                 }
                 if (ignore_numbers.length > 0) {
-                    let config = tools.readProjectSimparticConfig();
+                    let config = tools.readProjectSipaConfig();
                     for (let entry_index of ignore_numbers) {
                         const entry = missing_entries[entry_index];
                         config.ignored_index_inclusion_files.push(entry);
                         console.log(chalk.red(`  - ${entry}`));
                     }
                     config.ignored_index_inclusion_files = tools.uniqArray(config.ignored_index_inclusion_files).sort();
-                    tools.writeProjectSimparticConfig(config);
+                    tools.writeProjectSipaConfig(config);
                 }
             }
         }
@@ -129,8 +129,8 @@ class SimparticCliIndexer {
     }
 }
 
-SimparticCliIndexer.SECTIONS = {};
-SimparticCliIndexer.SECTIONS.index = [
+SipaCliIndexer.SECTIONS = {};
+SipaCliIndexer.SECTIONS.index = [
     {
         header: 'Indexer',
         content: [
@@ -140,31 +140,31 @@ SimparticCliIndexer.SECTIONS.index = [
         ]
     }
 ];
-SimparticCliIndexer.SECTIONS.examples = [
+SipaCliIndexer.SECTIONS.examples = [
     {
         header: 'Examples',
         content: [
             {sample: '{green 1}', desc: 'will add option 1 to the {green index.html}'},
             {sample: '{green 1,2}', desc: 'will add option 1 and 2 to the {green index.html}'},
-            {sample: '{red -2}', desc: 'will add option 2 to the ignore list in {green simpartic.json}'},
+            {sample: '{red -2}', desc: 'will add option 2 to the ignore list in {green sipa.json}'},
             {
                 sample: '{red -1}{green ,2}',
-                desc: 'will add option 1 to the ignore list in {green simpartic.json} and add option 2 to the {green index.html}'
+                desc: 'will add option 1 to the ignore list in {green sipa.json} and add option 2 to the {green index.html}'
             },
-            {sample: '{red -}', desc: 'will add all options to the ignore list in {green simpartic.json}'},
+            {sample: '{red -}', desc: 'will add all options to the ignore list in {green sipa.json}'},
             {sample: '{green +}', desc: 'will add all options to the {green index.html}'},
         ]
     }
 ];
-SimparticCliIndexer.SECTIONS.files_not_included = [
+SipaCliIndexer.SECTIONS.files_not_included = [
     {
-        header: 'Files not ignored in simpartic.json or not included in index.html',
+        header: 'Files not ignored in sipa.json or not included in index.html',
     }
 ];
-SimparticCliIndexer.SECTIONS.files_not_existing = [
+SipaCliIndexer.SECTIONS.files_not_existing = [
     {
         header: 'Files not existing but included in index.html',
     }
 ];
 
-module.exports = SimparticCliIndexer;
+module.exports = SipaCliIndexer;

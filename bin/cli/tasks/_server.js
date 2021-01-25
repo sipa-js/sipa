@@ -2,7 +2,7 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SimparticCliTools = require('./../_tools');
+const SipaCliTools = require('./../_tools');
 const fs = require('fs');
 
 const util = require('util');
@@ -10,25 +10,25 @@ const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const exec_prom = util.promisify(exec);
 
-class SimparticCliServer {
+class SipaCliServer {
     static server() {
-        const self = SimparticCliServer;
-        if(SimparticCliTools.isRunningInsideValidSimparticProject()) {
+        const self = SipaCliServer;
+        if(SipaCliTools.isRunningInsideValidSipaProject()) {
             const usage = commandLineUsage(self._sectionServerStart());
             console.log(usage);
             self._runLiveServerAndSass();
 
         } else {
-            SimparticCliTools.errorNotInsideValidSimparticProject();
+            SipaCliTools.errorNotInsideValidSipaProject();
         }
     }
 
     static _runLiveServerAndSass() {
         (async function run() {
-            const host = SimparticCliTools.readProjectSimparticConfig().development_server.host;
-            const port = SimparticCliTools.readProjectSimparticConfig().development_server.port;
-            const server_command = `node ${SimparticCliTools.simparticRootPath()}/node_modules/live-server/live-server.js --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
-            const sass_command = `node ${SimparticCliTools.simparticRootPath()}/node_modules/sass/sass.js --watch --update ./app/assets/style ./app/views --no-source-map`;
+            const host = SipaCliTools.readProjectSipaConfig().development_server.host;
+            const port = SipaCliTools.readProjectSipaConfig().development_server.port;
+            const server_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/live-server/live-server.js --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
+            const sass_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js --watch --update ./app/assets/style ./app/views --no-source-map`;
             // await exec_prom(server_command + ' & ' + sass_command).then(() => {
             //     console.log("...");
             // });
@@ -44,14 +44,14 @@ class SimparticCliServer {
     }
 
     static _sectionServerStart() {
-        const config = SimparticCliTools.readProjectSimparticConfig();
+        const config = SipaCliTools.readProjectSipaConfig();
         return [
             {
                 header: 'Running live development web server',
                 content: [
                     `Starting live web server listening on {green ${config.development_server.host}} at port {green ${config.development_server.port}}`,
                     '',
-                    'If you want to modify the {green host} or {green port} of the live development web server, edit {green simpartic.json} in your project root directory.',
+                    'If you want to modify the {green host} or {green port} of the live development web server, edit {green sipa.json} in your project root directory.',
                     '',
                 ]
             },
@@ -62,7 +62,7 @@ class SimparticCliServer {
                     '',
                     `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => { return chalk.green(e); }).join("\n  - ")}`,
                     '',
-                    'If you want to modify the watch paths of the live development sass compilation server, edit {green simpartic.json} in your project root directory.',
+                    'If you want to modify the watch paths of the live development sass compilation server, edit {green sipa.json} in your project root directory.',
                     '',
                 ]
             },
@@ -74,6 +74,6 @@ class SimparticCliServer {
     }
 }
 
-SimparticCliServer.SECTIONS = {};
+SipaCliServer.SECTIONS = {};
 
-module.exports = SimparticCliServer;
+module.exports = SipaCliServer;

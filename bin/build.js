@@ -1,5 +1,5 @@
 /**
- * release build script for simpartic
+ * release build script for sipa
  */
 const fs = require("fs");
 const util = require('util');
@@ -9,7 +9,7 @@ const { spawn } = require("child_process");
 const LuckyCase = require('lucky-case');
 const chalk = require('chalk');
 
-const build_destination_dir = './lib/templates/project/default/app/lib/simpartic/';
+const build_destination_dir = './lib/templates/project/default/app/lib/sipa/';
 
 const build_exclusion_markers = [
     /\/\/<!-- MODULE -->\/\/(.*?)\/\/<!-- \/MODULE -->\/\//gs,
@@ -18,13 +18,13 @@ const build_exclusion_markers = [
 const version_regex = /"version":\s*"([^"]*)"/sgm;
 
 const release_header_template = `/**
- * Simpartic
+ * SIPA
  *
  * Particularly simple old school single page lightweight web framework for clever javascript developers.
  *
  * @version {{version}}
  * @date {{date}}
- * @link https://github.com/magynhard/simpartic
+ * @link https://github.com/magynhard/sipa
  * @author Matthäus J. N. Beyrle
  * @copyright Matthäus J. N. Beyrle
  */
@@ -32,15 +32,15 @@ const release_header_template = `/**
 
 const builds = {
     default_build: {
-        destination_file: build_destination_dir + 'simpartic.js',
+        destination_file: build_destination_dir + 'sipa.js',
         source_files: [
-            './src/simpartic/core/sipa-basic-view.js',
-            './src/simpartic/tools/sipa-env.js',
-            './src/simpartic/tools/sipa-helper.js',
-            './src/simpartic/tools/sipa-hooks.js',
-            './src/simpartic/tools/sipa-page.js',
-            './src/simpartic/tools/sipa-url.js',
-            './src/simpartic/simpartic.js',
+            './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/tools/sipa-env.js',
+            './src/sipa/tools/sipa-helper.js',
+            './src/sipa/tools/sipa-hooks.js',
+            './src/sipa/tools/sipa-page.js',
+            './src/sipa/tools/sipa-url.js',
+            './src/sipa/sipa.js',
         ]}
 }
 
@@ -60,7 +60,7 @@ function prependToFile(file, string) {
 }
 
 console.log(chalk.yellow('###################################'));
-console.log(chalk.yellow('# Simpartic build script'));
+console.log(chalk.yellow('# Sipa build script'));
 console.log(chalk.yellow('###################################'));
 console.log('Building JS ...');
 for(let build_key of Object.keys(builds)) {

@@ -2,13 +2,13 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SimparticCliTools = require('./../_tools');
+const SipaCliTools = require('./../_tools');
 const fs = require('fs');
 
-class SimparticCliAbout {
+class SipaCliAbout {
     static about() {
-        const self = SimparticCliAbout;
-        let section = self.SECTIONS.about; // SimparticCliTools.colorizeValues(self.SECTIONS.about,['desc'],'green');
+        const self = SipaCliAbout;
+        let section = self.SECTIONS.about; // SipaCliTools.colorizeValues(self.SECTIONS.about,['desc'],'green');
         const usage = commandLineUsage(section);
         console.log(usage);
     }
@@ -16,8 +16,8 @@ class SimparticCliAbout {
 
 const package_json = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json','utf-8'));
 
-SimparticCliAbout.SECTIONS = {};
-SimparticCliAbout.SECTIONS.about = [
+SipaCliAbout.SECTIONS = {};
+SipaCliAbout.SECTIONS.about = [
     {
         header: 'Description',
         content: package_json.description + ' 🤓'
@@ -47,10 +47,10 @@ SimparticCliAbout.SECTIONS.about = [
             },
             {
                 desc: 'License',
-                summary: package_json.license + "\nFor full license text run " + chalk.green('simpartic license') + '.'
+                summary: package_json.license + "\nFor full license text run " + chalk.green('sipa license') + '.'
             },
         ]
     }
 ];
 
-module.exports = SimparticCliAbout;
+module.exports = SipaCliAbout;

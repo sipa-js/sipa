@@ -7,17 +7,17 @@ const fs = require('fs-extra');
 const LuckyCase = require('lucky-case/string');
 const glob = require('glob');
 const CurlyBracketParser = require('curly-bracket-parser');
-const SimparticCliTools = require('./../_tools');
-const SimparticIndexManager = require('./../_index-manager');
+const SipaCliTools = require('./../_tools');
+const SipaIndexManager = require('./../_index-manager');
 
-const SipaHelper = require('./../../../src/simpartic/tools/sipa-helper');
-const SipaPage = require('./../../../src/simpartic/tools/sipa-page');
+const SipaHelper = require('./../../../src/sipa/tools/sipa-helper');
+const SipaPage = require('./../../../src/sipa/tools/sipa-page');
 
-class SimparticCliGenerate {
+class SipaCliGenerate {
     static generate() {
-        const self = SimparticCliGenerate;
-        if (!SimparticCliTools.isRunningInsideValidSimparticProject()) {
-            SimparticCliTools.errorNotInsideValidSimparticProject();
+        const self = SipaCliGenerate;
+        if (!SipaCliTools.isRunningInsideValidSipaProject()) {
+            SipaCliTools.errorNotInsideValidSipaProject();
             return;
         }
         let section = tools.colorizeValues(self.SECTIONS.generate_overview, ['desc', 'name', 'alias'], 'green');
@@ -55,14 +55,14 @@ class SimparticCliGenerate {
      * @private
      */
     static _generateView(options = { type: 'page'}) {
-        const self = SimparticCliGenerate;
+        const self = SipaCliGenerate;
         const default_options = {
             type: 'page'
         }
         options = SipaHelper.mergeOptions(default_options, options);
         const singular_type = LuckyCase.toLowerCase(options.type);
         const plural_type = singular_type + 's';
-        const project_dir = SimparticCliTools.projectRootPath();
+        const project_dir = SipaCliTools.projectRootPath();
         // list existing pages
         console.log(commandLineUsage(self.SECTIONS['generate_example_' + plural_type]));
         console.log(commandLineUsage(self.SECTIONS['generate_existing_' + plural_type]));
@@ -75,11 +75,11 @@ class SimparticCliGenerate {
         view_id = SipaHelper.cutLeadingCharacters(view_id, '/');
         view_id = SipaHelper.cutTrailingCharacters(view_id, '/');
         console.log(commandLineUsage(self.SECTIONS.generate_generate));
-        const final_page_dir = SimparticCliTools.projectRootPath() + `/app/views/${plural_type}/` + view_id;
+        const final_page_dir = SipaCliTools.projectRootPath() + `/app/views/${plural_type}/` + view_id;
         fs.mkdirSync(final_page_dir, {recursive: true});
         tools.printLine(`Generate new ${chalk.green(singular_type)} by default ${singular_type} template ...`);
         tools.printLine();
-        const template_src = tools.simparticRootPath() + `/lib/templates/${singular_type}/default`;
+        const template_src = tools.sipaRootPath() + `/lib/templates/${singular_type}/default`;
         fs.copySync(template_src, final_page_dir);
         const view_files = glob.sync(final_page_dir + '/*.*', {});
         const view_id_last_segment = view_id.substr(view_id.lastIndexOf('/') + 1);
@@ -92,15 +92,15 @@ class SimparticCliGenerate {
                 class: SipaPage.getClassNameOfTemplate(view_id, { type: singular_type}),
                 id_last_segment: view_id_last_segment,
                 plural_type: plural_type,
-                project_name: SimparticCliTools.projectName()
+                project_name: SipaCliTools.projectName()
             });
             fs.renameSync(file, view_dir + '/' + view_id_file_name);
         });
         tools.printLine(chalk.green(view_id));
         // modify index.html
         console.log(commandLineUsage(self.SECTIONS.generate_include));
-        SimparticIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-JS`),final_page_dir + '/' + view_id_last_segment + '.js');
-        SimparticIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-CSS`),final_page_dir + '/' + view_id_last_segment + '.css');
+        SipaIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-JS`),final_page_dir + '/' + view_id_last_segment + '.js');
+        SipaIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-CSS`),final_page_dir + '/' + view_id_last_segment + '.css');
         console.log(`  ${chalk.green('done')}`);
     }
 
@@ -113,7 +113,7 @@ class SimparticCliGenerate {
      * @private
      */
     static _generateAsset(options = { type: 'javascript', prefix: 'app/assets/js/'}) {
-        const self = SimparticCliGenerate;
+        const self = SipaCliGenerate;
         const default_options = {
           type: 'javascript',
           prefix: 'app/assets/js'
@@ -122,7 +122,7 @@ class SimparticCliGenerate {
         const asset_name = `${options.type} asset`;
         console.log(commandLineUsage(self.SECTIONS['generate_example_' + options.type]));
         console.log(commandLineUsage(self.SECTIONS['generate_existing_' + options.type]));
-        const project_dir = SimparticCliTools.projectRootPath();
+        const project_dir = SipaCliTools.projectRootPath();
         let asset_ext = null;
         if(options.type === 'javascript') {
             asset_ext = 'js';
@@ -140,7 +140,7 @@ class SimparticCliGenerate {
         asset_id = SipaHelper.cutLeadingCharacters(asset_id, '/');
         asset_id = SipaHelper.cutTrailingCharacters(asset_id, '/');
         console.log(commandLineUsage(self.SECTIONS.generate_generate));
-        let final_asset_dir = SimparticCliTools.projectRootPath() + `/${options.prefix}`;
+        let final_asset_dir = SipaCliTools.projectRootPath() + `/${options.prefix}`;
         if(asset_id.indexOf('/') !== -1) {
             final_asset_dir += asset_id.substring(0,asset_id.lastIndexOf('/')+1);
         }
@@ -151,7 +151,7 @@ class SimparticCliGenerate {
         fs.mkdirSync(final_asset_dir, {recursive: true});
         tools.printLine(`Generate new ${chalk.green(asset_name)} by default ${asset_name} template ...`);
         tools.printLine();
-        const template_src = tools.simparticRootPath() + `/lib/templates/assets/default/${options.type}`;
+        const template_src = tools.sipaRootPath() + `/lib/templates/assets/default/${options.type}`;
         fs.copySync(template_src, final_asset_dir);
         const asset_files = glob.sync(template_src + '/*.*', {}).map((e) => { return final_asset_dir + e.substr(e.lastIndexOf('/')); });
         asset_files.forEach((file) => {
@@ -167,9 +167,9 @@ class SimparticCliGenerate {
         // modify index.html
         console.log(commandLineUsage(self.SECTIONS.generate_include));
         if(options.type === 'javascript') {
-            SimparticIndexManager.appendEntry(LuckyCase.toUpperCase(`ASSET-JS`),final_asset_dir + asset_id_last_segment + '.js');
+            SipaIndexManager.appendEntry(LuckyCase.toUpperCase(`ASSET-JS`),final_asset_dir + asset_id_last_segment + '.js');
         } else if(options.type === 'style') {
-            SimparticIndexManager.appendEntry(LuckyCase.toUpperCase(`ASSET-CSS`),final_asset_dir + asset_id_last_segment + '.css');
+            SipaIndexManager.appendEntry(LuckyCase.toUpperCase(`ASSET-CSS`),final_asset_dir + asset_id_last_segment + '.css');
         } else {
             throw `Unknown type '${options.type}'`;
         }
@@ -244,8 +244,8 @@ class SimparticCliGenerate {
     }
 }
 
-SimparticCliGenerate.SECTIONS = {};
-SimparticCliGenerate.SECTIONS.generate_overview = [
+SipaCliGenerate.SECTIONS = {};
+SipaCliGenerate.SECTIONS.generate_overview = [
     {
         header: 'Generate project asset',
         content: [
@@ -272,7 +272,7 @@ SimparticCliGenerate.SECTIONS.generate_overview = [
         header: "Let's get started ..."
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_example_pages = [
+SipaCliGenerate.SECTIONS.generate_example_pages = [
     {
         header: 'Page id format',
         content: [
@@ -285,7 +285,7 @@ SimparticCliGenerate.SECTIONS.generate_example_pages = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_existing_pages = [
+SipaCliGenerate.SECTIONS.generate_existing_pages = [
     {
         header: 'Existing page ids',
         content: [
@@ -293,7 +293,7 @@ SimparticCliGenerate.SECTIONS.generate_existing_pages = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_example_layouts = [
+SipaCliGenerate.SECTIONS.generate_example_layouts = [
     {
         header: 'Layout id format',
         content: [
@@ -308,7 +308,7 @@ SimparticCliGenerate.SECTIONS.generate_example_layouts = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_existing_layouts = [
+SipaCliGenerate.SECTIONS.generate_existing_layouts = [
     {
         header: 'Existing layout ids',
         content: [
@@ -316,7 +316,7 @@ SimparticCliGenerate.SECTIONS.generate_existing_layouts = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_example_javascript = [
+SipaCliGenerate.SECTIONS.generate_example_javascript = [
     {
         header: 'Javascript asset file name format',
         content: [
@@ -330,7 +330,7 @@ SimparticCliGenerate.SECTIONS.generate_example_javascript = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_existing_javascript = [
+SipaCliGenerate.SECTIONS.generate_existing_javascript = [
     {
         header: 'Existing javascript assets',
         content: [
@@ -338,7 +338,7 @@ SimparticCliGenerate.SECTIONS.generate_existing_javascript = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_example_style = [
+SipaCliGenerate.SECTIONS.generate_example_style = [
     {
         header: 'Style asset file name format',
         content: [
@@ -352,7 +352,7 @@ SimparticCliGenerate.SECTIONS.generate_example_style = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_existing_style = [
+SipaCliGenerate.SECTIONS.generate_existing_style = [
     {
         header: 'Existing style assets',
         content: [
@@ -360,12 +360,12 @@ SimparticCliGenerate.SECTIONS.generate_existing_style = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_generate = [
+SipaCliGenerate.SECTIONS.generate_generate = [
     {
         header: 'Generating ...'
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_include = [
+SipaCliGenerate.SECTIONS.generate_include = [
     {
         header: 'Include assets to project',
         content: [
@@ -373,7 +373,7 @@ SimparticCliGenerate.SECTIONS.generate_include = [
         ]
     }
 ];
-SimparticCliGenerate.SECTIONS.generate_created = [
+SipaCliGenerate.SECTIONS.generate_created = [
     {
         header: 'Finished!',
         content: [
@@ -384,4 +384,4 @@ SimparticCliGenerate.SECTIONS.generate_created = [
     }
 ];
 
-module.exports = SimparticCliGenerate;
+module.exports = SipaCliGenerate;
