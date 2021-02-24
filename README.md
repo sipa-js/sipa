@@ -30,9 +30,10 @@ But I allow you to use it anyway!
 <a name="why-sipa"></a>
 ## Why Sipa?
 I just want to develop with Vanilla JS and HTML the old way, I want to directly run and debug the code I code in the browser.
+Intensive transpiling (minifying) will happen when creating a production build.
 
 I don't want to learn a new framework world.
-I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid easy.
+I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid easy. So i can add whatever I want if I need to.
 
 ... and at the end I want to be happy! :-)
 
@@ -47,7 +48,7 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 * Live development web server for JavaScript and SCSS ![State](https://img.shields.io/badge/-done-default)
 * Life cycle with hook feature ![State](https://img.shields.io/badge/-progress-yellow)
 * Internationalization out of the box ![State](https://img.shields.io/badge/-todo-blue)
-* EJS template engine ![State](https://img.shields.io/badge/-progress-yellow)
+* EJS template engine (optional) ![State](https://img.shields.io/badge/-progress-yellow)
 * Builder to create compressed and minified .js and .css for production ![State](https://img.shields.io/badge/-todo-blue)
 
 
@@ -58,8 +59,8 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 ### Shipped libraries
 * `CurlyBracketParser` for url parsing
 * `LuckyCase` for name case transformations
-* `EJS` for embedded javascript template rendering
-* `jQuery` for having fun easily the old way
+* `EJS` for embedded javascript template rendering (optional)
+* `jQuery` for having fun easily the old way (optional)
 
 
 
@@ -99,7 +100,7 @@ sudo npm install -g sipa
 
 That's it!
 
-The command `sipa` and its shortcut `sipa` is now available on the command line.
+The command `sipa` is now available on the command line.
 
 Run `sipa help` for more information.
 
@@ -115,7 +116,9 @@ On the commandline run
 ```bash
 sipa new
 ```
-to get an interactive setup and answer the questions.
+to create a new project as subfolder of the current directory.
+
+A interactive setup assists you and generates the project depending on your input.
 
 
 
@@ -150,6 +153,7 @@ Check out the doc at ... to be done. ;-)
 - [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] test on naked linux platform (VM) ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] add unit tests ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] make EJS and jQuery optional at interactive setup ![State](https://img.shields.io/badge/-todo-blue)
 
 
 
