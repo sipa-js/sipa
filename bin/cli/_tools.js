@@ -203,7 +203,7 @@ SipaCliTools.SECTIONS.not_inside_valid_project = [
     {
         header: 'Invalid project directory',
         content: [
-            '{red You can run this command at the root of a valid Sipa project only.}',
+            '{red You can run this command at the root directory of a valid Sipa project only.}',
             '',
             `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`
         ]
