@@ -47,7 +47,7 @@
     "chalk": "^4.1.0",
     "command-line-args": "^5.1.1",
     "command-line-usage": "^6.1.1",
-    "curly-bracket-parser": "^1.0.1",
+    "curly-bracket-parser": "^1.0.2",
     "fs-extra": "^9.0.1",
     "glob": "^7.1.6",
     "jasmine": "^3.6.3",
