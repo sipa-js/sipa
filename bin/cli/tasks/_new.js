@@ -117,7 +117,7 @@ SipaCliNew.SECTIONS.new_ready = [
             '',
             "And don't forget to tell one person today, that you love him or her! ❤️",
             '',
-            "To start and run your development live web server {green cd} into your project dir and then run {green sipa server} or only its shortcut {green sipa s}!"
+            "To start and run your development live web server {green cd} into your project directory and then run {green sipa server} or its shortcut {green sipa s}!"
         ]
     }
 ];
