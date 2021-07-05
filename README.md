@@ -74,21 +74,21 @@ You may use npm instead of yarn.
 
 ### Install the framework with yarn
 ```bash
-yarn add global sipa
+yarn global add sipa
 ```
 
 #### Add to PATH environment variable
 
 You have to ensure, that the path of yarns bin directory is added to PATH.
 
-##### Linux/Unix/MacOS
+#### Linux/Unix/MacOS
 
 So if the command `sipa` is not available after installation, add the following line to your shell config if you are using linux/macOS/unix (`~/.bashrc`, `~/.zshrc`/...):
 ```shell
 export PATH="$(yarn global bin):$PATH"
 ```
 
-##### Windows
+#### Windows
 Run `yarn global bin` and add the PATH to your global PATH environment variable.
 
 
