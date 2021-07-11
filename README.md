@@ -69,7 +69,7 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 <a name="installation"></a>
 ## Installation
 ### Prerequisites
-[NodeJS](https://nodejs.org/en/download/) >= 13.x and [Yarn](https://classic.yarnpkg.com/en/docs/install/) **1.x** are installed.
+[NodeJS](https://nodejs.org/en/download/) >= **13.x** and [Yarn](https://classic.yarnpkg.com/en/docs/install/) **1.x** are installed.
 You may use npm instead of yarn.
 
 ### Install the framework with yarn
