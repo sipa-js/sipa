@@ -15,7 +15,7 @@
     "sipa": "./bin/cli/cli.js"
   },
   "scripts": {
-    "test": "jasmine",
+    "test": "node node_modules/jasmine/bin/jasmine.js",
     "build": "node bin/build.js",
     "publish": "npm publish"
   },
