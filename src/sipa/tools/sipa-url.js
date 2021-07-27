@@ -212,7 +212,7 @@ class SipaUrl {
             {param_name: 'param_keys', param_value: param_keys, expected_type: 'Array'},
             {param_name: 'url', param_value: url, expected_type: 'String'},
         ]);
-        let curr_params = Self.getParamsOfUrl(url);
+        let curr_params = self.getParamsOfUrl(url);
         const anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
         param_keys.forEach((key) => {
             if (curr_params[key]) {
