@@ -16,7 +16,8 @@
   },
   "scripts": {
     "test": "jasmine",
-    "build": "node bin/build.js",
+    "link_dev": "sudo npm link",
+    "unlink_dev": "sudo npm rm --global sipa",
     "publish": "npm publish"
   },
   "repository": {
