@@ -1559,16 +1559,16 @@
     "path-dirname" "^1.0.0"
 
 "glob-parent@~5.1.0":
-  "integrity" "sha512-FnI+VGOpnlGHWZxthPGR+QhR78fuiK0sNLkHQv+bL9fQi57lNNdquIbna/WrfROrolq8GK5Ek6BiMwqL/voRYQ=="
-  "resolved" "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.1.tgz"
-  "version" "5.1.1"
+  "integrity" "sha512-AOIgSQCepiJYwP3ARnGx+5VnTu2HBYdzbGP45eLw1vr3zB3vZLeyed1sC9hnbcOc9/SrMyM5RPQrkGz4aS9Zow=="
+  "resolved" "https://registry.npmjs.org/glob-parent/-/glob-parent-5.1.2.tgz"
+  "version" "5.1.2"
   dependencies:
     "is-glob" "^4.0.1"
 
 "glob@^7.0.0", "glob@^7.1.6":
-  "integrity" "sha512-LwaxwyZ72Lk7vZINtNNrywX0ZuLyStrdDtabefZKAY5ZGJhVtgdznluResxNmPitE0SAO+O26sWTHeKSI2wMBA=="
-  "resolved" "https://registry.npmjs.org/glob/-/glob-7.1.6.tgz"
-  "version" "7.1.6"
+  "integrity" "sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q=="
+  "resolved" "https://registry.npmjs.org/glob/-/glob-7.2.0.tgz"
+  "version" "7.2.0"
   dependencies:
     "fs.realpath" "^1.0.0"
     "inflight" "^1.0.4"
