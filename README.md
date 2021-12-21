@@ -10,7 +10,7 @@ You need to be clever to understand why this framework is that party(cular) you 
 But I allow you to use it anyway!
 
 ```diff
-- under heavy development, alpha state. First beta version including some documentation is planned to be released within 2021
+- under heavy development, alpha state. First beta version including some documentation is planned to be released in 01/2022
 ```
 
 **TALBE OF CONTENTS**
@@ -150,8 +150,8 @@ Check out the doc at ... to be done. ;-)
     - [x] javascript asset generator ![State](https://img.shields.io/badge/-done-default)
 - [ ] app release builder ![State](https://img.shields.io/badge/-progress-yellow)
 - [x] automatic index.html source manager ![State](https://img.shields.io/badge/-done-default)
-- [ ] index.html src update before build and before live development server start ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] file watcher to automatically trigger index.html src update for live development server ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] index.html src *check* before build ![State](https://img.shields.io/badge/-todo-blue)
+- [x] ~~file watcher to automatically trigger index.html src update for live development server~~ ![State](https://img.shields.io/badge/x-won't_do_(canceled)-green)
 - [ ] developer documentation (github page?) ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] sipa updater (`update` task) ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] built-in ejs rendering for pages and layouts ![State](https://img.shields.io/badge/-todo-blue)
