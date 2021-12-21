@@ -28,7 +28,7 @@ class SipaCliServer {
             const host = SipaCliTools.readProjectSipaConfig().development_server.host;
             const port = SipaCliTools.readProjectSipaConfig().development_server.port;
             const server_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/live-server/live-server.js --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
-            const sass_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js --watch --update ./app/assets/style ./app/views --no-source-map`;
+            const sass_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js --watch --update ./app/assets/style ./app/views --no-source-map --style=compressed`;
             // await exec_prom(server_command + ' & ' + sass_command).then(() => {
             //     console.log("...");
             // });
