@@ -146,6 +146,28 @@ class SipaCliTools {
         console.log(usage);
     }
 
+    static invalidConfigPaths() {
+        const self = SipaCliTools;
+        const config = self.readProjectSipaConfig();
+        let paths = [];
+        if(config.development_server?.sass_watch_paths?.length || 0 > 0) {
+            paths = paths.concat(config.development_server.sass_watch_paths);
+        }
+        let invalid_paths = [];
+        paths.forEach((path) => {
+            if(!fs.existsSync(path)) {
+                invalid_paths.push(path);
+            }
+        });
+        return invalid_paths;
+    }
+
+    static errorInvalidConfigPaths() {
+        const self = SipaCliTools;
+        const usage = commandLineUsage(self.SECTIONS.invalid_config_paths);
+        console.log(usage);
+    }
+
     /**
      * Get only the deepest dirs, without dirs between
      * @param {Array<String>} dirs to filter
@@ -225,6 +247,15 @@ SipaCliTools.SECTIONS.not_inside_valid_project = [
             '{red You can run this command at the root directory of a valid Sipa project only.}',
             '',
             `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`
+        ]
+    }
+];
+SipaCliTools.SECTIONS.invalid_config_paths = [
+    {
+        header: 'Invalid paths found',
+        content: [
+            'The following paths in sipa.json are invalid:',
+            `   → ${SipaCliTools.invalidConfigPaths().map((el) => { return chalk.red(el); }).join("\n  → ")}`,
         ]
     }
 ];

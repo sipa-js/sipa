@@ -86,7 +86,7 @@ class SipaCliIndexer {
             console.log(commandLineUsage(console.log(chalk`  There are no remaining not existing files included in {green index.html}`)));
         } else {
             console.log('  → ' + existing_entries.map((e, i) => {
-                return chalk.yellow(e)
+                return chalk.red(e)
             }).join('\n  → '));
             console.log();
             let input = tools.cliQuestion(chalk`Do you want to remove this invalid included file(s) from {green index.html}?`, ['yes','no'], 'yes', true);
