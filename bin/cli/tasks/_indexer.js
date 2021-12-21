@@ -35,6 +35,7 @@ class SipaCliIndexer {
             }).join('\n  → '));
             console.log();
             const input = self._numbersPrompt(0, missing_entries.length - 1);
+            console.log();
             if (input === '+') {
                 for (let entry of missing_entries) {
                     const section = sim._getSectionByPath(entry);
@@ -85,11 +86,12 @@ class SipaCliIndexer {
             console.log(commandLineUsage(console.log(chalk`  There are no remaining not existing files included in {green index.html}`)));
         } else {
             console.log('  → ' + existing_entries.map((e, i) => {
-                return chalk.green(e)
+                return chalk.yellow(e)
             }).join('\n  → '));
             console.log();
             let input = tools.cliQuestion(chalk`Do you want to remove this invalid included file(s) from {green index.html}?`, ['yes','no'], 'yes', true);
             if(input === 'yes') {
+                console.log();
                 for(let entry of existing_entries) {
                     sim.removeEntry(entry);
                     console.log(chalk.red(`  - ${entry}`));

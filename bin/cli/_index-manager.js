@@ -67,7 +67,7 @@ class SipaCliIndexManager {
         const self = SipaCliIndexManager;
         const entries = self.getJsEntries();
         let sections = {};
-        sections['LIB-JS'] = entries.filter((e) => { e.startsWith('lib/'); });
+        sections['LIB-JS'] = entries.filter((e) => { e.startsWith('assets/lib/'); });
         sections['ASSET-JS'] = entries.filter((e) => { e.startsWith('assets/js/'); });
         sections['PAGE-JS'] = entries.filter((e) => { e.startsWith('views/pages/'); });
         sections['LAYOUT-JS'] = entries.filter((e) => { e.startsWith('views/layouts/'); });
@@ -138,7 +138,7 @@ class SipaCliIndexManager {
      *
      * @param {string} path
      * @param {Object} options
-     * @param {('page','layout','javascript','style','app-init')} options.type='page'
+     * @param {('page','layout','javascript','style','lib,'app-init')} options.type='page'
      * @param {('views/pages','assets/js','assets/style')} options.relative_prefix='views/pages'
      * @private
      */
@@ -164,6 +164,9 @@ class SipaCliIndexManager {
                 break;
             case 'style':
                 relative_prefix = 'assets/style';
+                break;
+            case 'lib':
+                relative_prefix = 'assets/lib';
                 break;
             case 'app-init':
                 relative_prefix = 'config';
@@ -207,6 +210,9 @@ class SipaCliIndexManager {
                 return 'javascript';
             case 'ASSET-CSS':
                 return 'style';
+            case 'LIB-JS':
+            case 'LIB-CSS':
+                return 'lib';
             case 'APP-INIT-JS':
                 return 'app-init';
             default:
@@ -229,9 +235,9 @@ class SipaCliIndexManager {
             return 'ASSET-JS';
         } else if(rel_path.startsWith('assets/style') && rel_path.endsWith('.css')) {
             return 'ASSET-CSS';
-        } else if(rel_path.startsWith('lib/') && rel_path.endsWith('.js')) {
+        } else if(rel_path.startsWith('assets/lib') && rel_path.endsWith('.js')) {
             return 'LIB-JS';
-        } else if(rel_path.startsWith('lib/') && rel_path.endsWith('.css')) {
+        } else if(rel_path.startsWith('assets/lib') && rel_path.endsWith('.css')) {
             return 'LIB-CSS';
         } else if(rel_path.startsWith('config/') && rel_path.endsWith('.js')) {
             return 'APP-INIT-JS';
