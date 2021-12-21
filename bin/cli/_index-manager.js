@@ -31,14 +31,12 @@ class SipaCliIndexManager {
 
     static removeEntry(path) {
         const self = SipaCliIndexManager;
-        let entry_regex = null;
-        if(path.endsWith('.js')) {
-            entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.script_tag_regex.source.replace('src\\=\\"([^"]+)"','src\\=\\"' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
-        } else if(path.endsWith('.css')) {
-            entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.style_tag_regex.source.replace('href="([^"]+)"','href="' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
-        }
+            const js_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.script_tag_regex.source.replace('src\\=\\"([^"]+)"','src\\=\\"' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
+            const css_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.style_tag_regex.source.replace('href="([^"]+)"','href="' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
         let index_content = self._readIndexFile();
-        index_content = index_content.replace(entry_regex, '');
+        [js_entry_regex, css_entry_regex].forEach((entry_regex) => {
+            index_content = index_content.replace(entry_regex, '');
+        });
         self._writeIndexFile(index_content);
     }
 
