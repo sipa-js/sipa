@@ -10,7 +10,13 @@ You need to be clever to understand why this framework is that party(cular) you 
 But I allow you to use it anyway!
 
 ```diff
-- under heavy development, alpha state. First beta version including some documentation is planned to be released in 01/2022
+------------------------------------------
+- under heavy development, alpha state. 
+------------------------------------------
+-
+- First beta version including some documentation
+- is planned to be released in 01/2022
+-
 ```
 
 **TALBE OF CONTENTS**
