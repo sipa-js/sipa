@@ -75,7 +75,8 @@ class SipaCliIndexer {
         // included files that does not exist
         console.log(commandLineUsage(self.SECTIONS.files_not_existing));
         let existing_entries = sim.getJsEntries().concat(sim.getStyleEntries());
-        const existing_files = sim.getJsFiles().concat(sim.getStyleFiles());
+        const existing_files = sim.getJsFiles().concat(sim.getStyleFiles())
+            .concat(ignored_entries); // add ignored entries to existing, to remove from list
         existing_entries.forEach((el, i) => {
             if(existing_files.includes(el)) {
                 delete existing_entries[i];
