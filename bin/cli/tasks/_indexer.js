@@ -12,6 +12,10 @@ class SipaCliIndexer {
     static index() {
         const self = SipaCliIndexer;
         const sim = SipaIndexManager;
+        if (!SipaCliTools.isRunningInsideValidSipaProject()) {
+            SipaCliTools.errorNotInsideValidSipaProject();
+            return;
+        }
         console.log(commandLineUsage(self.SECTIONS.index));
         console.log(commandLineUsage(self.SECTIONS.examples));
         console.log(commandLineUsage(self.SECTIONS.files_not_included));
