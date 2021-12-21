@@ -20,7 +20,7 @@ class SipaCliIndexer {
         console.log(commandLineUsage(self.SECTIONS.examples));
         console.log(commandLineUsage(self.SECTIONS.files_not_included));
         let missing_entries = sim.missingJsEntries().concat(sim.missingStyleEntries());
-        const ignored_entries = tools.readProjectSipaConfig().ignored_index_inclusion_files;
+        const ignored_entries = tools.readProjectSipaConfig().indexer?.ignored_files || [];
         missing_entries.forEach((el, i) => {
            if(ignored_entries.includes(el)) {
                delete missing_entries[i];
@@ -45,10 +45,10 @@ class SipaCliIndexer {
             } else if (input === '-') {
                 let config = tools.readProjectSipaConfig();
                 for (let entry of missing_entries) {
-                    config.ignored_index_inclusion_files.push(entry);
+                    config.indexer.ignored_files.push(entry);
                     console.log(chalk.red(`  - ${entry}`));
                 }
-                config.ignored_index_inclusion_files = tools.uniqArray(config.ignored_index_inclusion_files).sort();
+                config.indexer.ignored_files = tools.uniqArray(config.indexer.ignored_files).sort();
                 tools.writeProjectSipaConfig(config);
             } else {
                 const all_numbers = input.split(',');
@@ -64,10 +64,10 @@ class SipaCliIndexer {
                     let config = tools.readProjectSipaConfig();
                     for (let entry_index of ignore_numbers) {
                         const entry = missing_entries[entry_index];
-                        config.ignored_index_inclusion_files.push(entry);
+                        config.indexer.ignored_files.push(entry);
                         console.log(chalk.red(`  - ${entry}`));
                     }
-                    config.ignored_index_inclusion_files = tools.uniqArray(config.ignored_index_inclusion_files).sort();
+                    config.indexer.ignored_files = tools.uniqArray(config.indexer.ignored_files).sort();
                     tools.writeProjectSipaConfig(config);
                 }
             }

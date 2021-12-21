@@ -175,7 +175,11 @@ class SipaCliTools {
 
     static readProjectSipaConfig() {
         const self = SipaCliTools;
-        return JSON.parse(fs.readFileSync(self.SIPA_CONFIG_FILE_PATH));
+        let config = JSON.parse(fs.readFileSync(self.SIPA_CONFIG_FILE_PATH));
+        config = Object.assign(Object.assign({}, self.SIPA_CONFIG_DEFAULTS), config);
+        if(!config.indexer) config.indexer = {};
+        if(!config.indexer.ignored_files) config.indexer.ignored_files = [];
+        return config;
     }
 
     static writeProjectSipaConfig(content) {
@@ -196,6 +200,21 @@ class SipaCliTools {
 
 SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
 SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package.json';
+
+SipaCliTools.SIPA_CONFIG_DEFAULTS = {
+    development_server: {
+        host: '0.0.0.0',
+        port: '7000',
+        sass_watch_paths: [
+            "app/assets/style",
+            "app/views"
+        ]
+    },
+    indexer: {
+        ignored_files: []
+    }
+}
+
 SipaCliTools.first_question = true;
 
 SipaCliTools.SECTIONS = {};
