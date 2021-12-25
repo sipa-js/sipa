@@ -1,11 +1,3 @@
-//<!-- MODULE -->//
-if (typeof module !== 'undefined' && module.exports) {
-    var CurlyBracketParser = require('curly-bracket-parser');
-    var LuckyCase = require('lucky-case');
-    var SipaHelper = require('./sipa-helper');
-}
-//<!-- /MODULE -->//
-
 /**
  * SipaPage
  *
@@ -436,9 +428,3 @@ SipaPage.config = null;
  * @param {string} default_layout
  * @param {Object} default_layouts
  */
-
-//<!-- MODULE -->//
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = SipaPage;
-}
-//<!-- /MODULE -->//
