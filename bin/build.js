@@ -36,6 +36,7 @@ const builds = {
         destination_file: build_destination_dir + 'sipa.js',
         source_files: [
             './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/core/sipa-state.js',
             './src/sipa/tools/sipa-env.js',
             './src/sipa/tools/sipa-helper.js',
             './src/sipa/tools/sipa-hooks.js',
