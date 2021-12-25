@@ -15,7 +15,8 @@
     "sipa": "./bin/cli/cli.js"
   },
   "scripts": {
-    "test": "node node_modules/jasmine/bin/jasmine.js",
+    "test": "npx jasmine-browser-runner runSpecs --verbose",
+    "test_browser": "npx jasmine-browser-runner serve --verbose",
     "build": "node bin/build.js",
     "link_dev": "sudo npm link",
     "unlink_dev": "sudo npm rm --global sipa",
