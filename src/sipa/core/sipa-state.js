@@ -21,7 +21,7 @@ class SipaState {
      * @param {SipaState.LEVEL.VARIABLE, SipaState.LEVEL.SESSION, SipaState.LEVEL.STORAGE} options.level=SipaState.LEVEL.SESSION
      * @param {boolean} options.force=false overwrite value, if it is set at another level already
      */
-    static set(key, value, options) {
+    static set(key, value, options = {}) {
         const self = SipaState;
         SipaHelper.validateParams([
             {param_name: 'key', param_value: key, expected_type: 'String'},
@@ -29,7 +29,7 @@ class SipaState {
         ]);
         if(!options) options = {};
         if(typeof options.level === 'undefined') options.level = self.LEVEL.SESSION;
-        let store = self._getStoreByLevel(level);
+        let store = self._getStoreByLevel(options.level);
         if(self.getLevel(key) === options.level || !self.hasKey(key) || options.force) {
             if(options.level === self.LEVEL.VARIABLE) {
                 store[self._makeFinalKey(key)] = value;
@@ -49,7 +49,7 @@ class SipaState {
      * @param {object} options
      * @param {boolean} options.force=false overwrite value without throwing error, if it is set at another level already
      */
-    static setVariable(key, value, options) {
+    static setVariable(key, value, options = {}) {
         const self = SipaState;
         if(!options) options = {};
         options.level = self.LEVEL.VARIABLE;
@@ -64,7 +64,7 @@ class SipaState {
      * @param {object} options
      * @param {boolean} options.force=false overwrite value without throwing error, if it is set at another level already
      */
-    static setSession(key, value, options) {
+    static setSession(key, value, options = {}) {
         const self = SipaState;
         if(!options) options = {};
         options.level = self.LEVEL.SESSION;
@@ -79,7 +79,7 @@ class SipaState {
      * @param {object} options
      * @param {boolean} options.force=false overwrite value without throwing error, if it is set at another level already
      */
-    static setStorage(key, value, options) {
+    static setStorage(key, value, options = {}) {
         const self = SipaState;
         if(!options) options = {};
         options.level = self.LEVEL.STORAGE;
@@ -223,6 +223,7 @@ class SipaState {
      * @private
      */
     static _getStoreByLevel(level) {
+        const self = SipaState;
         switch(level) {
             case self.LEVEL.VARIABLE:
                 return self._variables;
@@ -267,6 +268,7 @@ class SipaState {
     }
 
     static _throwKeyAlreadySetError(key) {
+        const self = SipaState;
         throw `Key '${key}' has already been set at persistence level '${self.getLevel(key)}'!`;
     }
 }
