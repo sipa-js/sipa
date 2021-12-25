@@ -5,18 +5,13 @@
     "sass_watch_paths": [
       "app/assets/style",
       "app/views"
-    ],
-    "index_inclusion": {
-      "auto_update_start": true,
-      "auto_update_running": true
-    }
+    ]
   },
   "build": {
-    "index_inclusion": {
-      "auto_update_start": true
-    }
   },
-  "ignored_index_inclusion_files": [
+  "indexer": {
+    "ignored_files": [
 
-  ]
+    ]
+  }
 }

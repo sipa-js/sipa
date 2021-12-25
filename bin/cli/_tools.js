@@ -146,6 +146,28 @@ class SipaCliTools {
         console.log(usage);
     }
 
+    static invalidConfigPaths() {
+        const self = SipaCliTools;
+        const config = self.readProjectSipaConfig();
+        let paths = [];
+        if(config.development_server?.sass_watch_paths?.length || 0 > 0) {
+            paths = paths.concat(config.development_server.sass_watch_paths);
+        }
+        let invalid_paths = [];
+        paths.forEach((path) => {
+            if(!fs.existsSync(path)) {
+                invalid_paths.push(path);
+            }
+        });
+        return invalid_paths;
+    }
+
+    static errorInvalidConfigPaths() {
+        const self = SipaCliTools;
+        const usage = commandLineUsage(self.SECTIONS.invalid_config_paths);
+        console.log(usage);
+    }
+
     /**
      * Get only the deepest dirs, without dirs between
      * @param {Array<String>} dirs to filter
@@ -175,7 +197,11 @@ class SipaCliTools {
 
     static readProjectSipaConfig() {
         const self = SipaCliTools;
-        return JSON.parse(fs.readFileSync(self.SIPA_CONFIG_FILE_PATH));
+        let config = JSON.parse(fs.readFileSync(self.SIPA_CONFIG_FILE_PATH));
+        config = Object.assign(Object.assign({}, self.SIPA_CONFIG_DEFAULTS), config);
+        if(!config.indexer) config.indexer = {};
+        if(!config.indexer.ignored_files) config.indexer.ignored_files = [];
+        return config;
     }
 
     static writeProjectSipaConfig(content) {
@@ -196,6 +222,21 @@ class SipaCliTools {
 
 SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
 SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package.json';
+
+SipaCliTools.SIPA_CONFIG_DEFAULTS = {
+    development_server: {
+        host: '0.0.0.0',
+        port: '7000',
+        sass_watch_paths: [
+            "app/assets/style",
+            "app/views"
+        ]
+    },
+    indexer: {
+        ignored_files: []
+    }
+}
+
 SipaCliTools.first_question = true;
 
 SipaCliTools.SECTIONS = {};
@@ -206,6 +247,15 @@ SipaCliTools.SECTIONS.not_inside_valid_project = [
             '{red You can run this command at the root directory of a valid Sipa project only.}',
             '',
             `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`
+        ]
+    }
+];
+SipaCliTools.SECTIONS.invalid_config_paths = [
+    {
+        header: 'Invalid paths found',
+        content: [
+            'The following paths in sipa.json are invalid:',
+            `   → ${SipaCliTools.invalidConfigPaths().map((el) => { return chalk.red(el); }).join("\n  → ")}`,
         ]
     }
 ];

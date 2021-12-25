@@ -12,11 +12,15 @@ class SipaCliIndexer {
     static index() {
         const self = SipaCliIndexer;
         const sim = SipaIndexManager;
+        if (!SipaCliTools.isRunningInsideValidSipaProject()) {
+            SipaCliTools.errorNotInsideValidSipaProject();
+            return;
+        }
         console.log(commandLineUsage(self.SECTIONS.index));
         console.log(commandLineUsage(self.SECTIONS.examples));
         console.log(commandLineUsage(self.SECTIONS.files_not_included));
         let missing_entries = sim.missingJsEntries().concat(sim.missingStyleEntries());
-        const ignored_entries = tools.readProjectSipaConfig().ignored_index_inclusion_files;
+        const ignored_entries = tools.readProjectSipaConfig().indexer?.ignored_files || [];
         missing_entries.forEach((el, i) => {
            if(ignored_entries.includes(el)) {
                delete missing_entries[i];
@@ -31,6 +35,7 @@ class SipaCliIndexer {
             }).join('\n  → '));
             console.log();
             const input = self._numbersPrompt(0, missing_entries.length - 1);
+            console.log();
             if (input === '+') {
                 for (let entry of missing_entries) {
                     const section = sim._getSectionByPath(entry);
@@ -40,10 +45,10 @@ class SipaCliIndexer {
             } else if (input === '-') {
                 let config = tools.readProjectSipaConfig();
                 for (let entry of missing_entries) {
-                    config.ignored_index_inclusion_files.push(entry);
+                    config.indexer.ignored_files.push(entry);
                     console.log(chalk.red(`  - ${entry}`));
                 }
-                config.ignored_index_inclusion_files = tools.uniqArray(config.ignored_index_inclusion_files).sort();
+                config.indexer.ignored_files = tools.uniqArray(config.indexer.ignored_files).sort();
                 tools.writeProjectSipaConfig(config);
             } else {
                 const all_numbers = input.split(',');
@@ -59,10 +64,10 @@ class SipaCliIndexer {
                     let config = tools.readProjectSipaConfig();
                     for (let entry_index of ignore_numbers) {
                         const entry = missing_entries[entry_index];
-                        config.ignored_index_inclusion_files.push(entry);
+                        config.indexer.ignored_files.push(entry);
                         console.log(chalk.red(`  - ${entry}`));
                     }
-                    config.ignored_index_inclusion_files = tools.uniqArray(config.ignored_index_inclusion_files).sort();
+                    config.indexer.ignored_files = tools.uniqArray(config.indexer.ignored_files).sort();
                     tools.writeProjectSipaConfig(config);
                 }
             }
@@ -70,7 +75,8 @@ class SipaCliIndexer {
         // included files that does not exist
         console.log(commandLineUsage(self.SECTIONS.files_not_existing));
         let existing_entries = sim.getJsEntries().concat(sim.getStyleEntries());
-        const existing_files = sim.getJsFiles().concat(sim.getStyleFiles());
+        const existing_files = sim.getJsFiles().concat(sim.getStyleFiles())
+            .concat(ignored_entries); // add ignored entries to existing, to remove from list
         existing_entries.forEach((el, i) => {
             if(existing_files.includes(el)) {
                 delete existing_entries[i];
@@ -81,11 +87,12 @@ class SipaCliIndexer {
             console.log(commandLineUsage(console.log(chalk`  There are no remaining not existing files included in {green index.html}`)));
         } else {
             console.log('  → ' + existing_entries.map((e, i) => {
-                return chalk.green(e)
+                return chalk.red(e)
             }).join('\n  → '));
             console.log();
             let input = tools.cliQuestion(chalk`Do you want to remove this invalid included file(s) from {green index.html}?`, ['yes','no'], 'yes', true);
             if(input === 'yes') {
+                console.log();
                 for(let entry of existing_entries) {
                     sim.removeEntry(entry);
                     console.log(chalk.red(`  - ${entry}`));
