@@ -153,28 +153,50 @@ class SipaState {
     }
 
     /**
-     * Remove the stored value of the given key
+     * Remove the stored value of the given key(s)
      *
-     * @param {string} key
-     * @returns {boolean} true if value of key was set and has been removed. False if it did not exist.
+     * @param {string|Array} key key or keys to remove
+     * @returns {boolean} true if value of any key was set and has been removed. False if no key did exist.
      */
     static remove(key) {
         const self = SipaState;
-        const key_exists = self.hasKey(key);
-        if(key_exists) {
-            switch(self.getLevel(key)) {
-                case self.LEVEL.VARIABLE:
-                    delete self._variables[key];
-                    break;
-                case self.LEVEL.SESSION:
-                    sessionStorage.removeItem(self._makeFinalKey(key));
-                    break;
-                case self.LEVEL.STORAGE:
-                    localStorage.removeItem((self._makeFinalKey(key)));
-                    break;
-            }
+        let any_key_exists = false;
+        let keys = null;
+        if(SipaHelper.isString(key)) {
+            keys = [key];
+        } else if (SipaHelper.isArray(key)) {
+            keys = key;
+        } else {
+            throw `Invalid parameter type for key: ${SipaHelper.getType(key)}`;
         }
-        return key_exists;
+        keys.forEach((key) => {
+            const key_exists = self.hasKey(key);
+            if(key_exists) {
+                any_key_exists = true;
+                switch(self.getLevel(key)) {
+                    case self.LEVEL.VARIABLE:
+                        delete self._variables[key];
+                        break;
+                    case self.LEVEL.SESSION:
+                        sessionStorage.removeItem(self._makeFinalKey(key));
+                        break;
+                    case self.LEVEL.STORAGE:
+                        localStorage.removeItem((self._makeFinalKey(key)));
+                        break;
+                }
+            }
+        });
+        return any_key_exists;
+    }
+
+    static removeAll() {
+        const self = SipaState;
+        return self.reset();
+    }
+
+    static reset() {
+        const self = SipaState;
+        return self.remove(self.getKeys());
     }
 
     static _serializeValue(value) {
