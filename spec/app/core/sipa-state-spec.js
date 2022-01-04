@@ -2,12 +2,12 @@
 var options = {};
 
 class SpecTestClass {
-    static staticAddMethod(a,b) {
-        return a+b;
+    static staticAddMethod(a, b) {
+        return a + b;
     }
 
-    dynamicAddMethod(a,b) {
-        return a+b;
+    dynamicAddMethod(a, b) {
+        return a + b;
     }
 }
 
@@ -104,51 +104,70 @@ describe('set and get: ', () => {
         });
         it('set and get array', function () {
             let key = 'spec14';
-            let value = [1,'mixed',3];
-            delete value[2];
+            let value = [0, 'mixed', null, 3];
+            delete value[3]; // make position 3 to type 'empty'
+            SipaState.set(key, value, options);
+            expect(SipaState.get(key)).toEqual(value);
+        });
+        it('set and get nested array', function () {
+            let key = 'spec14_2';
+            let value = [[0, 1, [2, 3, null, undefined, NaN, Infinity]]];
+            delete value[3]; // make position 3 to type 'empty'
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
         });
         it('set and get object', function () {
             let key = 'spec15';
-            let value = { a: 1, b: true, c: null, d: [1,2,'3'], e: { a: [], nan: NaN, null: null, undefined: undefined, infinity: Infinity }};
+            let value = {
+                a: 1,
+                b: true,
+                c: null,
+                d: [1, 2, '3'],
+                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity}
+            };
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
         });
         it('set and get arrow function', function () {
             let key = 'spec16';
-            let value = (a,b) => { return a+b; };
+            let value = (a, b) => {
+                return a + b;
+            };
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
-            expect(SipaState.get(key)(13,5)).toEqual(18);
+            expect(SipaState.get(key)(13, 5)).toEqual(18);
         });
         it('set and get unnamed common function', function () {
             let key = 'spec17';
-            let value = function (a,b) { return a+b; };
+            let value = function (a, b) {
+                return a + b;
+            };
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
-            expect(SipaState.get(key)(17,9)).toEqual(26);
+            expect(SipaState.get(key)(17, 9)).toEqual(26);
         });
         it('set and get named common function', function () {
             let key = 'spec18';
-            let value = function abc(a,b) { return a+b; };
+            let value = function abc(a, b) {
+                return a + b;
+            };
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
-            expect(SipaState.get(key)(17,9)).toEqual(26);
+            expect(SipaState.get(key)(17, 9)).toEqual(26);
         });
         it('set and get static class method', function () {
             let key = 'spec19';
             let value = SpecTestClass.staticAddMethod;
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
-            expect(SipaState.get(key)(2,7)).toEqual(9);
+            expect(SipaState.get(key)(2, 7)).toEqual(9);
         });
         it('set and get dynamic class method', function () {
             let key = 'spec19';
             let value = new SpecTestClass().dynamicAddMethod;
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
-            expect(SipaState.get(key)(7,13)).toEqual(20);
+            expect(SipaState.get(key)(7, 13)).toEqual(20);
         });
     });
     describe('level 2 - session: ', () => {
@@ -199,46 +218,66 @@ describe('set and get: ', () => {
         });
         it('set and get array', function () {
             let key = 'spec27';
-            let value = [1,'mixed', null];
+            let value = [0, 'mixed', null, 3];
+            delete value[3]; // make position 3 to type 'empty'
+            SipaState.set(key, value, options);
+            expect(SipaState.get(key)).toEqual(value);
+        });
+        it('set and get nested array', function () {
+            let key = 'spec27_2';
+            let value = [[0, 1, [2, 3, null, undefined, NaN, Infinity]]];
+            delete value[3]; // make position 3 to type 'empty'
             SipaState.set(key, value, options);
             expect(SipaState.get(key)).toEqual(value);
         });
         it('set and get object', function () {
             let key = 'spec28';
-            let value = { a: 1, b: true, c: null, d: [1,2,'3'], e: { a: [], nan: NaN, null: null, undefined: undefined, infinity: Infinity }};
+            let value = {
+                a: 1,
+                b: true,
+                c: null,
+                d: [1, 2, '3'],
+                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity}
+            };
             SipaState.set(key, value, options);
             console.warn(SipaState.get(key));
             expect(SipaState.get(key)).toEqual(value);
         });
         it('set and get arrow function', function () {
             let key = 'spec29';
-            let value = (a,b) => { return a+b; };
+            let value = (a, b) => {
+                return a + b;
+            };
             SipaState.set(key, value, options);
-            expect(SipaState.get(key)(13,5)).toEqual(18);
+            expect(SipaState.get(key)(13, 5)).toEqual(18);
         });
         it('set and get unnamed common function', function () {
             let key = 'spec30';
-            let value = function (a,b) { return a+b; };
+            let value = function (a, b) {
+                return a + b;
+            };
             SipaState.set(key, value, options);
-            expect(SipaState.get(key)(17,9)).toEqual(26);
+            expect(SipaState.get(key)(17, 9)).toEqual(26);
         });
         it('set and get named common function', function () {
             let key = 'spec31';
-            let value = function abc(a,b) { return a+b; };
+            let value = function abc(a, b) {
+                return a + b;
+            };
             SipaState.set(key, value, options);
-            expect(SipaState.get(key)(17,9)).toEqual(26);
+            expect(SipaState.get(key)(17, 9)).toEqual(26);
         });
         it('set and get static class method', function () {
             let key = 'spec32';
             let value = SpecTestClass.staticAddMethod;
             SipaState.set(key, value, options);
-            expect(SipaState.get(key)(2,7)).toEqual(9);
+            expect(SipaState.get(key)(2, 7)).toEqual(9);
         });
         it('set and get dynamic class method', function () {
             let key = 'spec33';
             let value = new SpecTestClass().dynamicAddMethod;
             SipaState.set(key, value, options);
-            expect(SipaState.get(key)(7,13)).toEqual(20);
+            expect(SipaState.get(key)(7, 13)).toEqual(20);
         });
     });
 });
