@@ -8,7 +8,7 @@
     "**/*[Ss]pec.?(m)js"
   ],
   "helpers": [
-    "helpers/asyncAwait.js"
+    "helpers/**/*.?(m)js"
   ],
   "random": false,
   "browser": "headlessChrome"
