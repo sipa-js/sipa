@@ -136,7 +136,7 @@ class SipaSerializer {
             const value = entry[1];
             // array or object, recursive rerun
             if (typeof value === 'object' && value !== null) {
-                return self.deepSerializeSpecialTypes(copy[key]);
+                return copy[key] = self.deepSerializeSpecialTypes(copy[key]);
             } else if (self._isSpecialType(copy[key])) {
                 copy[key] = self.serialize(copy[key]);
             }
@@ -156,7 +156,7 @@ class SipaSerializer {
             const value = entry[1];
             // array or object, recursive rerun
             if (typeof value === 'object' && value !== null) {
-                return self.deepDeserializeSpecialTypes(copy[key]);
+                return copy[key] = self.deepDeserializeSpecialTypes(copy[key]);
             } else if (self._isSerializedSpecialType(copy[key])) {
                 copy[key] = self.deserialize(copy[key]);
             }
