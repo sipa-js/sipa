@@ -30,7 +30,7 @@ class SipaHelper {
      * @returns {boolean} true if Array, otherwise false
      */
     static isArray(value) {
-        return value instanceof Array;
+        return value instanceof Array && typeof value.length !== 'undefined' && typeof value.forEach === 'function';
     }
 
     /**
@@ -40,7 +40,7 @@ class SipaHelper {
      * @returns {boolean} true if Object, otherwise false
      */
     static isObject(value) {
-        return value instanceof Object;
+        return value instanceof Object && (typeof value.length === 'undefined' || typeof value.forEach === 'undefined');
     }
 
     /**
@@ -51,6 +51,76 @@ class SipaHelper {
      */
     static isString(value) {
         return typeof value === 'string';
+    }
+
+    /**
+     * Check if given variable is of type Date
+     *
+     * @param {any} value
+     * @returns {boolean} true if Date, otherwise false
+     */
+    static isDate(value) {
+        return value instanceof Date;
+    }
+
+    /**
+     * Check if given variable is of type RegExp
+     *
+     * @param {any} value
+     * @returns {boolean} true if RegExp, otherwise false
+     */
+    static isRegExp(value) {
+        return value instanceof RegExp;
+    }
+
+    /**
+     * Check if given variable is of type NaN
+     *
+     * @param {any} value
+     * @returns {boolean} true if NaN, otherwise false
+     */
+    static isNaN(value) {
+        return typeof value === 'number' && (value).toString() === 'NaN';
+    }
+
+    /**
+     * Check if given variable is of type Infinity
+     *
+     * @param {any} value
+     * @returns {boolean} true if Infinity, otherwise false
+     */
+    static isInfinity(value) {
+        return value === Infinity;
+    }
+
+    /**
+     * Check if given variable is of type undefined
+     *
+     * @param {any} value
+     * @returns {boolean} true if undefined, otherwise false
+     */
+    static isUndefined(value) {
+        return typeof value === 'undefined';
+    }
+
+    /**
+     * Check if given value is a array (slice) of size 1 and contains type empty
+     *
+     * @param {any} value
+     * @returns {boolean} true if a array of size 1 and contains empty => [empty], if size is 1 and not of type empty then false
+     * @throws {Error} if array is not of size 1
+     */
+    static isArrayContainingEmptyValue(value) {
+        const self = SipaHelper;
+        if(self.isArray(value) && value.length === 1) {
+            if(Object.entries(value).length === 0) {
+                return true;
+            } else {
+                return false;
+            }
+        } else {
+            throw new Error()
+        }
     }
 
     /**
@@ -93,6 +163,16 @@ class SipaHelper {
             return 'Object';
         } else if (self.isString(value)) {
             return 'String';
+        } else if (self.isDate(value)) {
+            return 'Date';
+        } else if (self.isRegExp(value)) {
+            return 'RegExp';
+        } else if (self.isNaN(value)) {
+            return 'NaN';
+        } else if (self.isInfinity(value)) {
+            return 'Infinity';
+        } else if (self.isUndefined(value)) {
+            return 'Undefined';
         } else if (self.isBoolean(value)) {
             return 'Boolean';
         } else {

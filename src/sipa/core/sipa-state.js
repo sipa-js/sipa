@@ -27,14 +27,14 @@ class SipaState {
             {param_name: 'key', param_value: key, expected_type: 'String'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
-        if(!options) options = {};
-        if(typeof options.level === 'undefined') options.level = self.LEVEL.SESSION;
+        if (!options) options = {};
+        if (typeof options.level === 'undefined') options.level = self.LEVEL.SESSION;
         let store = self._getStoreByLevel(options.level);
-        if(self.getLevel(key) === options.level || !self.hasKey(key) || options.force) {
-            if(options.level === self.LEVEL.VARIABLE) {
+        if (self.getLevel(key) === options.level || !self.hasKey(key) || options.force) {
+            if (options.level === self.LEVEL.VARIABLE) {
                 store[self._makeFinalKey(key)] = value;
             } else {
-                store.setItem(self._makeFinalKey(key), self._serializeValue(value));
+                store.setItem(self._makeFinalKey(key), SipaSerializer.serialize(value));
             }
         } else {
             self._throwKeyAlreadySetError(key);
@@ -51,7 +51,7 @@ class SipaState {
      */
     static setVariable(key, value, options = {}) {
         const self = SipaState;
-        if(!options) options = {};
+        if (!options) options = {};
         options.level = self.LEVEL.VARIABLE;
         self.set(key, value, options);
     }
@@ -66,7 +66,7 @@ class SipaState {
      */
     static setSession(key, value, options = {}) {
         const self = SipaState;
-        if(!options) options = {};
+        if (!options) options = {};
         options.level = self.LEVEL.SESSION;
         self.set(key, value, options);
     }
@@ -81,7 +81,7 @@ class SipaState {
      */
     static setStorage(key, value, options = {}) {
         const self = SipaState;
-        if(!options) options = {};
+        if (!options) options = {};
         options.level = self.LEVEL.STORAGE;
         self.set(key, value, options);
     }
@@ -95,11 +95,11 @@ class SipaState {
      */
     static getLevel(key) {
         const self = SipaState;
-        if(Object.keys(self.getVariables()).includes(key)) {
+        if (Object.keys(self.getVariables()).includes(key)) {
             return self.LEVEL.VARIABLE;
-        } else if(Object.keys(self.getSession()).includes(key)) {
+        } else if (Object.keys(self.getSession()).includes(key)) {
             return self.LEVEL.SESSION;
-        } else if(Object.keys(self.getStorage()).includes(key)) {
+        } else if (Object.keys(self.getStorage()).includes(key)) {
             return self.LEVEL.STORAGE;
         } else {
             return null;
@@ -162,7 +162,7 @@ class SipaState {
         const self = SipaState;
         let any_key_exists = false;
         let keys = null;
-        if(SipaHelper.isString(key)) {
+        if (SipaHelper.isString(key)) {
             keys = [key];
         } else if (SipaHelper.isArray(key)) {
             keys = key;
@@ -171,9 +171,9 @@ class SipaState {
         }
         keys.forEach((key) => {
             const key_exists = self.hasKey(key);
-            if(key_exists) {
+            if (key_exists) {
                 any_key_exists = true;
-                switch(self.getLevel(key)) {
+                switch (self.getLevel(key)) {
                     case self.LEVEL.VARIABLE:
                         delete self._variables[key];
                         break;
@@ -199,27 +199,6 @@ class SipaState {
         return self.remove(self.getKeys());
     }
 
-    static _serializeValue(value) {
-        const self = SipaState;
-        if(typeof value === 'undefined' || typeof value === 'NaN') {
-            return typeof value;
-        } else if(typeof value === 'function') {
-            throw `You can store functions only at persistence level ${self.LEVEL.VARIABLE}`;
-        } else if(typeof value !== 'undefined' && typeof JSON.stringify(value) === 'undefined') {
-            throw `You can store references only at persistence level ${self.LEVEL.VARIABLE}`;
-        } else {
-            return JSON.stringify(value);
-        }
-    }
-
-    static _deserializeValue(value) {
-        if(value === 'undefined' || value === 'NaN') {
-            return value;
-        } else {
-            return JSON.parse(value);
-        }
-    }
-
     /**
      *
      * @param {SipaState.LEVEL.VARIABLE, SipaState.LEVEL.SESSION, SipaState.LEVEL.STORAGE} level
@@ -229,10 +208,12 @@ class SipaState {
     static _getAllBy(level) {
         const self = SipaState;
         let store = self._getStoreByLevel(level);
-        const keys = Object.keys(store).filter((i) => { return i.startsWith(self.PERSISTENCE_PREFIX); });
+        const keys = Object.keys(store).filter((i) => {
+            return i.startsWith(self.PERSISTENCE_PREFIX);
+        });
         let all = {};
-        for(let key of keys) {
-            all[self._reduceKey(key)] = self._deserializeValue(store[key]);
+        for (let key of keys) {
+            all[self._reduceKey(key)] = SipaSerializer.deserialize(store[key]);
         }
         return all;
     }
@@ -246,7 +227,7 @@ class SipaState {
      */
     static _getStoreByLevel(level) {
         const self = SipaState;
-        switch(level) {
+        switch (level) {
             case self.LEVEL.VARIABLE:
                 return self._variables;
             case self.LEVEL.SESSION:
@@ -267,7 +248,7 @@ class SipaState {
      */
     static _makeFinalKey(key) {
         const self = SipaState;
-        if(key.startsWith(self.PERSISTENCE_PREFIX)) {
+        if (key.startsWith(self.PERSISTENCE_PREFIX)) {
             return key;
         } else {
             return self.PERSISTENCE_PREFIX + key;
@@ -282,7 +263,7 @@ class SipaState {
      */
     static _reduceKey(key) {
         const self = SipaState;
-        if(key.startsWith(self.PERSISTENCE_PREFIX)) {
+        if (key.startsWith(self.PERSISTENCE_PREFIX)) {
             return key.substr(self.PERSISTENCE_PREFIX.length);
         } else {
             return key;
