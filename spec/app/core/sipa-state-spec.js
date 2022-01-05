@@ -399,3 +399,26 @@ describe('set and get: ', () => {
 });
 
 //----------------------------------------------------------------------------------------------------
+
+describe('reset ', () => {
+    beforeEach(() => {
+    });
+    it('resets values on all persistance levels', function () {
+        SipaState.reset();
+        expect(SipaState.length).toEqual(0);
+        const key1 = 'spec100';
+        const value1 = 123;
+        SipaState.setVariable(key1, value1);
+        const key2 = 'spec101';
+        const value2 = 234;
+        SipaState.setSession(key2, value2);
+        const key3 = 'spec102';
+        const value3 = 345;
+        SipaState.setStorage(key3, value3);
+        expect(SipaState.length).toEqual(3);
+        SipaState.reset();
+        expect(SipaState.length).toEqual(0);
+    });
+});
+
+//----------------------------------------------------------------------------------------------------

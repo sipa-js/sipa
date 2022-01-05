@@ -1,5 +1,26 @@
+/**
+ * Serializer to serialize data of primitive types or even complex Objects,
+ * to ensure to be stored as valid JSON and can be deserialized back without data loss.
+ *
+ * Includes support for
+ * - Boolean, Number, String, Array, Object, null (native JS[SON] support)
+ * And special type handling to support the following types
+ * - Functions
+ * - RegExp, Date
+ * - NaN, Infinity, undefined
+ * - empty (special type when deleting an item of an array)
+ *
+ * The special types are escaped by an internal escaping when serialized.
+ * See SipaSerializer.STORAGE_PLACEHOLDERS for the escapes.
+ */
 class SipaSerializer {
 
+    /**
+     * Serialize given value to be stored in JSON without loosing its original value
+     *
+     * @param {any} value
+     * @returns {string|null} returns string or null if value is null
+     */
     static serialize(value) {
         const self = SipaSerializer;
         if (typeof value === 'undefined') {
@@ -25,6 +46,12 @@ class SipaSerializer {
         }
     }
 
+    /**
+     * Serialize given value to be stored in JSON without loosing its original value
+     *
+     * @param {String|null} value
+     * @returns {Boolean|String|Number|Array|Object|RegExp|Date|undefined|NaN|Infinity|null|*}
+     */
     static deserialize(value) {
         const self = SipaSerializer;
         if (value === '::undefined::') {
@@ -56,6 +83,12 @@ class SipaSerializer {
         }
     }
 
+    /**
+     * Check if given string is a valid javascript function
+     *
+     * @param {String} value
+     * @returns {boolean}
+     */
     static isFunctionString(value) {
         const self = SipaSerializer;
         if (!SipaHelper.isString(value)) {
@@ -83,6 +116,12 @@ class SipaSerializer {
         }
     }
 
+    /**
+     * Check if given string is a valid javascript array
+     *
+     * @param {String} value
+     * @returns {boolean}
+     */
     static isArrayString(value) {
         const self = SipaSerializer;
         if(SipaHelper.isString(value)) {
@@ -98,6 +137,12 @@ class SipaSerializer {
         return false;
     }
 
+    /**
+     * Check if given string is a valid javascript object
+     *
+     * @param {String} value
+     * @returns {boolean}
+     */
     static isObjectString(value) {
         const self = SipaSerializer;
         if(SipaHelper.isString(value)) {
@@ -113,6 +158,12 @@ class SipaSerializer {
         return false;
     }
 
+    /**
+     * Deserialize a valid javascript string into a callable function
+     *
+     * @param {String} value
+     * @returns {Function}
+     */
     static deserializeFunctionString(value) {
         const self = SipaSerializer;
         let fn = null;
@@ -124,6 +175,15 @@ class SipaSerializer {
         return fn;
     }
 
+    /**
+     * Serializes (escapes) all special types within an Array or Object
+     * to be stored in JSON without data loss.
+     *
+     * Original Array or Object is cloned and will not be manipulated.
+     *
+     * @param {Array|Object} obj
+     * @returns {Array|Object}
+     */
     static deepSerializeSpecialTypes(obj) {
         const self = SipaSerializer;
         let copy = self._cloneObject(obj);
@@ -144,6 +204,14 @@ class SipaSerializer {
         return copy;
     }
 
+    /**
+     * Deserializes (unescapes) all special types of the given Array or Object
+     *
+     * Original Array or Object is cloned and will not be manipulated.
+     *
+     * @param {Array|Object} obj
+     * @returns {Array|Object}
+     */
     static deepDeserializeSpecialTypes(obj) {
         const self = SipaSerializer;
         let copy = self._cloneObject(obj);
@@ -164,6 +232,14 @@ class SipaSerializer {
         return copy;
     }
 
+    /**
+     * Serialize (escape) special type 'empty' inside the given Array.
+     * Only on first dimension/level, nesting is ignored.
+     *
+     * @param {Array} array
+     * @returns {Array}
+     * @private
+     */
     static _serializeEmptyArrayValues(array) {
         if (SipaHelper.isArray(array) && Object.entries(array).length < array.length) {
             for (let i = 0; i < array.length; ++i) {
@@ -175,6 +251,14 @@ class SipaSerializer {
         return array;
     }
 
+    /**
+     * Deserialize (unescape) special type 'empty' inside given Array
+     * Only on first dimension/level, nesting is ignored.
+     *
+     * @param {Array} array
+     * @returns {Array}
+     * @private
+     */
     static _deserializeEmptyArrayValues(array) {
         for (let i = 0; i < array.length; ++i) {
             if (array[i] === '::empty::') {
@@ -184,6 +268,14 @@ class SipaSerializer {
         return array;
     }
 
+    /**
+     * Check if given value is of special type that needs
+     * to be escaped before parsing to JSON.
+     *
+     * @param {any} value
+     * @returns {boolean} true if special type
+     * @private
+     */
     static _isSpecialType(value) {
         const h = SipaHelper;
         return h.isUndefined(value) ||
@@ -193,17 +285,34 @@ class SipaSerializer {
             h.isRegExp(value)
     }
 
+    /**
+     * Check if given value is an serialized (escaped) special type
+     *
+     * @param {any} value
+     * @returns {boolean}
+     * @private
+     */
     static _isSerializedSpecialType(value) {
         const self = SipaSerializer;
+        if(!SipaHelper.isString(value)) {
+            return false;
+        }
         const special_types = Object.keys(self.STORAGE_PLACEHOLDERS);
         for(let i = 0; i < special_types.length; ++i) {
-            if(SipaHelper.isString(value) && value.startsWith(special_types[i])) {
+            if(value.startsWith(special_types[i])) {
                 return true;
             }
         }
         return false;
     }
 
+    /**
+     * Clone the given Array or Object.
+     *
+     * @param {Array|Object} obj
+     * @returns {Array|Object}
+     * @private
+     */
     static _cloneObject(obj) {
         let clone = null;
         if(SipaHelper.isArray(obj)) {

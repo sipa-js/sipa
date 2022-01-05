@@ -118,7 +118,7 @@ class SipaState {
     }
 
     /**
-     * Get the value of the given key. Persistence level does not matter.
+     * Get the value of the given key. Persistence level does not matter and is implicit.
      *
      * @param {string} key
      */
@@ -127,26 +127,50 @@ class SipaState {
         return self.getAll()[key];
     }
 
+    /**
+     * Get all entries of persistence level 1 (variables)
+     *
+     * @returns {Object<String, any>}
+     */
     static getVariables() {
         const self = SipaState;
         return self._getAllBy(self.LEVEL.VARIABLE);
     }
 
+    /**
+     * Get all entries of persistence level 2 (session)
+     *
+     * @returns {Object<String, any>}
+     */
     static getSession() {
         const self = SipaState;
         return self._getAllBy(self.LEVEL.SESSION);
     }
 
+    /**
+     * Get all entries of persistence level 3 (storage)
+     *
+     * @returns {Object<String, any>}
+     */
     static getStorage() {
         const self = SipaState;
         return self._getAllBy(self.LEVEL.STORAGE);
     }
 
+    /**
+     * Get all stored entries
+     *
+     * @returns {Object<String, any>}
+     */
     static getAll() {
         const self = SipaState;
         return Object.assign(Object.assign(self.getVariables(), self.getSession()), self.getStorage());
     }
 
+    /**
+     * Get all keys
+     * @returns {Array<String>}
+     */
     static getKeys() {
         const self = SipaState;
         return Object.keys(self.getAll());
@@ -175,7 +199,7 @@ class SipaState {
                 any_key_exists = true;
                 switch (self.getLevel(key)) {
                     case self.LEVEL.VARIABLE:
-                        delete self._variables[key];
+                        delete self._variables[self._makeFinalKey(key)];
                         break;
                     case self.LEVEL.SESSION:
                         sessionStorage.removeItem(self._makeFinalKey(key));
@@ -189,14 +213,25 @@ class SipaState {
         return any_key_exists;
     }
 
+    /**
+     * Delete all stored data - alias method for reset()
+     *
+     * @returns {boolean} true if one or more entries have been deleted
+     */
     static removeAll() {
         const self = SipaState;
         return self.reset();
     }
 
+    /**
+     * Delete all stored data
+     *
+     * @returns {boolean} true if one or more entries have been deleted
+     */
     static reset() {
         const self = SipaState;
-        return self.remove(self.getKeys());
+        const remove_result = self.remove(self.getKeys());
+        return remove_result;
     }
 
     /**
@@ -273,6 +308,11 @@ class SipaState {
     static _throwKeyAlreadySetError(key) {
         const self = SipaState;
         throw `Key '${key}' has already been set at persistence level '${self.getLevel(key)}'!`;
+    }
+
+    static get length() {
+        const self = SipaState;
+        return self.getKeys().length;
     }
 }
 
