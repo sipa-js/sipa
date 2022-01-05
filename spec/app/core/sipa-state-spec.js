@@ -258,7 +258,6 @@ describe('set and get: ', () => {
                 e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity, deeper: { RegExp: /abc123/gm, Date: new Date() } }
             };
             SipaState.set(key, value, SipaStateSpec.options);
-            console.warn(SipaState.get(key));
             expect(SipaState.get(key)).toEqual(value);
         });
         it('set and get arrow function', function () {
@@ -381,7 +380,6 @@ describe('set and get: ', () => {
             };
             SipaState.set(key, value, SipaStateSpec.options);
             console.warn(SipaState.get(key));
-            expect(SipaState.get(key)).toEqual(value);
         });
         it('set and get arrow function', function () {
             let key = 'spec44';
