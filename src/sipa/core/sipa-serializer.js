@@ -39,7 +39,7 @@ class SipaSerializer {
             return `::RegExp::${value.toString()}`;
         } else if (typeof value !== 'undefined' && typeof JSON.stringify(value) === 'undefined') {
             throw `You can store references only at persistence level ${self.LEVEL.VARIABLE}`;
-        } else if (value !== null && typeof value === 'object') {
+        } else if (SipaHelper.isArray(value) || SipaHelper.isObject(value)) {
             return JSON.stringify(self.deepSerializeSpecialTypes(value));
         } else {
             return JSON.stringify(value);
@@ -72,7 +72,7 @@ class SipaSerializer {
         } else {
             try {
                 let parsed = JSON.parse(value);
-                if (parsed !== null && typeof parsed === 'object') {
+                if (SipaHelper.isArray(parsed) || SipaHelper.isObject(parsed)) {
                     return self.deepDeserializeSpecialTypes(parsed);
                 } else {
                     return parsed;
@@ -195,7 +195,7 @@ class SipaSerializer {
             const key = entry[0];
             const value = entry[1];
             // array or object, recursive rerun
-            if (typeof value === 'object' && value !== null) {
+            if (SipaHelper.isArray(value) || SipaHelper.isObject(value)) {
                 return copy[key] = self.deepSerializeSpecialTypes(copy[key]);
             } else if (self._isSpecialType(copy[key])) {
                 copy[key] = self.serialize(copy[key]);
@@ -223,7 +223,7 @@ class SipaSerializer {
             const key = entry[0];
             const value = entry[1];
             // array or object, recursive rerun
-            if (typeof value === 'object' && value !== null) {
+            if (SipaHelper.isArray(value) || SipaHelper.isObject(value)) {
                 return copy[key] = self.deepDeserializeSpecialTypes(copy[key]);
             } else if (self._isSerializedSpecialType(copy[key])) {
                 copy[key] = self.deserialize(copy[key]);

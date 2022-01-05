@@ -129,7 +129,7 @@ describe('set and get: ', () => {
                 b: true,
                 c: null,
                 d: [1, 2, '3'],
-                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity}
+                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity, deeper: { RegExp: /abc123/gm, Date: new Date() } }
             };
             SipaState.set(key, value, SipaStateSpec.options);
             expect(SipaState.get(key)).toEqual(value);
@@ -174,6 +174,18 @@ describe('set and get: ', () => {
             SipaState.set(key, value, SipaStateSpec.options);
             expect(SipaState.get(key)).toEqual(value);
             expect(SipaState.get(key)(7, 13)).toEqual(20);
+        });
+        it('set and get Date', function () {
+            let key = 'spec19_2';
+            let value = new Date();
+            SipaState.set(key, value, SipaStateSpec.options);
+            expect(SipaState.get(key)).toEqual(value);
+        });
+        it('set and get RegExp', function () {
+            let key = 'spec19_3';
+            let value = /abcdefg12345/gms;
+            SipaState.set(key, value, SipaStateSpec.options);
+            expect(SipaState.get(key)).toEqual(value);
         });
     });
     describe('level 2 - session: ', () => {
@@ -243,7 +255,7 @@ describe('set and get: ', () => {
                 b: true,
                 c: null,
                 d: [1, 2, '3'],
-                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity}
+                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity, deeper: { RegExp: /abc123/gm, Date: new Date() } }
             };
             SipaState.set(key, value, SipaStateSpec.options);
             console.warn(SipaState.get(key));
@@ -284,6 +296,18 @@ describe('set and get: ', () => {
             let value = new SipaStateSpecTestClass().dynamicAddMethod;
             SipaState.set(key, value, SipaStateSpec.options);
             expect(SipaState.get(key)(7, 13)).toEqual(20);
+        });
+        it('set and get Date', function () {
+            let key = 'spec33_2';
+            let value = new Date();
+            SipaState.set(key, value, SipaStateSpec.options);
+            expect(SipaState.get(key)).toEqual(value);
+        });
+        it('set and get RegExp', function () {
+            let key = 'spec33_3';
+            let value = /abcdefg12345/gms;
+            SipaState.set(key, value, SipaStateSpec.options);
+            expect(SipaState.get(key)).toEqual(value);
         });
     });
     describe('level 3 - storage: ', () => {
@@ -353,7 +377,7 @@ describe('set and get: ', () => {
                 b: true,
                 c: null,
                 d: [1, 2, '3'],
-                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity}
+                e: {a: [null, undefined, NaN, Infinity], nan: NaN, null: null, undefined: undefined, infinity: Infinity, deeper: { RegExp: /abc123/gm, Date: new Date() } }
             };
             SipaState.set(key, value, SipaStateSpec.options);
             console.warn(SipaState.get(key));
@@ -394,6 +418,18 @@ describe('set and get: ', () => {
             let value = new SipaStateSpecTestClass().dynamicAddMethod;
             SipaState.set(key, value, SipaStateSpec.options);
             expect(SipaState.get(key)(7, 13)).toEqual(20);
+        });
+        it('set and get Date', function () {
+            let key = 'spec49';
+            let value = new Date();
+            SipaState.set(key, value, SipaStateSpec.options);
+            expect(SipaState.get(key)).toEqual(value);
+        });
+        it('set and get RegExp', function () {
+            let key = 'spec50';
+            let value = /abcdefg12345/gms;
+            SipaState.set(key, value, SipaStateSpec.options);
+            expect(SipaState.get(key)).toEqual(value);
         });
     });
 });

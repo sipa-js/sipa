@@ -30,7 +30,7 @@ class SipaHelper {
      * @returns {boolean} true if Array, otherwise false
      */
     static isArray(value) {
-        return value instanceof Array && typeof value.length !== 'undefined' && typeof value.forEach === 'function';
+        return value instanceof Array && value.constructor.name === 'Array';
     }
 
     /**
@@ -40,7 +40,7 @@ class SipaHelper {
      * @returns {boolean} true if Object, otherwise false
      */
     static isObject(value) {
-        return value instanceof Object && (typeof value.length === 'undefined' || typeof value.forEach === 'undefined');
+        return value instanceof Object && value.constructor.name === 'Object';
     }
 
     /**
@@ -101,6 +101,16 @@ class SipaHelper {
      */
     static isUndefined(value) {
         return typeof value === 'undefined';
+    }
+
+    /**
+     * Check if given variable is of type null
+     *
+     * @param {any} value
+     * @returns {boolean} true if null, otherwise false
+     */
+    static isNull(value) {
+        return typeof value === null;
     }
 
     /**
@@ -173,12 +183,14 @@ class SipaHelper {
             return 'Infinity';
         } else if (self.isUndefined(value)) {
             return 'Undefined';
+        } else if (self.isNull(value)) {
+            return 'Null';
         } else if (self.isBoolean(value)) {
             return 'Boolean';
         } else {
             let type = 'Unknown';
             if (value && value.constructor) {
-                type = value.constructor;
+                type = value.constructor.name;
             } else if (value && value.prop && value.prop.constructor) {
                 type = value.prop.constructor;
             } else {
