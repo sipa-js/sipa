@@ -4,7 +4,7 @@
     "src/sipa/**/*.?(m)js",
     "lib/templates/project/default/app/assets/lib/curly-bracket-parser/curly-bracket-parser.js",
     "lib/templates/project/default/app/assets/lib/ejs/ejs.js",
-    "lib/templates/project/default/app/assets/lib/jquery/jquery-3.5.1.js",
+    "lib/templates/project/default/app/assets/lib/jquery/jquery-*.js",
     "lib/templates/project/default/app/assets/lib/lucky-case/lucky-case.js"
   ],
   "specDir": "spec",
