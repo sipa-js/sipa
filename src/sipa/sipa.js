@@ -5,7 +5,7 @@
  */
 class Sipa {
     /**
-     * Function to fire to init the whole app
+     * Function to fire to init the whole Sipa app
      *
      * @param {function} init_function
      */
