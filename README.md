@@ -55,6 +55,7 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 * Life cycle with hook feature ![State](https://img.shields.io/badge/-progress-yellow)
 * Internationalization out of the box ![State](https://img.shields.io/badge/-todo-blue)
 * EJS template engine (optional) ![State](https://img.shields.io/badge/-progress-yellow)
+* Storage to keep state on three different persistence levels ![State](https://img.shields.io/badge/-done-default)
 * Builder to create compressed and minified .js and .css for production ![State](https://img.shields.io/badge/-todo-blue)
 
 
@@ -149,23 +150,27 @@ Check out the doc at ... to be done. ;-)
 <!-- -------------------------- SECTION -------------------------- -->
 <a name="todos"></a>
 ## TODOs:
-- [x] generators ![State](https://img.shields.io/badge/-done-default)
-    - [x] page generator ![State](https://img.shields.io/badge/-done-default)
-    - [x] layout generator ![State](https://img.shields.io/badge/-done-default)
-    - [x] style asset generator ![State](https://img.shields.io/badge/-done-default)
-    - [x] javascript asset generator ![State](https://img.shields.io/badge/-done-default)
-- [ ] app release builder ![State](https://img.shields.io/badge/-progress-yellow)
-- [x] automatic index.html source manager ![State](https://img.shields.io/badge/-done-default)
-- [ ] index.html src *check* before build ![State](https://img.shields.io/badge/-todo-blue)
-- [x] ~~file watcher to automatically trigger index.html src update for live development server~~ ![State](https://img.shields.io/badge/x-won't_do_(canceled)-green)
+### command line interface
+  - [ ] delete task ![State](https://img.shields.io/badge/-todo-blue)
+  - build task
+    - [ ] default build with minified assets ![State](https://img.shields.io/badge/-progress-yellow)
+      - [ ] index.html src *check* before build ![State](https://img.shields.io/badge/-todo-blue)
+    - [ ] single html file build ![State](https://img.shields.io/badge/-todo-blue)
+  - update task
+    - [ ] update sipa cli installation itself ![State](https://img.shields.io/badge/-todo-blue)
+    - [ ] update sipa within current project ![State](https://img.shields.io/badge/-todo-blue)
+
+### common
 - [ ] developer documentation (github page?) ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] sipa updater (`update` task) ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] built-in ejs rendering for pages and layouts ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] built-in translation service ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] test on naked linux platform (VM) ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] add unit tests ![State](https://img.shields.io/badge/-todo-blue)
-- [ ] make EJS and jQuery optional at interactive setup ![State](https://img.shields.io/badge/-todo-blue)
+
+
+### other / low prio
+  - [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
+  - [ ] test on naked linux platform (VM) ![State](https://img.shields.io/badge/-todo-blue)
+  - [ ] add unit tests ![State](https://img.shields.io/badge/-progress-yellow)
+  - [ ] make EJS and jQuery optional at interactive setup ![State](https://img.shields.io/badge/-todo-blue)
 
 
 
