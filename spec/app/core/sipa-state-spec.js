@@ -434,7 +434,111 @@ describe('set and get: ', () => {
 
 //----------------------------------------------------------------------------------------------------
 
-describe('reset ', () => {
+describe('reset: ', () => {
+    beforeEach(() => {
+    });
+    it('resets values on all persistance levels', function () {
+        SipaState.reset();
+        expect(SipaState.length).toEqual(0);
+        const key1 = 'spec100';
+        const value1 = 123;
+        SipaState.setVariable(key1, value1);
+        const key2 = 'spec101';
+        const value2 = 234;
+        SipaState.setSession(key2, value2);
+        const key3 = 'spec102';
+        const value3 = 345;
+        SipaState.setStorage(key3, value3);
+        expect(SipaState.length).toEqual(3);
+        SipaState.reset();
+        expect(SipaState.length).toEqual(0);
+    });
+});
+
+//----------------------------------------------------------------------------------------------------
+
+describe('remove: ', () => {
+    beforeEach(() => {
+        SipaState.reset();
+    });
+    it('removes on level 1', function () {
+        expect(SipaState.length).toEqual(0);
+        const key1 = 'spec120';
+        const value1 = 123;
+        SipaState.setVariable(key1, value1);
+        const key2 = 'spec121';
+        const value2 = 234;
+        SipaState.setVariable(key2, value2);
+        expect(SipaState.length).toEqual(2);
+        expect(SipaState.hasKey(key1)).toEqual(true);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        SipaState.remove(key1);
+        expect(SipaState.length).toEqual(1);
+        expect(SipaState.hasKey(key1)).toEqual(false);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        expect(SipaState.get(key1)).toEqual(undefined);
+    });
+    it('removes on level 2', function () {
+        expect(SipaState.length).toEqual(0);
+        const key1 = 'spec122';
+        const value1 = 123;
+        SipaState.setSession(key1, value1);
+        const key2 = 'spec123';
+        const value2 = 234;
+        SipaState.setSession(key2, value2);
+        expect(SipaState.length).toEqual(2);
+        expect(SipaState.hasKey(key1)).toEqual(true);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        SipaState.remove(key1);
+        expect(SipaState.length).toEqual(1);
+        expect(SipaState.hasKey(key1)).toEqual(false);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        expect(SipaState.get(key1)).toEqual(undefined);
+    });
+    it('removes on level 3', function () {
+        expect(SipaState.length).toEqual(0);
+        const key1 = 'spec123';
+        const value1 = 123;
+        SipaState.setStorage(key1, value1);
+        const key2 = 'spec124';
+        const value2 = 234;
+        SipaState.setStorage(key2, value2);
+        expect(SipaState.length).toEqual(2);
+        expect(SipaState.hasKey(key1)).toEqual(true);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        SipaState.remove(key1);
+        expect(SipaState.length).toEqual(1);
+        expect(SipaState.hasKey(key1)).toEqual(false);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        expect(SipaState.get(key1)).toEqual(undefined);
+    });
+    it('removes on mixed levels', function () {
+        expect(SipaState.length).toEqual(0);
+        const key1 = 'spec123';
+        const value1 = 123;
+        SipaState.setVariable(key1, value1);
+        const key2 = 'spec124';
+        const value2 = 234;
+        SipaState.setSession(key2, value2);
+        const key3 = 'spec125';
+        const value3 = 234;
+        SipaState.setStorage(key3, value3);
+        expect(SipaState.length).toEqual(3);
+        expect(SipaState.hasKey(key1)).toEqual(true);
+        expect(SipaState.hasKey(key2)).toEqual(true);
+        expect(SipaState.hasKey(key3)).toEqual(true);
+        SipaState.remove(key2);
+        expect(SipaState.length).toEqual(2);
+        expect(SipaState.hasKey(key1)).toEqual(true);
+        expect(SipaState.hasKey(key2)).toEqual(false);
+        expect(SipaState.hasKey(key3)).toEqual(true);
+        expect(SipaState.get(key2)).toEqual(undefined);
+    });
+});
+
+//----------------------------------------------------------------------------------------------------
+
+describe('reset: ', () => {
     beforeEach(() => {
     });
     it('resets values on all persistance levels', function () {
