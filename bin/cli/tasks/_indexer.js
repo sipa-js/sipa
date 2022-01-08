@@ -2,10 +2,9 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SipaCliTools = require('./../_tools');
 const fs = require('fs');
-const tools = require('./../_tools');
 
+const SipaCliTools = require('./../_tools');
 const SipaIndexManager = require('./../_index-manager');
 
 class SipaCliIndexer {
@@ -19,14 +18,7 @@ class SipaCliIndexer {
         console.log(commandLineUsage(self.SECTIONS.index));
         console.log(commandLineUsage(self.SECTIONS.examples));
         console.log(commandLineUsage(self.SECTIONS.files_not_included));
-        let missing_entries = sim.missingJsEntries().concat(sim.missingStyleEntries());
-        const ignored_entries = tools.readProjectSipaConfig().indexer?.ignored_files || [];
-        missing_entries.forEach((el, i) => {
-           if(ignored_entries.includes(el)) {
-               delete missing_entries[i];
-           }
-        });
-        missing_entries = missing_entries.filter(e => e !== null);
+        const missing_entries = sim.missingEntries();
         if (missing_entries.length === 0) {
             console.log(commandLineUsage(console.log(chalk`  There are no existing files missing in {green index.html}`)));
         } else {
@@ -43,13 +35,13 @@ class SipaCliIndexer {
                     console.log(chalk.green(`  + ${entry}`));
                 }
             } else if (input === '-') {
-                let config = tools.readProjectSipaConfig();
+                let config = SipaCliTools.readProjectSipaConfig();
                 for (let entry of missing_entries) {
                     config.indexer.ignored_files.push(entry);
                     console.log(chalk.red(`  - ${entry}`));
                 }
-                config.indexer.ignored_files = tools.uniqArray(config.indexer.ignored_files).sort();
-                tools.writeProjectSipaConfig(config);
+                config.indexer.ignored_files = SipaCliTools.uniqArray(config.indexer.ignored_files).sort();
+                SipaCliTools.writeProjectSipaConfig(config);
             } else {
                 const all_numbers = input.split(',');
                 const add_numbers = all_numbers.filter(e => !e.startsWith('-')).map(e => parseInt(e.replace('+', '')));
@@ -61,39 +53,31 @@ class SipaCliIndexer {
                     console.log(chalk.green(`  + ${entry}`));
                 }
                 if (ignore_numbers.length > 0) {
-                    let config = tools.readProjectSipaConfig();
+                    let config = SipaCliTools.readProjectSipaConfig();
                     for (let entry_index of ignore_numbers) {
                         const entry = missing_entries[entry_index];
                         config.indexer.ignored_files.push(entry);
                         console.log(chalk.red(`  - ${entry}`));
                     }
-                    config.indexer.ignored_files = tools.uniqArray(config.indexer.ignored_files).sort();
-                    tools.writeProjectSipaConfig(config);
+                    config.indexer.ignored_files = SipaCliTools.uniqArray(config.indexer.ignored_files).sort();
+                    SipaCliTools.writeProjectSipaConfig(config);
                 }
             }
         }
         // included files that does not exist
         console.log(commandLineUsage(self.SECTIONS.files_not_existing));
-        let existing_entries = sim.getJsEntries().concat(sim.getStyleEntries());
-        const existing_files = sim.getJsFiles().concat(sim.getStyleFiles())
-            .concat(ignored_entries); // add ignored entries to existing, to remove from list
-        existing_entries.forEach((el, i) => {
-            if(existing_files.includes(el)) {
-                delete existing_entries[i];
-            }
-        });
-        existing_entries = existing_entries.filter(e => e !== null);
-        if (existing_entries.length === 0) {
+        const missing_files = sim.missingFiles();
+        if (missing_files.length === 0) {
             console.log(commandLineUsage(console.log(chalk`  There are no remaining not existing files included in {green index.html}`)));
         } else {
-            console.log('  → ' + existing_entries.map((e, i) => {
+            console.log('  → ' + missing_files.map((e, i) => {
                 return chalk.red(e)
             }).join('\n  → '));
             console.log();
-            let input = tools.cliQuestion(chalk`Do you want to remove this invalid included file(s) from {green index.html}?`, ['yes','no'], 'yes', true);
+            let input = SipaCliTools.cliQuestion(chalk`Do you want to remove this invalid included file(s) from {green index.html}?`, ['yes','no'], 'yes', true);
             if(input === 'yes') {
                 console.log();
-                for(let entry of existing_entries) {
+                for(let entry of missing_files) {
                     sim.removeEntry(entry);
                     console.log(chalk.red(`  - ${entry}`));
                 }
@@ -108,7 +92,7 @@ class SipaCliIndexer {
         const validate_regex = /^((([\-]|[\+])?[0-9]+[\,]?)+|\+|\-)$/gm;
         let input = null;
         while (true) {
-            input = tools.cliQuestion(`Make your choice by comma separated number(s) or +/-`, null, null, false);
+            input = SipaCliTools.cliQuestion(`Make your choice by comma separated number(s) or +/-`, null, null, false);
             // CTRL+C
             if (input === null) {
                 process.exit(1);

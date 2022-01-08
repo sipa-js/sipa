@@ -1,0 +1,3 @@
+Store any self hosted web fonts inside this directory that should be included in the production build.
+
+Subdirectories are supported.

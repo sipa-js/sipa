@@ -1,9 +1,10 @@
 #!/usr/bin/env node
 
+const fs = require('fs');
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
+
 const SipaCliTools = require('./../_tools');
-const fs = require('fs');
 
 class SipaCliLicense {
     static license() {
@@ -18,7 +19,7 @@ SipaCliLicense.SECTIONS = {};
 SipaCliLicense.SECTIONS.license = [
     {
         header: 'License',
-        content: fs.readFileSync(__dirname + '/../../../LICENSE','utf-8')
+        content: SipaCliTools.readFile(__dirname + '/../../../LICENSE')
     }
 ];
 

@@ -1,5 +1,5 @@
 /**
- * release build script for sipa
+ * Release build script for sipa framework
  */
 const fs = require("fs");
 const util = require('util');
@@ -8,6 +8,8 @@ const exec_prom = util.promisify(exec);
 const { spawn } = require("child_process");
 const LuckyCase = require('lucky-case');
 const chalk = require('chalk');
+
+const SipaCliTools = require('cli/_tools');
 
 const build_destination_dir = './lib/templates/project/default/app/lib/sipa/';
 
@@ -48,7 +50,7 @@ const builds = {
 }
 
 function version() {
-    const package_json = fs.readFileSync('./package.json','utf8');
+    const package_json = SipaCliTools.readFile('./package.json');
     version_regex.lastIndex = 0;
     return version_regex.exec(package_json)[1];
 }
@@ -58,8 +60,8 @@ function releaseTemplate() {
 }
 
 function prependToFile(file, string) {
-    const org_file = fs.readFileSync(file,'utf8');
-    fs.writeFileSync(file, string + org_file);
+    const org_file = SipaCliTools.readFile(file);
+    SipaCliTools.writeFile(file, string + org_file);
 }
 
 console.log(chalk.yellow('###################################'));
@@ -76,12 +78,12 @@ for(let build_key of Object.keys(builds)) {
     (function buildRawDestinationFile() {
         let final_file = "";
         build.source_files.forEach((source_file) => {
-            final_file += fs.readFileSync(source_file, 'utf8') + "\n";
+            final_file += SipaCliTools.readFile(source_file) + "\n";
         });
         build_exclusion_markers.forEach((regex) => {
             final_file = final_file.replace(regex,'');
         });
-        fs.writeFileSync(build.destination_file, releaseTemplate() + final_file);
+        SipaCliTools.writeFile(build.destination_file, releaseTemplate() + final_file);
     })();
 }
 

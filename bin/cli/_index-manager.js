@@ -5,17 +5,16 @@ const commandLineUsage = require('command-line-usage');
 const prompt = require('prompt-sync')();
 const path = require('path');
 const fs = require('fs');
-const LuckyCase = require('lucky-case');
 const glob = require('glob');
+const LuckyCase = require('lucky-case');
 
 const SipaCliTools = require('./_tools');
-
 const SipaHelper = require('./../../src/sipa/tools/sipa-helper');
 
 
 class SipaCliIndexManager {
     /**
-     * Add entry at the end of the given section
+     * Add entry inside index.html at the end of the given section
      *
      * @param {string} section name of the section, e.g. 'ASSET-JS' or 'PAGE-CSS'
      * @param {string} path to the asset file
@@ -24,28 +23,43 @@ class SipaCliIndexManager {
         const self = SipaCliIndexManager;
         const tag_name = self._makeTag(path, { type: self._getAssetTypeBySection(section)});
         const section_close_tag_regex = new RegExp(`(\\s*)\\<\\!\\-\\-\\s*\\/${LuckyCase.toUpperCase(section)}\\s*\\-\\-\\>`, "gm");
-        let index_content = self._readIndexFile();
+        let index_content = SipaCliTools.readProjectIndexFile();
         index_content = index_content.replace(section_close_tag_regex, "$1" + tag_name + index_content.match(section_close_tag_regex));
-        self._writeIndexFile(index_content);
+        SipaCliTools.writeProjectIndexFile(index_content);
     }
 
+    /**
+     * Remove entry inside index.html
+     *
+     * @param {string} path to the asset file
+     */
     static removeEntry(path) {
         const self = SipaCliIndexManager;
             const js_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.script_tag_regex.source.replace('src\\=\\"([^"]+)"','src\\=\\"' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
             const css_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.style_tag_regex.source.replace('href="([^"]+)"','href="' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
-        let index_content = self._readIndexFile();
+        let index_content = SipaCliTools.readProjectIndexFile();
         [js_entry_regex, css_entry_regex].forEach((entry_regex) => {
             index_content = index_content.replace(entry_regex, '');
         });
-        self._writeIndexFile(index_content);
+        SipaCliTools.writeProjectIndexFile(index_content);
     }
 
+    /**
+     * Get list of all javascript entries in index.html
+     *
+     * @returns {Array<String>}
+     */
     static getJsEntries() {
         const self = SipaCliIndexManager;
-        let index_content = self._readIndexFile();
+        let index_content = SipaCliTools.readProjectIndexFile();
         return [...index_content.matchAll(self.script_tag_regex)].map((e) => { return e[1]; });
     }
 
+    /**
+     * Get list of all javascript files in app directory
+     *
+     * @returns {Array<String>}
+     */
     static getJsFiles() {
         const self = SipaCliIndexManager;
         const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
@@ -54,6 +68,11 @@ class SipaCliIndexManager {
         return files.map((e) => { return e.substr(dir_prefix.length); });
     }
 
+    /**
+     * Get list of javascript files that have not yet been included to index.html
+     *
+     * @returns {Array<String>}
+     */
     static missingJsEntries() {
         const self = SipaCliIndexManager;
         const files = self.getJsFiles();
@@ -61,24 +80,22 @@ class SipaCliIndexManager {
         return files.map(e => e.trim()).filter(x => !entries.includes(x.trim()));
     }
 
-    static getJsEntriesOrderedBySection() {
-        const self = SipaCliIndexManager;
-        const entries = self.getJsEntries();
-        let sections = {};
-        sections['LIB-JS'] = entries.filter((e) => { e.startsWith('assets/lib/'); });
-        sections['ASSET-JS'] = entries.filter((e) => { e.startsWith('assets/js/'); });
-        sections['PAGE-JS'] = entries.filter((e) => { e.startsWith('views/pages/'); });
-        sections['LAYOUT-JS'] = entries.filter((e) => { e.startsWith('views/layouts/'); });
-        sections['APP-INIT-JS'] = entries.filter((e) => { e.startsWith('config/'); });
-        return sections;
-    }
-
+    /**
+     * Get list of all stylesheet entries in index.html
+     *
+     * @returns {Array<String>}
+     */
     static getStyleEntries() {
         const self = SipaCliIndexManager;
-        let index_content = self._readIndexFile();
+        let index_content = SipaCliTools.readProjectIndexFile();
         return [...index_content.matchAll(self.style_tag_regex)].map((e) => { return e[1]; });
     }
 
+    /**
+     * Get list of all stylesheet files in app directory
+     *
+     * @returns {Array<String>}
+     */
     static getStyleFiles() {
         const self = SipaCliIndexManager;
         const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
@@ -87,6 +104,11 @@ class SipaCliIndexManager {
         return files.map((e) => { return e.substr(dir_prefix.length); });
     }
 
+    /**
+     * Get list of stylesheet files that have not yet been included to index.html
+     *
+     * @returns {Array<String>}
+     */
     static missingStyleEntries() {
         const self = SipaCliIndexManager;
         const files = self.getStyleFiles();
@@ -94,15 +116,57 @@ class SipaCliIndexManager {
         return files.filter(x => !entries.includes(x));
     }
 
-    static getStyleEntriesOrderedBySection() {
+    /**
+     * Get files that have entries in index.html but do not exist
+     *
+     * @returns {Array<String>}
+     */
+    static missingFiles() {
         const self = SipaCliIndexManager;
-        const entries = self.getStyleEntries();
-        let sections = {};
-        sections['LIB-CSS'] = entries.filter((e) => { e.startsWith('lib/'); });
-        sections['ASSET-CSS'] = entries.filter((e) => { e.startsWith('assets/style/'); });
-        sections['PAGE-CSS'] = entries.filter((e) => { e.startsWith('views/pages/'); });
-        sections['LAYOUT-CSS'] = entries.filter((e) => { e.startsWith('views/layouts/'); });
-        return sections;
+        let existing_entries = self.getJsEntries().concat(self.getStyleEntries());
+        const existing_files = self.getJsFiles().concat(self.getStyleFiles())
+            .concat(self.ignoredFiles()); // add ignored entries to existing, to remove from list
+        existing_entries.forEach((el, i) => {
+            if(existing_files.includes(el)) {
+                delete existing_entries[i];
+            }
+        });
+        existing_entries = existing_entries.filter(e => e !== null);
+        return existing_entries;
+    }
+
+    /**
+     * Get entries that should exist in index.html because this files exist
+     *
+     * @returns {Array<String>}
+     */
+    static missingEntries() {
+        const self = SipaCliIndexManager;
+        let missing_entries = self.missingJsEntries().concat(self.missingStyleEntries());
+        missing_entries.forEach((el, i) => {
+            if(self.ignoredFiles().includes(el)) {
+                delete missing_entries[i];
+            }
+        });
+        missing_entries = missing_entries.filter(e => e !== null);
+        return missing_entries;
+    }
+
+    /**
+     * Check if there are unsolved file entries or missing files in index.html
+     *
+     * Returns count of missing entries.
+     *
+     * @returns {Number}
+     */
+    static missingFilesOrEntriesCount() {
+        const self = SipaCliIndexManager;
+        return self.missingFiles().length + self.missingEntries().length;
+    }
+
+    static ignoredFiles() {
+        const self = SipaCliIndexManager;
+        return SipaCliTools.readProjectSipaConfig().indexer?.ignored_files || [];
     }
 
     /**
@@ -241,19 +305,8 @@ class SipaCliIndexManager {
             return 'APP-INIT-JS';
         }
     }
-
-    static _readIndexFile() {
-        const self = SipaCliIndexManager;
-        return fs.readFileSync(self.index_path,'utf8').toString();
-    }
-
-    static _writeIndexFile(content) {
-        const self = SipaCliIndexManager;
-        return fs.writeFileSync(self.index_path, content);
-    }
 }
 
-SipaCliIndexManager.index_path = SipaCliTools.projectRootPath() + '/app/index.html';
 SipaCliIndexManager.script_tag_regex = /\<\s*script\s*.*\s*src\=\"([^"]+)"\s*\>\s*\<\/\s*script\s*\>/gm;
 SipaCliIndexManager.style_tag_regex = /<\s*link\s*rel="stylesheet"\s*href="([^"]+)"\s*>/gm;
 

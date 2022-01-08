@@ -195,9 +195,15 @@ class SipaCliTools {
         return self.readProjectPackageJson().name;
     }
 
-    static readProjectSipaConfig() {
+    static readProjectSipaConfig(use_cache = true) {
         const self = SipaCliTools;
-        let config = JSON.parse(fs.readFileSync(self.SIPA_CONFIG_FILE_PATH));
+        let config = null;
+        if(!self.cached_config || use_cache === false) {
+            config = JSON.parse(self.readFile(self.SIPA_CONFIG_FILE_PATH));
+            self.cached_config = Object.assign({}, config);
+        } else {
+            config = self.cached_config;
+        }
         config = Object.assign(Object.assign({}, self.SIPA_CONFIG_DEFAULTS), config);
         if(!config.indexer) config.indexer = {};
         if(!config.indexer.ignored_files) config.indexer.ignored_files = [];
@@ -206,22 +212,55 @@ class SipaCliTools {
 
     static writeProjectSipaConfig(content) {
         const self = SipaCliTools;
-        return fs.writeFileSync(self.SIPA_CONFIG_FILE_PATH, JSON.stringify(content, null, 2));
+        return self.writeFile(self.SIPA_CONFIG_FILE_PATH, JSON.stringify(content, null, 2));
     }
 
     static readProjectPackageJson() {
         const self = SipaCliTools;
-        return JSON.parse(fs.readFileSync(self.PACKAGE_JSON_FILE_PATH));
+        return JSON.parse(self.readFile(self.PACKAGE_JSON_FILE_PATH));
     }
 
     static writeProjectPackageJson(content) {
         const self = SipaCliTools;
-        return fs.writeFileSync(self.PACKAGE_JSON_FILE_PATH, JSON.stringify(content, null, 2));
+        return self.writeFile(self.PACKAGE_JSON_FILE_PATH, JSON.stringify(content, null, 2));
+    }
+
+    static readProjectIndexFile() {
+        const self = SipaCliTools;
+        return self.readFile(self.PROJECT_INDEX_FILE_PATH);
+    }
+
+    static writeProjectIndexFile(content) {
+        const self = SipaCliTools;
+        return self.writeFile(self.PROJECT_INDEX_FILE_PATH, content);
+    }
+
+    static makeDir(dir) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+
+    static makeDirOfFile(file) {
+        let final_dir = path.dirname(file);
+        fs.mkdirSync(final_dir, { recursive: true });
+    }
+
+    static readFile(path, encoding = 'utf8') {
+        if(!encoding) {
+            encoding = undefined;
+        }
+        return fs.readFileSync(path, encoding).toString();
+    }
+
+    static writeFile(path, content) {
+        const self = SipaCliTools;
+        self.makeDirOfFile(path);
+        return fs.writeFileSync(path, content);
     }
 }
 
 SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
 SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package.json';
+SipaCliTools.PROJECT_INDEX_FILE_PATH = SipaCliTools.projectRootPath() + '/app/index.html';
 
 SipaCliTools.SIPA_CONFIG_DEFAULTS = {
     development_server: {
@@ -238,6 +277,7 @@ SipaCliTools.SIPA_CONFIG_DEFAULTS = {
 }
 
 SipaCliTools.first_question = true;
+SipaCliTools.cached_config = null;
 
 SipaCliTools.SECTIONS = {};
 SipaCliTools.SECTIONS.not_inside_valid_project = [
@@ -250,14 +290,17 @@ SipaCliTools.SECTIONS.not_inside_valid_project = [
         ]
     }
 ];
-SipaCliTools.SECTIONS.invalid_config_paths = [
-    {
-        header: 'Invalid paths found',
-        content: [
-            'The following paths in sipa.json are invalid:',
-            `   → ${SipaCliTools.invalidConfigPaths().map((el) => { return chalk.red(el); }).join("\n  → ")}`,
-        ]
-    }
-];
+
+if(SipaCliTools.isRunningInsideValidSipaProject()) {
+    SipaCliTools.SECTIONS.invalid_config_paths = [
+        {
+            header: 'Invalid paths found',
+            content: [
+                'The following paths in sipa.json are invalid:',
+                `   → ${SipaCliTools.invalidConfigPaths().map((el) => { return chalk.red(el); }).join("\n  → ")}`,
+            ]
+        }
+    ];
+}
 
 module.exports = SipaCliTools;

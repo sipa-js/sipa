@@ -2,13 +2,13 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SipaCliTools = require('./../_tools');
 const fs = require('fs');
-
 const util = require('util');
 const exec = require("child_process").exec;
 const spawn = require("child_process").spawn;
 const exec_prom = util.promisify(exec);
+
+const SipaCliTools = require('./../_tools');
 
 class SipaCliServer {
     static server() {

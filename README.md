@@ -54,9 +54,9 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 * Live development web server for JavaScript and SCSS ![State](https://img.shields.io/badge/-done-default)
 * Life cycle with hook feature ![State](https://img.shields.io/badge/-done-default)
 * Internationalization out of the box ![State](https://img.shields.io/badge/-todo-blue)
-* EJS template engine (optional) ![State](https://img.shields.io/badge/-progress-yellow)
+* EJS template engine (optional) ![State](https://img.shields.io/badge/-prepared-blue)
 * Storage to keep state on three different persistence levels ![State](https://img.shields.io/badge/-done-default)
-* Builder to create compressed and minified .js and .css for production ![State](https://img.shields.io/badge/-todo-blue)
+* Builder to create compressed and minified .js and .css for production ![State](https://img.shields.io/badge/-progress-yellow)
 
 
 

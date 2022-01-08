@@ -2,8 +2,9 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const SipaCliTools = require('./../_tools');
 const fs = require('fs');
+
+const SipaCliTools = require('./../_tools');
 
 class SipaCliAbout {
     static about() {
@@ -14,7 +15,7 @@ class SipaCliAbout {
     }
 }
 
-const package_json = JSON.parse(fs.readFileSync(__dirname + '/../../../package.json','utf-8'));
+const package_json = JSON.parse(SipaCliTools.readFile(__dirname + '/../../../package.json'));
 
 SipaCliAbout.SECTIONS = {};
 SipaCliAbout.SECTIONS.about = [

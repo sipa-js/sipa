@@ -2,14 +2,13 @@
 
 const chalk = require('chalk');
 const commandLineUsage = require('command-line-usage');
-const tools = require('./../_tools');
 const fs = require('fs-extra');
-const LuckyCase = require('lucky-case/string');
 const glob = require('glob');
+const LuckyCase = require('lucky-case/string');
 const CurlyBracketParser = require('curly-bracket-parser');
+
 const SipaCliTools = require('./../_tools');
 const SipaIndexManager = require('./../_index-manager');
-
 const SipaHelper = require('./../../../src/sipa/tools/sipa-helper');
 const SipaPage = require('./../../../src/sipa/tools/sipa-page');
 
@@ -20,13 +19,13 @@ class SipaCliGenerate {
             SipaCliTools.errorNotInsideValidSipaProject();
             return;
         }
-        let section = tools.colorizeValues(self.SECTIONS.generate_overview, ['desc', 'name', 'alias'], 'green');
+        let section = SipaCliTools.colorizeValues(self.SECTIONS.generate_overview, ['desc', 'name', 'alias'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
         const valid_options = [
             'page', 'p', 'layout', 'l', 'style', 's', 'javascript', 'j'
         ];
-        const choice = tools.cliQuestion('Make your choice', valid_options, 'page', true);
+        const choice = SipaCliTools.cliQuestion('Make your choice', valid_options, 'page', true);
         switch (choice) {
             case 'page':
             case 'p':
@@ -77,9 +76,9 @@ class SipaCliGenerate {
         console.log(commandLineUsage(self.SECTIONS.generate_generate));
         const final_page_dir = SipaCliTools.projectRootPath() + `/app/views/${plural_type}/` + view_id;
         fs.mkdirSync(final_page_dir, {recursive: true});
-        tools.printLine(`Generate new ${chalk.green(singular_type)} by default ${singular_type} template ...`);
-        tools.printLine();
-        const template_src = tools.sipaRootPath() + `/lib/templates/${singular_type}/default`;
+        SipaCliTools.printLine(`Generate new ${chalk.green(singular_type)} by default ${singular_type} template ...`);
+        SipaCliTools.printLine();
+        const template_src = SipaCliTools.sipaRootPath() + `/lib/templates/${singular_type}/default`;
         fs.copySync(template_src, final_page_dir);
         const view_files = glob.sync(final_page_dir + '/*.*', {});
         const view_id_last_segment = view_id.substr(view_id.lastIndexOf('/') + 1);
@@ -96,7 +95,7 @@ class SipaCliGenerate {
             });
             fs.renameSync(file, view_dir + '/' + view_id_file_name);
         });
-        tools.printLine(chalk.green(view_id));
+        SipaCliTools.printLine(chalk.green(view_id));
         // modify index.html
         console.log(commandLineUsage(self.SECTIONS.generate_include));
         SipaIndexManager.appendEntry(LuckyCase.toUpperCase(`${singular_type}-JS`),final_page_dir + '/' + view_id_last_segment + '.js');
@@ -149,9 +148,9 @@ class SipaCliGenerate {
             asset_id_last_segment = asset_id_last_segment.substr(asset_id_last_segment.lastIndexOf('/')+1);
         }
         fs.mkdirSync(final_asset_dir, {recursive: true});
-        tools.printLine(`Generate new ${chalk.green(asset_name)} by default ${asset_name} template ...`);
-        tools.printLine();
-        const template_src = tools.sipaRootPath() + `/lib/templates/assets/default/${options.type}`;
+        SipaCliTools.printLine(`Generate new ${chalk.green(asset_name)} by default ${asset_name} template ...`);
+        SipaCliTools.printLine();
+        const template_src = SipaCliTools.sipaRootPath() + `/lib/templates/assets/default/${options.type}`;
         fs.copySync(template_src, final_asset_dir);
         const asset_files = glob.sync(template_src + '/*.*', {}).map((e) => { return final_asset_dir + e.substr(e.lastIndexOf('/')); });
         asset_files.forEach((file) => {
@@ -163,7 +162,7 @@ class SipaCliGenerate {
             });
             fs.renameSync(file, asset_dir + '/' + asset_file_name);
         });
-        tools.printLine(chalk.green(asset_id));
+        SipaCliTools.printLine(chalk.green(asset_id));
         // modify index.html
         console.log(commandLineUsage(self.SECTIONS.generate_include));
         if(options.type === 'javascript') {
@@ -233,7 +232,7 @@ class SipaCliGenerate {
     static _prompt(asset_name, existing_assets) {
         let input = null;
         while (true) {
-            input = tools.cliQuestion(`Enter the name of the new ${asset_name}`, null, null, true).trim();
+            input = SipaCliTools.cliQuestion(`Enter the name of the new ${asset_name}`, null, null, true).trim();
             if (existing_assets.includes(input)) {
                 console.log(chalk.red(`  There is already a ${asset_name} '${input}'`));
             } else {
