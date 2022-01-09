@@ -1,9 +1,5 @@
 #!/usr/bin/env node
 
-const chalk = require('chalk');
-const commandLineUsage = require('command-line-usage');
-const prompt = require('prompt-sync')();
-const path = require('path');
 const fs = require('fs');
 const glob = require('glob');
 const LuckyCase = require('lucky-case');
