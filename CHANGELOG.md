@@ -9,4 +9,39 @@ The old path is no longer valid and will lead to errors, so move your libraries 
 
 ### refactored structure of `sipa.json`
 
-Only ignored indexer files are not backward compatible and may need to be ignored once again when running `sipa i`
+Ignored indexer files are not backward compatible and may need to be ignored once again when running `sipa i`
+
+New default config file looks like this now - copy the parts that are missing in your configuration:
+```json
+{
+  "development_server": {
+    "host": "0.0.0.0",
+    "port": "7000",
+    "sass_watch_paths": [
+      "app/assets/style",
+      "app/views"
+    ]
+  },
+  "build": {
+    "auto_fix_font_paths_in_css": true,
+    "static_files_to_copy": {
+      "files": "files",
+      "assets/img": "assets/img"
+    }
+  },
+  "indexer": {
+    "ignored_files": [
+    ]
+  }
+}
+```
+
+### new folder `files`
+
+... inside the app folder. There you can store any special files, downloads for example.
+
+Create folder `app/files/` if you need it, otherwise remove the line 
+```json
+"files": "files",
+``` 
+in your `sipa.json`.
