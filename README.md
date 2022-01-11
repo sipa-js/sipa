@@ -153,8 +153,8 @@ Check out the doc at ... to be done. ;-)
 ### command line interface
   - [ ] delete task ![State](https://img.shields.io/badge/-todo-blue)
   - build task
-    - [ ] default build with minified assets ![State](https://img.shields.io/badge/-progress-yellow)
-      - [ ] index.html src *check* before build ![State](https://img.shields.io/badge/-todo-blue)
+    - [x] default build with minified assets ![State](https://img.shields.io/badge/-done-default)
+      - [x] index.html src *check* before build ![State](https://img.shields.io/badge/-done-default)
     - [ ] single html file build ![State](https://img.shields.io/badge/-todo-blue)
   - update task
     - [ ] update sipa cli installation itself ![State](https://img.shields.io/badge/-todo-blue)
@@ -170,7 +170,10 @@ Check out the doc at ... to be done. ;-)
   - [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
   - [ ] test on naked linux platform (VM) ![State](https://img.shields.io/badge/-todo-blue)
   - [ ] add unit tests ![State](https://img.shields.io/badge/-progress-yellow)
-  - [ ] make EJS and jQuery optional at interactive setup ![State](https://img.shields.io/badge/-todo-blue)
+  - make EJS and jQuery optional at interactive setup
+    - [ ] remove/rewrite jQuery dependencies ![State](https://img.shields.io/badge/-todo-blue)
+    - [ ] auto recognize EJS if available ![State](https://img.shields.io/badge/-todo-blue)
+    - [ ] add option to choose at interactive setup (?) ![State](https://img.shields.io/badge/-todo-blue)
 
 
 
