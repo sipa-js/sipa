@@ -1,6 +1,6 @@
 {
   "name": "sipa",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "date": "2022-01-11T20:03:00.000Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
