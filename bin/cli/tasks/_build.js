@@ -8,6 +8,7 @@ const glob = require("glob");
 const execSync = require("child_process").execSync;
 
 const SipaCliTools = require('./../_tools');
+const SipaCliServer = require('./../tasks/_server');
 const SipaCliIndexManager = require('./../_index-manager');
 
 class SipaCliBuild {
@@ -17,17 +18,19 @@ class SipaCliBuild {
             SipaCliTools.errorNotInsideValidSipaProject();
             return;
         }
-        if(SipaCliIndexManager.missingFilesOrEntriesCount() > 0) {
+        if (SipaCliIndexManager.missingFilesOrEntriesCount() > 0) {
             let section = self.SECTIONS.unresolved_files;
             section[0].content[0] = section[0].content[0].replace('{{count}}', SipaCliIndexManager.missingFilesOrEntriesCount());
             console.log(commandLineUsage(section));
             return;
         }
         console.log(commandLineUsage(self.SECTIONS.build));
+        SipaCliTools.removePath(self.paths.dist_base_dir);
         SipaCliTools.makeDir(self.paths.dist_base_dir);
         self.createDistIndexHtml();
-        self.createMinifiedJsFile();
+        //self.createMinifiedJsFile();
         self.createMinifiedCssFile();
+        self.processFonts();
         self.copyStaticFiles();
     }
 
@@ -58,6 +61,8 @@ class SipaCliBuild {
 
     static createMinifiedCssFile() {
         const self = SipaCliBuild;
+        // compile SASS to CSS before processing
+        SipaCliServer.runSass(`--update ${SipaCliServer._sassWatchPathsInline()} --no-source-map --style=compressed`, false, true);
         const index_css_files = SipaCliIndexManager.getStyleEntries();
         let final_css_file_content = "";
         SipaCliTools.printLine(`→ merge stylesheet files to minify ...`);
@@ -66,14 +71,47 @@ class SipaCliBuild {
             let file_content = SipaCliTools.readFile(self.paths.app_base_dir + '/' + file);
             final_css_file_content += "\n" + file_content;
         });
-        const final_file_path = self.paths.dist_base_dir + '/' + self.paths.dist_index_minified_css;
         // remove any multi line comments
         final_css_file_content = final_css_file_content.replace(/\/\*[^*]*\*+([^\/][^*]*\*+)*\//gms, '');
-        SipaCliTools.writeFile(final_file_path, final_css_file_content);
-        SipaCliTools.printLine(`    → minify css ...`);
-        const sass_path = path.resolve(`${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js`);
-        const minify_command = `node ${sass_path} "${final_file_path}" --no-source-map --style=compressed "${final_file_path}"`;
-        execSync(minify_command);
+        SipaCliTools.writeFile(self._finalDistCssStylePath(), final_css_file_content);
+        const green_path = chalk.green(`${self._finalDistCssStylePath().substring(self._finalDistCssStylePath().lastIndexOf('assets/'))}`);
+        SipaCliTools.printLine(`    → minify css to ${green_path} ...`);
+        SipaCliServer.runSass(`"${self._finalDistCssStylePath()}" --no-source-map --style=compressed "${self._finalDistCssStylePath()}"`, false, true);
+    }
+
+    /**
+     * Copies only fonts, that are used in css, to distribution directory.
+     *
+     * After that, paths inside CSS of copied fonts are fixed automatically, if option in config is set.
+     */
+    static processFonts() {
+        const self = SipaCliBuild;
+        const fonts_in_css = self._cssFontFilesBaseNames();
+        const app_fonts_pattern = SipaCliTools.projectRootPath() + `/app/assets/**/*.{${self.supported_font_types.join(',')}}`;
+        const fonts_in_app_font_folder = glob.sync(app_fonts_pattern);
+        const used_fonts_in_app_folder = fonts_in_app_font_folder.filter((font) => {
+            for (let i = 0; i < fonts_in_css.length; ++i) {
+                if (font.endsWith(fonts_in_css[i])) return true;
+            }
+            return false;
+        });
+        SipaCliTools.printLine(`→ copy fonts used inside css ...`);
+        used_fonts_in_app_folder.forEach((used_font) => {
+            SipaCliTools.copyFile(used_font, self.paths.dist_base_dir + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font));
+            SipaCliTools.printLine(`  - ${used_font.substring(used_font.lastIndexOf('assets/'))} ...`);
+        });
+        if(SipaCliTools.readProjectSipaConfig().build?.auto_fix_font_paths_in_css) {
+            SipaCliTools.printLine(`→ auto fix font paths in css ...`);
+            let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
+            const copied_fonts = glob.sync(self.paths.dist_base_dir + '/assets/fonts/*');
+            copied_fonts.forEach((font) => {
+               const font_regex = new RegExp(`url\\s*\\(\\s*['"]([^\\)]+${SipaCliTools.escapeRegExp(path.basename(font))})([#?][^)]*)*['"]\\s*\\)`,'gms');
+               css_file_content = css_file_content.replace(font_regex, `url("${self.paths.fonts_base_dir}/${path.basename(font)}` + '$2")');
+            });
+            SipaCliTools.writeFile(self._finalDistCssStylePath(), css_file_content);
+        } else {
+            SipaCliTools.printLine(`→ auto fix font paths in css ... ${chalk.red('skipped')}`);
+        }
     }
 
     static copyStaticFiles() {
@@ -117,6 +155,48 @@ ${doc_body_open_tag}
             return line.trim();
         }).join("\n");
     }
+
+    /**
+     * Get all font file base names inside the final minified css file,
+     * e.g. ["font.woff","myFont.ttf"]
+     *
+     * @returns {Array<String>}
+     * @private
+     */
+    static _cssFontFilesBaseNames() {
+        const self = SipaCliBuild;
+        let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
+        const regex = self.CSS_URL_CONTENT_REGEXP;
+        regex.lastIndex = 0;
+        let matches = [];
+        let match = null;
+        while (match = regex.exec(css_file_content)) {
+            matches.push(match[1]);
+        }
+        regex.lastIndex = 0;
+        matches = matches.map((el) => {
+            if (el.indexOf('#') !== -1) el = el.substring(0, el.lastIndexOf('#')); // remove anchors
+            if (el.indexOf('?') !== -1) el = el.substring(0, el.lastIndexOf('?')); // remove params
+            if (['"', "'"].includes(el[0])) el = el.substring(1); // remove quotes at beginning
+            if (['"', "'"].includes(el[el.length - 1])) el = el.substring(0, el.length - 1); // remove quotes at the end
+            return el;
+        });
+        matches = matches.filter((el) => {
+            for (let i = 0; i < self.supported_font_types.length; ++i) {
+                if (el.endsWith("." + self.supported_font_types[i])) return true;
+            }
+            return false;
+        });
+        matches = matches.map((el) => {
+            return path.basename(el);
+        });
+        return matches;
+    }
+
+    static _finalDistCssStylePath() {
+        const self = SipaCliBuild;
+        return self.paths.dist_base_dir + '/' + self.paths.dist_index_minified_css;
+    }
 }
 
 SipaCliBuild.SECTIONS = {};
@@ -146,11 +226,14 @@ SipaCliBuild.paths = {
     dist_base_dir: SipaCliTools.projectRootPath() + '/dist/default',
     dist_index_minified_js: 'assets/js/sipa.min.js',
     dist_index_minified_css: 'assets/style/sipa.min.css',
+    fonts_base_dir: 'assets/fonts',
     static_files_to_copy: {
-        'assets/files': 'assets/files',
+        'files': 'files',
         'assets/img': 'assets/img',
     }
 }
+
+SipaCliBuild.supported_font_types = ['ttf', 'woff', 'woff2', 'eot', 'otf'];
 
 /**
  * group 1 - part at the beginning until including <head>, e.g. <!DOCTYPE html><html><head>
@@ -158,9 +241,7 @@ SipaCliBuild.paths = {
  * group 3 - body open tag including attributes
  * @type {RegExp}
  */
-SipaCliBuild.ORIGINAL_INDEX_SOURCES_REGEXP = /(.*)<![-]+[=]+\s*HEADER\s*[=]+[-]+>$(.*)<![-]+[=]+\s*\/HEADER\s*[=]+[-]+>.*(<body[^\n]*>$)/gms
-
-
-
+SipaCliBuild.ORIGINAL_INDEX_SOURCES_REGEXP = /(.*)<![-]+[=]+\s*HEADER\s*[=]+[-]+>$(.*)<![-]+[=]+\s*\/HEADER\s*[=]+[-]+>.*(<body[^\n]*>$)/gms;
+SipaCliBuild.CSS_URL_CONTENT_REGEXP = /url\s*\(\s*([^\)]+)\s*\)/gms;
 
 module.exports = SipaCliBuild;

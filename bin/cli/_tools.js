@@ -256,6 +256,25 @@ class SipaCliTools {
         self.makeDirOfFile(path);
         return fs.writeFileSync(path, content);
     }
+
+    static copyFile(src, dest) {
+        const self = SipaCliTools;
+        self.makeDirOfFile(dest);
+        fs.copyFileSync(src, dest);
+    }
+
+    /**
+     * Delete file or directory
+     *
+     * @param {String} path
+     */
+    static removePath(path) {
+        fs.rmSync(path, { recursive: true, force: true });
+    }
+
+    static escapeRegExp(string) {
+        return string.replace(/[$+.*?^(){}|[\]\\]/g, '\\$&');
+    }
 }
 
 SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
