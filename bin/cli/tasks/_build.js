@@ -28,9 +28,10 @@ class SipaCliBuild {
         SipaCliTools.removePath(self.paths.dist_base_dir);
         SipaCliTools.makeDir(self.paths.dist_base_dir);
         self.createDistIndexHtml();
-        //self.createMinifiedJsFile();
+        self.createMinifiedJsFile();
         self.createMinifiedCssFile();
         self.processFonts();
+        self.copyViews();
         self.copyStaticFiles();
     }
 
@@ -53,10 +54,11 @@ class SipaCliBuild {
         });
         const final_file_path = self.paths.dist_base_dir + '/' + self.paths.dist_index_minified_js;
         SipaCliTools.writeFile(final_file_path, final_js_file_content);
-        SipaCliTools.printLine(`    → minify javascript ...`);
+        const green_path = chalk.green(`${final_file_path.substring(final_file_path.lastIndexOf('assets/'))}`);
+        SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
         const terser_path = path.resolve(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
         const minify_command = `node ${terser_path} "${final_file_path}" -m -c -o "${final_file_path}"`;
-        execSync(minify_command);
+        //execSync(minify_command);
     }
 
     static createMinifiedCssFile() {
@@ -97,8 +99,9 @@ class SipaCliBuild {
         });
         SipaCliTools.printLine(`→ copy fonts used inside css ...`);
         used_fonts_in_app_folder.forEach((used_font) => {
-            SipaCliTools.copyFile(used_font, self.paths.dist_base_dir + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font));
-            SipaCliTools.printLine(`  - ${used_font.substring(used_font.lastIndexOf('assets/'))} ...`);
+            const dest_file = self.paths.dist_base_dir + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font);
+            SipaCliTools.copyFile(used_font, dest_file);
+            SipaCliTools.printLine(`  - ${chalk.green(self.paths.fonts_base_dir + '/' + path.basename(used_font))} ...`);
         });
         if(SipaCliTools.readProjectSipaConfig().build?.auto_fix_font_paths_in_css) {
             SipaCliTools.printLine(`→ auto fix font paths in css ...`);
@@ -106,7 +109,7 @@ class SipaCliBuild {
             const copied_fonts = glob.sync(self.paths.dist_base_dir + '/assets/fonts/*');
             copied_fonts.forEach((font) => {
                const font_regex = new RegExp(`url\\s*\\(\\s*['"]([^\\)]+${SipaCliTools.escapeRegExp(path.basename(font))})([#?][^)]*)*['"]\\s*\\)`,'gms');
-               css_file_content = css_file_content.replace(font_regex, `url("${self.paths.fonts_base_dir}/${path.basename(font)}` + '$2")');
+               css_file_content = css_file_content.replace(font_regex, `url("${self.paths.fonts_production_style_dir}/${path.basename(font)}` + '$2")');
             });
             SipaCliTools.writeFile(self._finalDistCssStylePath(), css_file_content);
         } else {
@@ -114,8 +117,38 @@ class SipaCliBuild {
         }
     }
 
-    static copyStaticFiles() {
+    static copyViews() {
+        const self = SipaCliBuild;
+        SipaCliTools.printLine(`→ copy views ...`);
+        const static_files_to_copy = glob.sync(self.paths.app_base_dir + '/views/**/*.html');
+        static_files_to_copy.forEach((src_file, index) => {
+            const dest_relative_path = src_file.replace(self.paths.app_base_dir + '/','');
+            const dest_path = self.paths.dist_base_dir + '/' + dest_relative_path;
+            SipaCliTools.printLine(`  - ${chalk.green(dest_relative_path)} ...`);
+            SipaCliTools.makeDirOfFile(dest_path);
+            SipaCliTools.copyFile(src_file, dest_path);
+        });
+    }
 
+    static copyStaticFiles() {
+        const self = SipaCliBuild;
+        SipaCliTools.printLine(`→ copy static files ...`);
+        const static_files_to_copy = SipaCliTools.readProjectSipaConfig().build?.static_files_to_copy;
+        Object.keys(static_files_to_copy).forEach((from_path, index) => {
+            const to_path = static_files_to_copy[from_path];
+            if(SipaCliTools.pathExists(self.paths.app_base_dir + '/' + from_path)) {
+                SipaCliTools.printLine(`  - ${from_path} > ${chalk.green(to_path)} ...`);
+                if(SipaCliTools.isDir(self.paths.app_base_dir + '/' + from_path)) {
+                    SipaCliTools.makeDir(self.paths.dist_base_dir + '/' + to_path);
+                } else if(SipaCliTools.isFile(self.paths.app_base_dir + '/' + from_path)) {
+                    SipaCliTools.makeDirOfFile(self.paths.dist_base_dir + '/' + to_path);
+                }
+                SipaCliTools.copy(self.paths.app_base_dir + '/' + from_path, self.paths.dist_base_dir + '/' + to_path);
+            } else {
+                SipaCliTools.printLine(`  - ${chalk.red(from_path)} > ${to_path}`);
+                throw chalk.red(`Invalid path! Path does not exist: '${self.paths.app_base_dir + '/' + from_path}'`)
+            }
+        });
     }
 
     /**
@@ -227,10 +260,7 @@ SipaCliBuild.paths = {
     dist_index_minified_js: 'assets/js/sipa.min.js',
     dist_index_minified_css: 'assets/style/sipa.min.css',
     fonts_base_dir: 'assets/fonts',
-    static_files_to_copy: {
-        'files': 'files',
-        'assets/img': 'assets/img',
-    }
+    fonts_production_style_dir: '../fonts',
 }
 
 SipaCliBuild.supported_font_types = ['ttf', 'woff', 'woff2', 'eot', 'otf'];

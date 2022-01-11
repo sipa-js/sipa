@@ -5,6 +5,7 @@ const commandLineUsage = require('command-line-usage');
 const prompt = require('prompt-sync')();
 const path = require('path');
 const fs = require('fs');
+const fse = require('fs-extra');
 
 class SipaCliTools {
 
@@ -261,6 +262,41 @@ class SipaCliTools {
         const self = SipaCliTools;
         self.makeDirOfFile(dest);
         fs.copyFileSync(src, dest);
+    }
+
+    static copy(src, dest) {
+        const self = SipaCliTools;
+        fse.copySync(src, dest);
+    }
+
+    static isDir(path) {
+        const self = SipaCliTools;
+        try {
+            const stat = fs.lstatSync(path);
+            return stat.isDirectory();
+        } catch (e) {
+            return false;
+        }
+    }
+
+    static isFile(path) {
+        const self = SipaCliTools;
+        try {
+            const stat = fs.lstatSync(path);
+            return stat.isFile();
+        } catch (e) {
+            return false;
+        }
+    }
+
+    static pathExists(path) {
+        const self = SipaCliTools;
+        try {
+            const stat = fs.lstatSync(path);
+            return true;
+        } catch (e) {
+            return false;
+        }
     }
 
     /**
