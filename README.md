@@ -67,7 +67,7 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 * `CurlyBracketParser` for url parsing
 * `LuckyCase` for name case transformations
 * `EJS` for embedded javascript template rendering (optional)
-* `jQuery` for having fun easily the old way (optional)
+* `jQuery` for having fun with web development the old way (optional)
 
 
 
