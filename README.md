@@ -1,4 +1,4 @@
-![SIPA Particularly simple web framework](doc/_raw/logo_doc.svg)
+![SIPA Particularly simple web framework](doc/_assets/_raw/logo_doc.svg)
 [![NPM version](https://img.shields.io/npm/v/sipa?color=63a618&style=plastic&logo=npm)](https://www.npmjs.com/package/sipa)
 ![NPM downloads](https://img.shields.io/npm/dt/sipa?color=dce2df&style=plastic)
 [![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-fabd09.svg?style=plastic)](LICENSE)
@@ -11,12 +11,8 @@ But I allow you to use it anyway!
 
 ```diff
 ------------------------------------------
-- under heavy development, alpha state. 
+- in development, beta state. 
 ------------------------------------------
--
-- First beta version including some documentation
-- is planned to be released in 01/2022
--
 ```
 
 **TALBE OF CONTENTS**
@@ -35,11 +31,16 @@ But I allow you to use it anyway!
 <!-- -------------------------- SECTION -------------------------- -->
 <a name="why-sipa"></a>
 ## Why Sipa?
-I just want to develop with Vanilla JS and HTML the old way, I want to directly run and debug the code I code in the browser.
-Intensive transpiling (minifying) will happen when creating a production build.
+I just want to develop with Javascript: The code i write IS the code i run in the browser. 
+
+Writing Javascript and HTML the old way! So I can directly run and debug my code in the browser. Instant!
+
+Intensive transpiling (minifying) will (can!) finally happen when creating a production build. I even can create a single file production build out of the box! (Feature not yet implemented)
 
 I don't want to learn a new framework world.
 I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid easy. So i can add whatever I want if I need to.
+
+A framework that gives me a frame, but doesnt force me into it.
 
 ... and at the end I want to be happy! :-)
 
@@ -49,27 +50,19 @@ I can JavaScript, I want to do JavaScript. I want it simple, I want it stupid ea
 <!-- -------------------------- SECTION -------------------------- -->
 <a name="main-features"></a>
 ### Main features
-* Solid basic project structure ![State](https://img.shields.io/badge/-done-default)
-* Simple but powerful page pattern with loader / router ![State](https://img.shields.io/badge/-done-default)
-* Live development web server for JavaScript and SCSS ![State](https://img.shields.io/badge/-done-default)
-* Life cycle with hook feature ![State](https://img.shields.io/badge/-done-default)
+* Solid basic project structure
+* Simple but powerful page pattern structure with loader / router
+* Live development web server for JavaScript and SCSS
+* Life cycle with hook feature
 * Internationalization out of the box ![State](https://img.shields.io/badge/-todo-blue)
-* EJS template engine (optional) ![State](https://img.shields.io/badge/-prepared-blue)
-* Storage to keep state on three different persistence levels ![State](https://img.shields.io/badge/-done-default)
-* Builder to create compressed and minified .js and .css for production ![State](https://img.shields.io/badge/-done-default)
+* Global state storage to keep state on three different persistence levels 
+* Builder to create compressed and minified .js and .css for production 
+* Optionally:
+  * EJS template engine (optional) ![State](https://img.shields.io/badge/-prepared-blue)
+  * Good old jQuery
 
 
-
-
-<!-- -------------------------- SECTION -------------------------- -->
-<a name="shipped-libraries"></a>
-### Shipped libraries
-* `CurlyBracketParser` for url parsing
-* `LuckyCase` for name case transformations
-* `EJS` for embedded javascript template rendering (optional)
-* `jQuery` for having fun with web development the old way (optional)
-
-
+To get an overview and idea about the framework, have a look at the [introduction]().
 
 
 <!-- -------------------------- SECTION -------------------------- -->

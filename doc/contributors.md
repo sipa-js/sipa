@@ -1,5 +1,7 @@
-# Developer documentation
-This documentation is about developing the Sipa framework itself.
+# Contributor documentation
+This documentation is for contributors and about developing the Sipa framework itself.
+
+For developing with the Sipa framework, check out the developer documentation. 
 
 ## Basic setup
 Run at the root directory
