@@ -1,6 +1,6 @@
 ![SIPA Particularly simple web framework](_assets/_raw/logo_doc.svg)
 # Developer documentation
-Documentation for developing web apps with Sipa. 
+Documentation for developing web apps with Sipa. ![State](https://img.shields.io/badge/-progress-yellow)
 
 ## Table of contents
 * **Introduction / Tutorial**

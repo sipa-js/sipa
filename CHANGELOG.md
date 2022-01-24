@@ -1,4 +1,4 @@
-# 0.4.0
+# 0.4.x
 ## migration steps from 0.3.x to 0.4.x
 ### refactored lib paths
 The path `app/lib` has been moved to `app/assets/lib`.
