@@ -22,7 +22,8 @@ But I allow you to use it anyway!
 * [Installation](#installation)
 * [Setup a new project](#setup-a-new-project)
 * [Documentation](#documentation)
-* [TODOs](#todos)
+  * [Contributors](doc/contributors.md)
+  * [Developers](doc/developers.md) ![State](https://img.shields.io/badge/-progress-yellow)
 * [Contributing](#contributing)
 
 
@@ -142,6 +143,8 @@ A interactive setup assists you and generates the project depending on your inpu
 ## Contributing
 
 Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/sipa. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+
+More technical information to setup, you can find in the [contributors dcoumentation](doc/contributors.md).
 
 
 
