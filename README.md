@@ -89,7 +89,7 @@ export PATH="$(yarn global bin):$PATH"
 ```
 
 #### Windows
-Run `yarn global bin` and add the PATH to your global PATH environment variable.
+Run `yarn global bin` and add the returned PATH to your global PATH environment variable.
 
 
 ### Install the framework with npm
@@ -110,7 +110,7 @@ The command `sipa` is now available on the command line.
 
 Run `sipa help` for more information.
 
-Or get started with our tutorial [here]() (TODO).
+Or get started with our tutorial in the [developer documentation](doc/developers.md).
 
 
 
