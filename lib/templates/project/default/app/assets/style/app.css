@@ -22,7 +22,6 @@ h1, h2 {
 #top-navi-bar {
     background: #2e3436;
     padding: 16px;
-    text-shadow: 2px 2px 0 black, -2px -2px 0 black, -2px 2px black, 2px -2px black;
 }
 
 #page-container {
