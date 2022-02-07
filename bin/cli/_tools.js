@@ -12,11 +12,11 @@ class SipaCliTools {
     static logo() {
         // ASCII-Font: Calvin S
         // Sub title font: Source Code Pro Bold
-        return chalk.yellow.bgGray.bold("\n                         \n" +
+        return chalk.yellow.bgBlack.bold("\n                         \n" +
             "     ┏━┓ ┳ ┏━┓ ┏━┓       \n" +
             "     ┗━┓ ┃ ┣━┛ ┣━┫       \n" +
-            "     ┗━┛ ┻ ┻   ┻ ┻       \n" + chalk.reset.white.bgGray(
-            "  Particularly Simple    \n") + chalk.bold.green.bgGray(
+            "     ┗━┛ ┻ ┻   ┻ ┻       \n" + chalk.reset.white.bgBlack(
+            "  particularly simple    \n") + chalk.bold.green.bgBlack(
             "     web framework       \n") +
             "                         \n"
         );
