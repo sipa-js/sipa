@@ -14,6 +14,9 @@
   "helpers": [
     "helpers/**/*.?(m)js"
   ],
-  "random": false,
-  "browser": "headlessChrome"
+  "browser": "headlessChrome",
+  "env": {
+    "random": false,
+    "stopSpecOnExpectationFailure": false
+  }
 }
