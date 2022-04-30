@@ -45,3 +45,6 @@ Create folder `app/files/` if you need it, otherwise remove the line
 "files": "files",
 ``` 
 in your `sipa.json`.
+
+### Replace comments in index.html
+

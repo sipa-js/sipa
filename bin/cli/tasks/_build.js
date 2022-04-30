@@ -122,6 +122,7 @@ class SipaCliBuild {
         SipaCliTools.printLine(`→ copy views ...`);
         const static_files_to_copy = glob.sync(self.paths.app_base_dir + '/views/**/*.html');
         static_files_to_copy.forEach((src_file, index) => {
+            self.paths.app_base_dir = self.paths.app_base_dir.replace(/\\/g,'/') // ensure ms win compatibility
             const dest_relative_path = src_file.replace(self.paths.app_base_dir + '/','');
             const dest_path = self.paths.dist_base_dir + '/' + dest_relative_path;
             SipaCliTools.printLine(`  - ${chalk.green(dest_relative_path)} ...`);

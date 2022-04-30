@@ -9,9 +9,9 @@ const { spawn } = require("child_process");
 const LuckyCase = require('lucky-case');
 const chalk = require('chalk');
 
-const SipaCliTools = require('cli/_tools');
+const SipaCliTools = require('./cli/_tools');
 
-const build_destination_dir = './lib/templates/project/default/app/lib/sipa/';
+const build_destination_dir = './lib/templates/project/default/app/assets/lib/sipa/';
 
 const build_exclusion_markers = [
     /\/\/<!-- MODULE -->\/\/(.*?)\/\/<!-- \/MODULE -->\/\//gs,

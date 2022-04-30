@@ -184,11 +184,13 @@ class SipaCliTools {
     }
 
     static sipaRootPath() {
-        return path.resolve(__dirname + '/../../');
+        const self = SipaCliTools;
+        return self.normalizePath(path.resolve(__dirname + '/../../'));
     }
 
     static projectRootPath() {
-        return process.cwd();
+        const self = SipaCliTools;
+        return self.normalizePath(process.cwd());
     }
 
     static projectName() {
@@ -241,7 +243,8 @@ class SipaCliTools {
     }
 
     static makeDirOfFile(file) {
-        let final_dir = path.dirname(file);
+        const self = SipaCliTools;
+        let final_dir = self.normalizePath(path.dirname(file));
         fs.mkdirSync(final_dir, { recursive: true });
     }
 
@@ -297,6 +300,16 @@ class SipaCliTools {
         } catch (e) {
             return false;
         }
+    }
+
+    /**
+     * Ensure path is divided by slashes / and not back slahes \
+     * to ensure compatibility with MS Windows
+     *
+     * @param {String} path
+     */
+    static normalizePath(path) {
+        return path.replace(/\\/g,'/');
     }
 
     /**
