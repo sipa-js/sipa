@@ -48,3 +48,8 @@ in your `sipa.json`.
 
 ### Replace comments in index.html
 
+Rename the two occurences of `META-TITLE-ICON` into `HEADER`.
+
+### Replace old sipa runtime
+
+Copy `lib/templates/project/default/app/assets/lib/sipa/sipa.js` from the Github repository and replace your `app/assets/lib/sipa/sipa.js` in your actual Sipa project.
