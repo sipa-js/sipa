@@ -58,7 +58,7 @@ class SipaCliBuild {
         SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
         const terser_path = path.resolve(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
         const minify_command = `node ${terser_path} "${final_file_path}" -m -c -o "${final_file_path}"`;
-        //execSync(minify_command);
+        execSync(minify_command);
     }
 
     static createMinifiedCssFile() {
