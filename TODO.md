@@ -16,6 +16,9 @@
 - update task
     - [ ] update sipa cli installation itself ![State](https://img.shields.io/badge/-todo-blue)
     - [ ] update sipa within current project ![State](https://img.shields.io/badge/-todo-blue)
+- dist task
+    - [ ] add `distribution_sever` to `sipa.json`
+    - [ ] add task `d` and `dist` and `distribution`(?) to start a live server on the distribution directory
 
 ### common
 - [ ] developer documentation (github page?) ![State](https://img.shields.io/badge/-todo-blue)
