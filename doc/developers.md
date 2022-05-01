@@ -15,7 +15,7 @@ Documentation for developing web apps with Sipa. ![State](https://img.shields.io
   * Add translations
   * Create sample application 
   * Sipa helper classes
-  * Create minified production build
+  * [Production build](developers/production_build.md)
 
 
 * **Use cases**

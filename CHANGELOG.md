@@ -1,3 +1,21 @@
+# 0.5.x
+* Support to configure minification of JavaScript and Stylesheets (CSS).
+## migration steps from 0.4.x to 0.5.x
+Add the following lines inside your `build: { }` attribute in `sipa.json`:
+
+```json
+    "minify": {
+      "css": {
+        "remove_comments": true,
+        "compress": true
+      },
+      "js": {
+        "remove_comments": true,
+        "compress": true
+      }
+    }
+```
+
 # 0.4.x
 ## migration steps from 0.3.x to 0.4.x
 ### refactored lib paths

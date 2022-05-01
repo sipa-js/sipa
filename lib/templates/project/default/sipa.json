@@ -9,6 +9,16 @@
   },
   "build": {
     "auto_fix_font_paths_in_css": true,
+    "minify": {
+      "css": {
+        "remove_comments": true,
+        "compress": true
+      },
+      "js": {
+        "remove_comments": true,
+        "compress": true
+      }
+    },
     "static_files_to_copy": {
       "files": "files",
       "assets/img": "assets/img"

@@ -53,12 +53,20 @@ class SipaCliBuild {
             final_js_file_content += "\n" + file_content;
         });
         const final_file_path = self.paths.dist_base_dir + '/' + self.paths.dist_index_minified_js;
+        if(SipaCliTools.readProjectSipaConfig().build?.minify?.js?.remove_comments) {
+            // remove any single line comments
+            final_js_file_content = final_js_file_content.replace(/^\s*\/\/[^\n]*$/gms, '');
+            // remove any multi line comments
+            final_js_file_content = final_js_file_content.replace(/^\s*\/\*[^*]*\*+([^\/][^*]*\*+)*\//gms, '');
+        }
         SipaCliTools.writeFile(final_file_path, final_js_file_content);
-        const green_path = chalk.green(`${final_file_path.substring(final_file_path.lastIndexOf('assets/'))}`);
-        SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
-        const terser_path = path.resolve(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
-        const minify_command = `node ${terser_path} "${final_file_path}" -m -c -o "${final_file_path}"`;
-        execSync(minify_command);
+        if(SipaCliTools.readProjectSipaConfig().build?.minify?.js?.compress) {
+            const green_path = chalk.green(`${final_file_path.substring(final_file_path.lastIndexOf('assets/'))}`);
+            SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
+            const terser_path = path.resolve(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
+            const minify_command = `node ${terser_path} "${final_file_path}" -m -c -o "${final_file_path}"`;
+            execSync(minify_command);
+        }
     }
 
     static createMinifiedCssFile() {
@@ -73,12 +81,16 @@ class SipaCliBuild {
             let file_content = SipaCliTools.readFile(self.paths.app_base_dir + '/' + file);
             final_css_file_content += "\n" + file_content;
         });
-        // remove any multi line comments
-        final_css_file_content = final_css_file_content.replace(/\/\*[^*]*\*+([^\/][^*]*\*+)*\//gms, '');
+        if(SipaCliTools.readProjectSipaConfig().build?.minify?.css?.remove_comments) {
+            // remove any multi line comments
+            final_css_file_content = final_css_file_content.replace(/\/\*[^*]*\*+([^\/][^*]*\*+)*\//gms, '');
+        }
         SipaCliTools.writeFile(self._finalDistCssStylePath(), final_css_file_content);
-        const green_path = chalk.green(`${self._finalDistCssStylePath().substring(self._finalDistCssStylePath().lastIndexOf('assets/'))}`);
-        SipaCliTools.printLine(`    → minify css to ${green_path} ...`);
-        SipaCliServer.runSass(`"${self._finalDistCssStylePath()}" --no-source-map --style=compressed "${self._finalDistCssStylePath()}"`, false, true);
+        if(SipaCliTools.readProjectSipaConfig().build?.minify?.css?.compress) {
+            const green_path = chalk.green(`${self._finalDistCssStylePath().substring(self._finalDistCssStylePath().lastIndexOf('assets/'))}`);
+            SipaCliTools.printLine(`    → minify css to ${green_path} ...`);
+            SipaCliServer.runSass(`"${self._finalDistCssStylePath()}" --no-source-map --style=compressed "${self._finalDistCssStylePath()}"`, false, true);
+        }
     }
 
     /**
