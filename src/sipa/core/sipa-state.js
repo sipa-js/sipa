@@ -5,10 +5,10 @@
  *                     You can even store references and functions!
  *
  * Level 2 (session): Data will be lost when browser is closed (SipaState.LEVEL.SESSION)
- *                    You can not store references or functions!
+ *                    You can not store references but thanks to SipaSerializer isolated functions are possible!
  *
  * Level 3 (storage): Data will be lost when clearing browser cache only (SipaState.LEVEL.STORAGE)
- *                    You can not store references or functions!
+ *                    You can not store references but thanks to SipaSerializer isolated functions are possible!
  *
  */
 class SipaState {
