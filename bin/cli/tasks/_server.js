@@ -9,6 +9,8 @@ const execSync = require("child_process").execSync;
 const spawn = require("child_process").spawn;
 const exec_prom = util.promisify(exec);
 
+const File = require('ruby-nice/file');
+
 const SipaCliTools = require('./../_tools');
 
 class SipaCliServer {
@@ -32,7 +34,19 @@ class SipaCliServer {
         (async function run() {
             const host = SipaCliTools.readProjectSipaConfig().development_server?.host || '7000';
             const port = SipaCliTools.readProjectSipaConfig().development_server?.port || '0.0.0.0';
-            const server_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/live-server/live-server.js --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
+            const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/live-server/live-server.js`;
+            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../../node_modules/live-server/live-server.js`);
+            let live_server_js_path = null;
+            // npm path
+            if(File.isExisting(npm_path)) {
+                live_server_js_path = npm_path;
+            } // yarn path
+            else if(File.isExisting((yarn_path))) {
+                live_server_js_path = yarn_path;
+            } else {
+                throw new Error(`Could not locate live-server.js`);
+            }
+            const server_command = `node ${live_server_js_path} --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
             let server_process = exec(server_command);
             server_process.stdout.on('data', function(data) {
                 console.log(data.toString('utf8'));
@@ -48,7 +62,19 @@ class SipaCliServer {
      * @returns {ChildProcess|Buffer|string} ChildProcess on async, Buffer or string on sync
      */
     static runSass(parameters = "", log = true, sync = false) {
-        const sass_command = `node ${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js ${parameters}`;
+        const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js`;
+        const yarn_path = `${SipaCliTools.sipaRootPath()}/../../../node_modules/sass/sass.js`;
+        let sass_server_js_path = null;
+        // npm path
+        if(File.isExisting(npm_path)) {
+            sass_server_js_path = npm_path;
+        } // yarn path
+        else if(File.isExisting((yarn_path))) {
+            sass_server_js_path = yarn_path;
+        } else {
+            throw new Error(`Could not locate sass.js`);
+        }
+        const sass_command = `node ${sass_server_js_path} ${parameters}`;
         let sass_process = null;
         if(sync) {
             sass_process = execSync(sass_command);
