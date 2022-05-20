@@ -23,6 +23,7 @@ const build_exclusion_markers = [
 ]
 
 const version_regex = /"version":\s*"([^"]*)"/sgm;
+const date_regex = /"date":\s*"([^"]*)"/sgm;
 
 const release_header_template = `/**
  * 
@@ -90,6 +91,15 @@ function updateJsProjectVersion() {
     return new_version;
 }
 
+function updateDate() {
+    const new_date = (new Date()).toISOString();
+    // package.json
+    let package_json = fs.readFileSync('./package.json','utf8');
+    package_json = package_json.replace(date_regex, `"date": "${new_date}"`);
+    fs.writeFileSync('./package.json', package_json, 'utf8');
+    return new_date;
+}
+
 console.log(`Updating version from ${version()} ...`);
 console.log(`... to version ${updateJsProjectVersion()}`);
 console.log();
@@ -98,7 +108,7 @@ console.log(chalk.yellow('###################################'));
 console.log(chalk.yellow('# Sipa build script'));
 console.log(chalk.yellow('###################################'));
 console.log(`Updating version from ${version()} ...`);
-console.log(`... to version ${updateJsProjectVersion()}`);
+console.log(`... to version ${updateJsProjectVersion()} @ ${updateDate()}`);
 console.log();
 console.log('Building JS ...');
 for(let build_key of Object.keys(builds)) {
