@@ -1,7 +1,7 @@
 {
   "name": "sipa",
-  "version": "0.5.19",
-  "date": "2022-05-20T18:47:22.122Z",
+  "version": "0.5.21",
+  "date": "2022-05-20T18:49:21.919Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
@@ -59,7 +59,7 @@
     "live-server": "^1.2.1",
     "lucky-case": "^1.1.7",
     "prompt-sync": "^4.2.0",
-    "ruby-nice": "^0.0.33",
+    "ruby-nice": "^0.0.35",
     "sass": "^1.32.0",
     "terser": "^5.10.0",
     "typifier": "^0.0.10"
