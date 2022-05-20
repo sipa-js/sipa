@@ -18,8 +18,7 @@
     "test_browser": "npx jasmine-browser-runner serve",
     "build": "node bin/build.js",
     "link_dev": "sudo npm link",
-    "unlink_dev": "sudo npm rm --global sipa",
-    "publish": "npm publish"
+    "unlink_dev": "sudo npm rm --global sipa"
   },
   "repository": {
     "type": "git",
