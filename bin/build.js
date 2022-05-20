@@ -100,10 +100,6 @@ function updateDate() {
     return new_date;
 }
 
-console.log(`Updating version from ${version()} ...`);
-console.log(`... to version ${updateJsProjectVersion()}`);
-console.log();
-
 console.log(chalk.yellow('###################################'));
 console.log(chalk.yellow('# Sipa build script'));
 console.log(chalk.yellow('###################################'));
