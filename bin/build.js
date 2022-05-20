@@ -8,6 +8,11 @@ const exec_prom = util.promisify(exec);
 const { spawn } = require("child_process");
 const LuckyCase = require('lucky-case');
 const chalk = require('chalk');
+const File = require('ruby-nice/file');
+const Dir = require('ruby-nice/dir');
+const FileUtils = require('ruby-nice/file-utils');
+require('ruby-nice/array');
+require('ruby-nice/object');
 
 const SipaCliTools = require('./cli/_tools');
 
@@ -49,6 +54,17 @@ const builds = {
         ]}
 }
 
+const copy_static_files = {
+    './node_modules/typifier/dist/typifier.js': File.expandPath(build_destination_dir + '/../typifier/') + '/typifier.js',
+    './node_modules/typifier/LICENSE': File.expandPath(build_destination_dir + '/../typifier/') + '/LICENSE',
+
+    './node_modules/curly-bracket-parser/dist/curly-bracket-parser.js': File.expandPath(build_destination_dir + '/../curly-bracket-parser/') + '/curly-bracket-parser.js',
+    './node_modules/curly-bracket-parser/LICENSE': File.expandPath(build_destination_dir + '/../curly-bracket-parser/') + '/LICENSE',
+
+    './node_modules/lucky-case/dist/lucky-case.js': File.expandPath(build_destination_dir + '/../lucky-case/') + '/lucky-case.js',
+    './node_modules/lucky-case/LICENSE': File.expandPath(build_destination_dir + '/../lucky-case/') + '/LICENSE',
+}
+
 function version() {
     const package_json = SipaCliTools.readFile('./package.json');
     version_regex.lastIndex = 0;
@@ -59,14 +75,31 @@ function releaseTemplate() {
     return release_header_template.replace('{{version}}', version()).replace('{{date}}',(new Date).toISOString());
 }
 
-function prependToFile(file, string) {
-    const org_file = SipaCliTools.readFile(file);
-    SipaCliTools.writeFile(file, string + org_file);
+function updateJsProjectVersion() {
+    let split_version = version().split('.');
+    split_version[split_version.length-1] = parseInt(split_version[split_version.length-1])+1;
+    const new_version = split_version.join('.');
+    // package.json
+    let package_json = fs.readFileSync('./package.json','utf8');
+    package_json = package_json.replace(version_regex, `"version": "${new_version}"`);
+    fs.writeFileSync('./package.json', package_json, 'utf8');
+    // project class
+    let project_js = fs.readFileSync('./src/sipa/sipa.js','utf8');
+    project_js = project_js.replace(/Sipa\._version\s*=\s*"[^"]+";/gm, `Sipa._version = "${new_version}";`)
+    fs.writeFileSync('./src/sipa/sipa.js', project_js, 'utf8');
+    return new_version;
 }
+
+console.log(`Updating version from ${version()} ...`);
+console.log(`... to version ${updateJsProjectVersion()}`);
+console.log();
 
 console.log(chalk.yellow('###################################'));
 console.log(chalk.yellow('# Sipa build script'));
 console.log(chalk.yellow('###################################'));
+console.log(`Updating version from ${version()} ...`);
+console.log(`... to version ${updateJsProjectVersion()}`);
+console.log();
 console.log('Building JS ...');
 for(let build_key of Object.keys(builds)) {
     const build = builds[build_key];
@@ -86,5 +119,13 @@ for(let build_key of Object.keys(builds)) {
         SipaCliTools.writeFile(build.destination_file, releaseTemplate() + final_file);
     })();
 }
+console.log('Copy static files ...');
+copy_static_files.each((key, value, index) => {
+    console.log(` - ${key} -> ${value}`);
+    if(!File.isDirectory(File.getDirname(value))) {
+        FileUtils.mkdirP(File.getDirname(value));
+    }
+    FileUtils.copy(key, value);
+});
 
 console.log(chalk.green('All done!'));

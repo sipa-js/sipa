@@ -441,10 +441,10 @@ cors@latest:
     object-assign "^4"
     vary "^1"
 
-curly-bracket-parser@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/curly-bracket-parser/-/curly-bracket-parser-1.0.2.tgz#7cc6f5c4056cb95ecc349d35a97bbfe18a02f0cd"
-  integrity sha512-DXQrT+XyUvdRjfH/VXWXsvxnm/RHQ7w79E1laFbaXR4NE1FQVx7Ifoq+ExxPiOAPWqN57+VUeIHejmL761uVyA==
+curly-bracket-parser@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/curly-bracket-parser/-/curly-bracket-parser-1.0.3.tgz#37d3d4add2dbd327914f2c3ccf38fe91856699e9"
+  integrity sha512-O2aM7YrSFQjWDDCNcRhcaYKxWSkKvX1CnrRmeqxoZdY93e0H2F4lsxW4Lf3ueOKr9fn92Lqpx92wc5CW64rTYg==
   dependencies:
     lucky-case "^1.1.2"
 
@@ -727,7 +727,7 @@ from@~0:
   resolved "https://registry.yarnpkg.com/from/-/from-0.1.7.tgz#83c60afc58b9c56997007ed1a768b3ab303a44fe"
   integrity sha1-g8YK/Fi5xWmXAH7Rp2izqzA6RP4=
 
-fs-extra@^10.0.0:
+fs-extra@^10.0.0, fs-extra@^10.1.0:
   version "10.1.0"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-10.1.0.tgz#02873cfbc4084dde127eaa5f9905eef2325d1abf"
   integrity sha512-oRXApq54ETRj4eMiFzGnHWGy+zo5raudjuxN0b8H7s/RU2oW0Wvsx9O0ACRN/kRq9E8Vu/ReskGB5o3ji+FzHQ==
@@ -799,6 +799,17 @@ glob@^7.1.3, glob@^7.1.6, glob@^7.1.7:
     minimatch "^3.0.4"
     once "^1.3.0"
     path-is-absolute "^1.0.0"
+
+glob@^8.0.1:
+  version "8.0.3"
+  resolved "https://registry.yarnpkg.com/glob/-/glob-8.0.3.tgz#415c6eb2deed9e502c68fa44a272e6da6eeca42e"
+  integrity sha512-ull455NHSHI/Y1FqGaaYFaLGkNMMJbavMrEGFXG/PGrg6y7sutWHUHrz6gy6WEBH6akM1M414dWKCNs+IhKdiQ==
+  dependencies:
+    fs.realpath "^1.0.0"
+    inflight "^1.0.4"
+    inherits "2"
+    minimatch "^5.0.1"
+    once "^1.3.0"
 
 graceful-fs@^4.1.11, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
   version "4.2.10"
@@ -1184,6 +1195,11 @@ lucky-case@^1.1.2, lucky-case@^1.1.3:
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/lucky-case/-/lucky-case-1.1.3.tgz#b8844eb9c99c21349c0562ae4814f2ea79466281"
   integrity sha512-lanf2o9ui/Kayx/Scx7Q7J2z+Y2Dt1HNHG79tv5oFTWyR1O32W5blF/1lUQbqHk9OKa0cCUzTbJHgaWv4S+8ow==
+
+lucky-case@^1.1.7:
+  version "1.1.7"
+  resolved "https://registry.yarnpkg.com/lucky-case/-/lucky-case-1.1.7.tgz#ff0ace0b0d9d9fbff65ccd3861403a1407df6fb7"
+  integrity sha512-UIIRoAJpeCjoNjCAaZNpVOlynFms6k2/tbalR2D5sxg3jd0ZwU3oPBWdQxQChNHJMAJffVeEjp8YRGT6rDNbyQ==
 
 map-cache@^0.2.2:
   version "0.2.2"
@@ -1574,6 +1590,15 @@ rimraf@^3.0.0:
   dependencies:
     glob "^7.1.3"
 
+ruby-nice@^0.0.33:
+  version "0.0.33"
+  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.0.33.tgz#f7b88b503dd4e10fe043473339036ca77acc0368"
+  integrity sha512-4bZXqdB/uxm5BVmQAbtTdAZ09TAGDs/jjzqfuPjYwgOk+PphV087J7VNNfedWiCCbo0m/PaecXE6TaEMkDc7qQ==
+  dependencies:
+    fs-extra "^10.1.0"
+    glob "^8.0.1"
+    typifier "^0.0.8"
+
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.1.2.tgz#991ec69d296e0313747d59bdfd2b745c35f8828d"
@@ -1926,6 +1951,20 @@ typical@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/typical/-/typical-5.2.0.tgz#4daaac4f2b5315460804f0acf6cb69c52bb93066"
   integrity sha512-dvdQgNDNJo+8B2uBQoqdb11eUCE1JQXhvjC/CZtgvZseVd5TYMXnq0+vuUemXbd/Se29cTaUuPX3YIc2xgbvIg==
+
+typifier@^0.0.10:
+  version "0.0.10"
+  resolved "https://registry.yarnpkg.com/typifier/-/typifier-0.0.10.tgz#33d0b4567b7a1469c46cf87b5ca067630cba6fd3"
+  integrity sha512-IlW2Y659XCyNHbC3WQHtExSqAPJrgjnjNXEcofe3iKizl/AEVtxKz/vGAtryEss+l1dwUEr529bZH6ujnD6dWA==
+  dependencies:
+    lucky-case "^1.1.3"
+
+typifier@^0.0.8:
+  version "0.0.8"
+  resolved "https://registry.yarnpkg.com/typifier/-/typifier-0.0.8.tgz#011a98be26b4900b14944f6d5451b9bfad83af24"
+  integrity sha512-YkM2x/VTDvDXfmM+5w3SeewaXCq+0pHTO+eqRtyAJPr3QyVD9XJ5S0/dxEmNxGH3ya1xnHczhYmBIkkx2twGhA==
+  dependencies:
+    lucky-case "^1.1.3"
 
 union-value@^1.0.0:
   version "1.0.1"
