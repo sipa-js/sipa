@@ -66,7 +66,7 @@ class SipaCliBuild {
             SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
             let terser_path = null;
             const npm_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
-            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../../node_modules/terser/bin/terser`);
+            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/terser/bin/terser`);
             // npm path
             if(File.isExisting(npm_path)) {
                 terser_path = npm_path;

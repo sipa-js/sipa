@@ -35,7 +35,7 @@ class SipaCliServer {
             const host = SipaCliTools.readProjectSipaConfig().development_server?.host || '7000';
             const port = SipaCliTools.readProjectSipaConfig().development_server?.port || '0.0.0.0';
             const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/live-server/live-server.js`;
-            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../../node_modules/live-server/live-server.js`);
+            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/live-server/live-server.js`);
             let live_server_js_path = null;
             // npm path
             if(File.isExisting(npm_path)) {
@@ -63,7 +63,7 @@ class SipaCliServer {
      */
     static runSass(parameters = "", log = true, sync = false) {
         const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/sass/sass.js`;
-        const yarn_path = `${SipaCliTools.sipaRootPath()}/../../../node_modules/sass/sass.js`;
+        const yarn_path = `${SipaCliTools.sipaRootPath()}/../../node_modules/sass/sass.js`;
         let sass_server_js_path = null;
         // npm path
         if(File.isExisting(npm_path)) {
