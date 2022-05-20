@@ -1,4 +1,4 @@
-#![Sipa - Particularly simple web framework](../_raw/logo_doc.svg)
+#![Sipa - Particularly simple web framework](../../_assets/_raw/logo_doc.svg)
 # jsdoc documentation
 Here we provide auto generated json doc documentations of all the Sipa parts.
 

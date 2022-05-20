@@ -1,6 +1,6 @@
 {
   "name": "sipa",
-  "version": "0.5.4",
+  "version": "0.5.6",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
@@ -20,6 +20,12 @@
     "link_dev": "sudo npm link",
     "unlink_dev": "sudo npm rm --global sipa"
   },
+  "files": [
+    "bin/cli/**/*",
+    "doc/**/*",
+    "lib/**/*",
+    "src/**/*"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/magynhard/sipa.git"
