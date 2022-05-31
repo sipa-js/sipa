@@ -10,6 +10,7 @@ const execSync = require("child_process").execSync;
 const SipaCliTools = require('./../_tools');
 const SipaCliServer = require('./../tasks/_server');
 const SipaCliIndexManager = require('./../_index-manager');
+const File = require("ruby-nice/file");
 
 class SipaCliBuild {
     static build() {
@@ -63,7 +64,18 @@ class SipaCliBuild {
         if(SipaCliTools.readProjectSipaConfig().build?.minify?.js?.compress) {
             const green_path = chalk.green(`${final_file_path.substring(final_file_path.lastIndexOf('assets/'))}`);
             SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
-            const terser_path = path.resolve(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
+            let terser_path = null;
+            const npm_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/node_modules/terser/bin/terser`);
+            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/terser/bin/terser`);
+            // npm path
+            if(File.isExisting(npm_path)) {
+                terser_path = npm_path;
+            } // yarn path
+            else if(File.isExisting((yarn_path))) {
+                terser_path = yarn_path;
+            } else {
+                throw new Error(`Could not locate sass.js`);
+            }
             const minify_command = `node ${terser_path} "${final_file_path}" -m -c -o "${final_file_path}"`;
             execSync(minify_command);
         }

@@ -28,4 +28,4 @@ class Sipa {
  * @type {string}
  * @private
  */
-Sipa._version = "0.5.14";
+Sipa._version = "0.5.27";
