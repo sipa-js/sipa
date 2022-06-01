@@ -251,7 +251,7 @@ class SipaPage {
                 after_loaded_function(data, text, response, 'always');
             },
             error: (response, text, data) => {
-                console.error(`Error ${response.status} - ${response.text} - could not load layout '${layout_path}'`);
+                console.error(`Error ${response.status} - ${response.statusText} - could not load layout '${layout_path}'`);
                 if (typeof options.error === 'function') {
                     options.error(response, text, data);
                 }
