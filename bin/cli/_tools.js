@@ -152,7 +152,7 @@ class SipaCliTools {
         const config = self.readProjectSipaConfig();
         let paths = [];
         if(config.development_server?.sass_watch_paths?.length || 0 > 0) {
-            paths = paths.concat(config.development_server.sass_watch_paths);
+            paths = paths.concat(config.development_server.sass_watch_paths.map(e => `app/${e}`));
         }
         let invalid_paths = [];
         paths.forEach((path) => {
@@ -335,8 +335,8 @@ SipaCliTools.SIPA_CONFIG_DEFAULTS = {
         host: '0.0.0.0',
         port: '7000',
         sass_watch_paths: [
-            "app/assets/style",
-            "app/views"
+            "assets/style",
+            "views"
         ]
     },
     indexer: {

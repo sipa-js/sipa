@@ -106,7 +106,7 @@ class SipaCliServer {
                 content: [
                     `Starting live sass file watcher listening on {green *.scss} files to compile to {green *.css} files automatically`,
                     '',
-                    `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => { return chalk.green(e); }).join("\n  - ")}`,
+                    `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => { return chalk.green(`app/${e}`); }).join("\n  - ")}`,
                     '',
                     'If you want to modify the watch paths of the live development sass compilation server, edit {green sipa.json} in your project root directory.',
                     '',
@@ -120,12 +120,12 @@ class SipaCliServer {
     }
 
     static _sassWatchPaths() {
-        return SipaCliTools.readProjectSipaConfig().development_server?.sass_watch_paths || ['app/assets/style','app/views'];
+        return SipaCliTools.readProjectSipaConfig().development_server?.sass_watch_paths || ['assets/style','views'];
     }
 
     static _sassWatchPathsInline() {
         const self = SipaCliServer;
-        return self._sassWatchPaths().map((el) => { return el.startsWith('./') ? el : './' + el }).join(' ');
+        return self._sassWatchPaths().map((el) => { return el.startsWith('./') ? `./app/${el.substring(2)}` : `./app/${el}` }).join(' ');
     }
 }
 

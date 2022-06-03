@@ -1,3 +1,24 @@
+# 0.6.x
+* Support to configure the indexers asset paths at `sipa.json` to define additional custom assets.
+
+## migration steps from 0.5.x to 0.6.x
+In `sipa.json` the SASS watch paths are now relativ to `/app` and not to the project root `/` anymore, as paths outside `app` could not be accessed by `index.html` anyway. On the other hand, then all paths inside `sipa.json` have the base dir `/app/` consistently.
+
+So adjust the paths and remove the prefixed `app` at the `sass_watch_paths`, for example:
+
+```json
+    // before
+    "sass_watch_paths": [
+      "app/assets/style",
+      "app/views"
+    ]
+    // after
+    "sass_watch_paths": [
+      "assets/style",
+      "views"
+    ]
+```
+
 # 0.5.x
 * Support to configure minification of JavaScript and Stylesheets (CSS).
 ## migration steps from 0.4.x to 0.5.x
