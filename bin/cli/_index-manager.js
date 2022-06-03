@@ -17,7 +17,7 @@ class SipaCliIndexManager {
      */
     static appendEntry(section, path) {
         const self = SipaCliIndexManager;
-        const tag_name = self._makeTag(path, { type: self._getAssetTypeBySection(section)});
+        const tag_name = self._makeTag(path, {type: self._getAssetTypeBySection(section)});
         const section_close_tag_regex = new RegExp(`(\\s*)\\<\\!\\-\\-\\s*\\/${LuckyCase.toUpperCase(section)}\\s*\\-\\-\\>`, "gm");
         let index_content = SipaCliTools.readProjectIndexFile();
         index_content = index_content.replace(section_close_tag_regex, "$1" + tag_name + index_content.match(section_close_tag_regex));
@@ -31,8 +31,8 @@ class SipaCliIndexManager {
      */
     static removeEntry(path) {
         const self = SipaCliIndexManager;
-            const js_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.script_tag_regex.source.replace('src\\=\\"([^"]+)"','src\\=\\"' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
-            const css_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.style_tag_regex.source.replace('href="([^"]+)"','href="' + path.replace(/\//g,'\\/') + '"') + '\\s*$', 'gm');
+        const js_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.script_tag_regex.source.replace('src\\=\\"([^"]+)"', 'src\\=\\"' + path.replace(/\//g, '\\/') + '"') + '\\s*$', 'gm');
+        const css_entry_regex = new RegExp('[\\n\\r\\c]?\\s*' + self.style_tag_regex.source.replace('href="([^"]+)"', 'href="' + path.replace(/\//g, '\\/') + '"') + '\\s*$', 'gm');
         let index_content = SipaCliTools.readProjectIndexFile();
         [js_entry_regex, css_entry_regex].forEach((entry_regex) => {
             index_content = index_content.replace(entry_regex, '');
@@ -48,7 +48,9 @@ class SipaCliIndexManager {
     static getJsEntries() {
         const self = SipaCliIndexManager;
         let index_content = SipaCliTools.readProjectIndexFile();
-        return [...index_content.matchAll(self.script_tag_regex)].map((e) => { return e[1]; });
+        return [...index_content.matchAll(self.script_tag_regex)].map((e) => {
+            return e[1];
+        });
     }
 
     /**
@@ -61,7 +63,9 @@ class SipaCliIndexManager {
         const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
         let files = glob.sync(dir_prefix + '**/*.js', {});
         // make paths relative to index.html
-        return files.map((e) => { return e.substr(dir_prefix.length); });
+        return files.map((e) => {
+            return e.substr(dir_prefix.length);
+        });
     }
 
     /**
@@ -84,7 +88,9 @@ class SipaCliIndexManager {
     static getStyleEntries() {
         const self = SipaCliIndexManager;
         let index_content = SipaCliTools.readProjectIndexFile();
-        return [...index_content.matchAll(self.style_tag_regex)].map((e) => { return e[1]; });
+        return [...index_content.matchAll(self.style_tag_regex)].map((e) => {
+            return e[1];
+        });
     }
 
     /**
@@ -97,7 +103,9 @@ class SipaCliIndexManager {
         const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
         let files = glob.sync(dir_prefix + '**/*.css', {});
         // make paths relative to index.html
-        return files.map((e) => { return e.substr(dir_prefix.length); });
+        return files.map((e) => {
+            return e.substr(dir_prefix.length);
+        });
     }
 
     /**
@@ -123,7 +131,7 @@ class SipaCliIndexManager {
         const existing_files = self.getJsFiles().concat(self.getStyleFiles())
             .concat(self.ignoredFiles()); // add ignored entries to existing, to remove from list
         existing_entries.forEach((el, i) => {
-            if(existing_files.includes(el)) {
+            if (existing_files.includes(el)) {
                 delete existing_entries[i];
             }
         });
@@ -140,7 +148,7 @@ class SipaCliIndexManager {
         const self = SipaCliIndexManager;
         let missing_entries = self.missingJsEntries().concat(self.missingStyleEntries());
         missing_entries.forEach((el, i) => {
-            if(self.ignoredFiles().includes(el)) {
+            if (self.ignoredFiles().includes(el)) {
                 delete missing_entries[i];
             }
         });
@@ -174,17 +182,17 @@ class SipaCliIndexManager {
      * @returns {string} html tag to include js or css
      * @private
      */
-    static _makeTag(path, options = { type: 'page'}) {
+    static _makeTag(path, options = {type: 'page'}) {
         const self = SipaCliIndexManager;
         const default_options = {
             type: 'page'
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        SipaHelper.validateParams([{ param_name: 'path', param_value: path, expected_type: 'String'}]);
+        SipaHelper.validateParams([{param_name: 'path', param_value: path, expected_type: 'String'}]);
         const final_path = self._makePath(path, options);
-        if(path.endsWith('.css')) {
+        if (path.endsWith('.css')) {
             return `<link rel="stylesheet" href="${final_path}">`;
-        } else if(path.endsWith('.js')) {
+        } else if (path.endsWith('.js')) {
             return `<script type="text/javascript" src="${final_path}"></script>`;
         } else {
             throw `Invalid file extension '${path.substr(path.lastIndexOf('.'))}'. Supported extensions are '.css' and '.js'`;
@@ -200,7 +208,7 @@ class SipaCliIndexManager {
      * @param {('views/pages','assets/js','assets/style')} options.relative_prefix='views/pages'
      * @private
      */
-    static _makePath(path, options = { type: 'page'}) {
+    static _makePath(path, options = {type: 'page'}) {
         const self = SipaCliIndexManager;
         const default_options = {
             type: 'page'
@@ -210,7 +218,7 @@ class SipaCliIndexManager {
         const app_prefix = 'app/';
         const absolute_prefix = SipaCliTools.projectRootPath() + '/' + app_prefix;
         let relative_prefix = null;
-        switch(options.type) {
+        switch (options.type) {
             case 'page':
                 relative_prefix = 'views/pages';
                 break;
@@ -226,23 +234,26 @@ class SipaCliIndexManager {
             case 'lib':
                 relative_prefix = 'assets/lib';
                 break;
+            case 'custom':
+                relative_prefix = '';
+                break;
             case 'app-init':
                 relative_prefix = 'config';
                 break;
         }
         let final_path = path;
-        if(final_path.startsWith(absolute_prefix)) {
+        if (final_path.startsWith(absolute_prefix)) {
             final_path = final_path.substring(absolute_prefix.length);
         }
         final_path = SipaHelper.cutLeadingCharacters(final_path, '/');
-        if(final_path.startsWith(app_prefix)) {
+        if (final_path.startsWith(app_prefix)) {
             final_path = final_path.substring(app_prefix.length);
         }
         final_path = SipaHelper.cutLeadingCharacters(final_path, '/');
-        if(!final_path.startsWith(relative_prefix)) {
+        if (!final_path.startsWith(relative_prefix)) {
             final_path = relative_prefix + '/' + final_path;
         }
-        if(fs.existsSync(SipaCliTools.projectRootPath() + '/' + app_prefix + final_path)) {
+        if (fs.existsSync(SipaCliTools.projectRootPath() + '/' + app_prefix + final_path)) {
             return final_path;
         } else {
             throw `Could not make path of '${path}'\n${final_path}`;
@@ -273,6 +284,9 @@ class SipaCliIndexManager {
                 return 'lib';
             case 'APP-INIT-JS':
                 return 'app-init';
+            case 'CUSTOM-JS':
+            case 'CUSTOM-CSS':
+                return 'custom';
             default:
                 throw `Invalid section '${section}'`;
         }
@@ -280,25 +294,29 @@ class SipaCliIndexManager {
 
     static _getSectionByPath(path) {
         const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
-        const rel_path = path.replace(dir_prefix,'');
-        if(rel_path.startsWith('views/pages') && rel_path.endsWith('.js')) {
+        const rel_path = path.replace(dir_prefix, '');
+        if (rel_path.startsWith('views/pages') && rel_path.endsWith('.js')) {
             return 'PAGE-JS';
-        } else if(rel_path.startsWith('views/pages') && rel_path.endsWith('.css')) {
+        } else if (rel_path.startsWith('views/pages') && rel_path.endsWith('.css')) {
             return 'PAGE-CSS';
-        } else if(rel_path.startsWith('views/layouts') && rel_path.endsWith('.js')) {
+        } else if (rel_path.startsWith('views/layouts') && rel_path.endsWith('.js')) {
             return 'LAYOUT-JS';
-        } else if(rel_path.startsWith('views/layouts') && rel_path.endsWith('.css')) {
+        } else if (rel_path.startsWith('views/layouts') && rel_path.endsWith('.css')) {
             return 'LAYOUT-CSS';
-        } else if(rel_path.startsWith('assets/js') && rel_path.endsWith('.js')) {
+        } else if (rel_path.startsWith('assets/js') && rel_path.endsWith('.js')) {
             return 'ASSET-JS';
-        } else if(rel_path.startsWith('assets/style') && rel_path.endsWith('.css')) {
+        } else if (rel_path.startsWith('assets/style') && rel_path.endsWith('.css')) {
             return 'ASSET-CSS';
-        } else if(rel_path.startsWith('assets/lib') && rel_path.endsWith('.js')) {
+        } else if (rel_path.startsWith('assets/lib') && rel_path.endsWith('.js')) {
             return 'LIB-JS';
-        } else if(rel_path.startsWith('assets/lib') && rel_path.endsWith('.css')) {
+        } else if (rel_path.startsWith('assets/lib') && rel_path.endsWith('.css')) {
             return 'LIB-CSS';
-        } else if(rel_path.startsWith('config/') && rel_path.endsWith('.js')) {
+        } else if (rel_path.startsWith('config/') && rel_path.endsWith('.js')) {
             return 'APP-INIT-JS';
+        } else if (!rel_path.startsWith('files/') && rel_path.endsWith('.css')) {
+            return 'CUSTOM-CSS';
+        } else if (!rel_path.startsWith('files/') && rel_path.endsWith('.js')) {
+            return 'CUSTOM-JS'
         }
     }
 }
