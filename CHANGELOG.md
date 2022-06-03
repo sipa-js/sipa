@@ -1,7 +1,9 @@
 # 0.6.x
-* Support to configure the indexers asset paths at `sipa.json` to define additional custom assets.
+* Now all paths in `sipa.json` are based on the directory `/app`.
+* New block in `index.html` for very custom assets.
 
-## migration steps from 0.5.x to 0.6.x
+## Migration steps from 0.5.x to 0.6.x
+### New base dir for watch paths
 In `sipa.json` the SASS watch paths are now relativ to `/app` and not to the project root `/` anymore, as paths outside `app` could not be accessed by `index.html` anyway. On the other hand, then all paths inside `sipa.json` have the base dir `/app/` consistently.
 
 So adjust the paths and remove the prefixed `app` at the `sass_watch_paths`, for example:
@@ -18,10 +20,32 @@ So adjust the paths and remove the prefixed `app` at the `sass_watch_paths`, for
       "views"
     ]
 ```
+### New custom block in `index.html`
+There is a new custom block in `index.html` to link very custom assets there.
+
+In your `index.html` after the line 
+
+```html
+<!---------------===== /LIBS =====--------------->
+``` 
+add the following lines:
+
+```html
+    <!---------------===== CUSTOM =====--------------->
+    <!-- section for your very custom content, e.g. if you want to embed sipa into another framework -->
+    <!-- here are only included files, that are defined in sipa.json at 'custom_assets_paths' -->
+    <!-- CUSTOM-JS -->
+    <!-- /CUSTOM-JS -->
+    <!-- CUSTOM-CSS -->
+    <!-- /CUSTOM-CSS -->
+    <!---------------===== /CUSTOM =====--------------->
+```
+
+
 
 # 0.5.x
 * Support to configure minification of JavaScript and Stylesheets (CSS).
-## migration steps from 0.4.x to 0.5.x
+## Migration steps from 0.4.x to 0.5.x
 Add the following lines inside your `build: { }` attribute in `sipa.json`:
 
 ```json
@@ -38,7 +62,7 @@ Add the following lines inside your `build: { }` attribute in `sipa.json`:
 ```
 
 # 0.4.x
-## migration steps from 0.3.x to 0.4.x
+## Migration steps from 0.3.x to 0.4.x
 ### refactored lib paths
 The path `app/lib` has been moved to `app/assets/lib`.
 
