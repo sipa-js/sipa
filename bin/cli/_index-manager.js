@@ -5,7 +5,7 @@ const glob = require('glob');
 const LuckyCase = require('lucky-case');
 
 const SipaCliTools = require('./_tools');
-const SipaHelper = require('./../../src/sipa/tools/sipa-helper');
+const SipaHelper = require('./../../src/simpartic/tools/sipa-helper');
 
 
 class SipaCliIndexManager {

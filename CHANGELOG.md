@@ -1,3 +1,11 @@
+# 0.7.x
+## Sipa goes back to the long name Simpartic
+As `sipa` is not very uniq - about 50 million search results on Google - we go back to its original long version `simpartic` while the shortcut `sipa` will remain for the CLI and class names.
+
+Simpartic has only about 200 search results on Google today, where many of them are typos, except our real simpartic itself of course!
+
+
+
 # 0.6.x
 * Now all paths in `sipa.json` are based on the directory `/app`.
 * New block in `index.html` for very custom assets.
@@ -32,8 +40,8 @@ add the following lines:
 
 ```html
     <!---------------===== CUSTOM =====--------------->
-    <!-- section for your very custom content, e.g. if you want to embed sipa into another framework -->
-    <!-- here are only included files, that are defined in sipa.json at 'custom_assets_paths' -->
+    <!-- Section for your very custom content, e.g. if you want to embed Simpartic into another framework -->
+    <!-- Here are only files included, that are defined in simpartic.json at 'custom_assets_paths' -->
     <!-- CUSTOM-JS -->
     <!-- /CUSTOM-JS -->
     <!-- CUSTOM-CSS -->

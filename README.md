@@ -16,7 +16,7 @@ But I allow you to use it anyway!
 ```
 
 **TALBE OF CONTENTS**
-* [Why Sipa?](#why-sipa)
+* [Why Simpartic?](#why-simpartic)
     * [Main features](#main-features)
     * [Shipped libraries](#shipped-libraries)
 * [Installation](#installation)
@@ -30,8 +30,8 @@ But I allow you to use it anyway!
 
 
 <!-- -------------------------- SECTION -------------------------- -->
-<a name="why-sipa"></a>
-## Why Sipa?
+<a name="why-simpartic"></a>
+## Why Simpartic?
 I just want to develop with Javascript: The code i write IS the code i run in the browser. 
 
 Writing Javascript and HTML the old way! So I can directly run and debug my code in the browser. Instant!
@@ -75,7 +75,7 @@ You may use npm instead of yarn.
 
 ### Install the framework with yarn
 ```bash
-yarn global add sipa
+yarn global add simpartic
 ```
 
 #### Add to PATH environment variable
@@ -84,7 +84,7 @@ You have to ensure, that the path of yarns bin directory is added to PATH.
 
 #### Linux/Unix/MacOS
 
-So if the command `sipa` is not available after installation, add the following line to your shell config if you are using linux/macOS/unix (`~/.bashrc`, `~/.zshrc`/...):
+If the command `sipa` is not available after installation, add the following line to your shell config if you are using linux/macOS/unix (`~/.bashrc`, `~/.zshrc`/...):
 ```shell
 export PATH="$(yarn global bin):$PATH"
 ```
@@ -95,19 +95,19 @@ Run `yarn global bin` and add the returned PATH to your global PATH environment 
 
 ### Install the framework with npm
 ```bash
-npm install -g sipa
+npm install -g simpartic
 ```
 
 Depending on your global npm directory, you may need to run this command with sudo or as root:
 ```bash
-sudo npm install -g sipa
+sudo npm install -g simpartic
 ```
 
 ### After installing with yarn or npm
 
 That's it!
 
-The command `sipa` is now available on the command line.
+The command `sipa` (and its long version `simpartic`) is now available on the command line.
 
 Run `sipa help` for more information.
 
@@ -142,7 +142,7 @@ A interactive setup assists you and generates the project depending on your inpu
 <a name="contributing"></a>
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/sipa. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/simpartic. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 More technical information to setup, you can find in the [contributors dcoumentation](doc/contributors.md).
 

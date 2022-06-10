@@ -20,7 +20,7 @@ class SipaEnv {
     }
 
     /**
-     * Check if Sipa is running at localhost
+     * Check if Simpartic is running at localhost
      *
      * @returns {boolean} true if localhost, otherweise false
      */

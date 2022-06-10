@@ -12,13 +12,13 @@ class SipaCliTools {
     static logo() {
         // ASCII-Font: Calvin S
         // Sub title font: Source Code Pro Bold
-        return chalk.yellow.bgBlack.bold("\n                         \n" +
-            "     ┏━┓ ┳ ┏━┓ ┏━┓       \n" +
-            "     ┗━┓ ┃ ┣━┛ ┣━┫       \n" +
-            "     ┗━┛ ┻ ┻   ┻ ┻       \n" + chalk.reset.white.bgBlack(
-            "  particularly simple    \n") + chalk.bold.green.bgBlack(
-            "     web framework       \n") +
-            "                         \n"
+        return chalk.yellow.bgBlack.bold("\n                                         \n" +
+            "     ┏━┓ ┳ ┏┳┓ ┏━┓ ┏━┓ ┏━┓ ┏┳┓ ┳ ┏━┓     \n" +
+            "     ┗━┓ ┃ ┃ ┃ ┣━┛ ┣━┫ ┣┳┛  ┃  ┃ ┃       \n" +
+            "     ┗━┛ ┻ ┻ ┻ ┻   ┻ ┻ ┻┗━  ┻  ┻ ┗━┛     \n" + chalk.reset.white.bgBlack(
+            "           particularly simple           \n") + chalk.bold.green.bgBlack(
+            "              web framework              \n") +
+            "                                         \n"
         );
     }
 
@@ -326,7 +326,7 @@ class SipaCliTools {
     }
 }
 
-SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
+SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/simpartic.json';
 SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package.json';
 SipaCliTools.PROJECT_INDEX_FILE_PATH = SipaCliTools.projectRootPath() + '/app/index.html';
 
@@ -352,7 +352,7 @@ SipaCliTools.SECTIONS.not_inside_valid_project = [
     {
         header: 'Invalid project directory',
         content: [
-            '{red You can run this command at the root directory of a valid Sipa project only.}',
+            '{red You can run this command at the root directory of a valid Simpartic project only.}',
             '',
             `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`
         ]
@@ -364,7 +364,7 @@ if(SipaCliTools.isRunningInsideValidSipaProject()) {
         {
             header: 'Invalid paths found',
             content: [
-                'The following paths in sipa.json are invalid:',
+                'The following paths in simpartic.json are invalid:',
                 `   → ${SipaCliTools.invalidConfigPaths().map((el) => { return chalk.red(el); }).join("\n  → ")}`,
             ]
         }

@@ -1,19 +1,19 @@
 /**
- * Sipa
+ * Simpartic
  *
  * Framework core class to provide core functionality.
  */
-class Sipa {
+class Simpartic {
     /**
      * Get the version of the used library
      * @returns {string}
      */
     static getVersion() {
-        const self = Sipa;
+        const self = Simpartic;
         return self._version;
     }
     /**
-     * Function to fire to init the whole Sipa app
+     * Function to fire to init the whole Simpartic app
      *
      * @param {function} init_function
      */
@@ -28,4 +28,4 @@ class Sipa {
  * @type {string}
  * @private
  */
-Sipa._version = "0.6.1";
+Simpartic._version = "0.6.1";

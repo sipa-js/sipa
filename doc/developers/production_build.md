@@ -1,5 +1,5 @@
 # Production build
-Sipa provides tools to create a production build.
+Simpartic provides tools to create a production build.
 
 ## Why a production build?
 For production we can concat all the JavaScript (.js) and stylesheet (.css) files each into one file. Then we can compress these files by removing comments, new lines and even minify some code.
@@ -8,7 +8,7 @@ That results in smaller files to deliver on the one hand, on the other hand it p
 
 ## Common build process
 
-By default Sipa only considers your view `.html` files, you stylesheets `.css` and javascript files `.js` of your assets directory, including font files that are used inside the stylesheets. Then it generates a minified `index.html` based on your development file.
+By default Simpartic only considers your view `.html` files, you stylesheets `.css` and javascript files `.js` of your assets directory, including font files that are used inside the stylesheets. Then it generates a minified `index.html` based on your development file.
 Additional custom static files for the distribution build must be specified in the `sipa.json`. See the options below in this document for more information.
 
 ## Create a production build
@@ -18,7 +18,7 @@ sipa b
 ```
 inside your project root directory.
 
-Sipa will then create a production build inside
+Simpartic will then create a production build inside
 ```
 /dist/default
 ```
@@ -29,7 +29,7 @@ There are some options available for your production build that you can set in y
 
 In the following is an example how the node could look like in real project. After the attributes are described.
 ```json
-// sipa.json
+// simpartic.json
 ...
 "build": {
     "auto_fix_font_paths_in_css": true,

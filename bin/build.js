@@ -1,5 +1,5 @@
 /**
- * Release build script for sipa framework
+ * Release build script for the Simpartic web framework
  */
 const fs = require("fs");
 const util = require('util');
@@ -16,7 +16,7 @@ require('ruby-nice/object');
 
 const SipaCliTools = require('./cli/_tools');
 
-const build_destination_dir = './lib/templates/project/default/app/assets/lib/sipa/';
+const build_destination_dir = './lib/templates/project/default/app/assets/lib/simpartic/';
 
 const build_exclusion_markers = [
     /\/\/<!-- MODULE -->\/\/(.*?)\/\/<!-- \/MODULE -->\/\//gs,
@@ -27,13 +27,13 @@ const date_regex = /"date":\s*"([^"]*)"/sgm;
 
 const release_header_template = `/**
  * 
- * Sipa
+ * Simpartic
  *
  * Particularly simple old school single page lightweight web framework for clever javascript developers.
  *
  * @version {{version}}
  * @date {{date}}
- * @link https://github.com/magynhard/sipa
+ * @link https://github.com/magynhard/simpartic
  * @author Matthäus J. N. Beyrle
  * @copyright Matthäus J. N. Beyrle
  */
@@ -41,17 +41,17 @@ const release_header_template = `/**
 
 const builds = {
     default_build: {
-        destination_file: build_destination_dir + 'sipa.js',
+        destination_file: build_destination_dir + 'simpartic.js',
         source_files: [
-            './src/sipa/core/sipa-basic-view.js',
-            './src/sipa/core/sipa-serializer.js',
-            './src/sipa/core/sipa-state.js',
-            './src/sipa/tools/sipa-env.js',
-            './src/sipa/tools/sipa-helper.js',
-            './src/sipa/tools/sipa-hooks.js',
-            './src/sipa/tools/sipa-page.js',
-            './src/sipa/tools/sipa-url.js',
-            './src/sipa/sipa.js',
+            './src/simpartic/core/sipa-basic-view.js',
+            './src/simpartic/core/sipa-serializer.js',
+            './src/simpartic/core/sipa-state.js',
+            './src/simpartic/tools/sipa-env.js',
+            './src/simpartic/tools/sipa-helper.js',
+            './src/simpartic/tools/sipa-hooks.js',
+            './src/simpartic/tools/sipa-page.js',
+            './src/simpartic/tools/sipa-url.js',
+            './src/simpartic/simpartic.js',
         ]}
 }
 
@@ -85,9 +85,9 @@ function updateJsProjectVersion() {
     package_json = package_json.replace(version_regex, `"version": "${new_version}"`);
     fs.writeFileSync('./package.json', package_json, 'utf8');
     // project class
-    let project_js = fs.readFileSync('./src/sipa/sipa.js','utf8');
-    project_js = project_js.replace(/Sipa\._version\s*=\s*"[^"]+";/gm, `Sipa._version = "${new_version}";`)
-    fs.writeFileSync('./src/sipa/sipa.js', project_js, 'utf8');
+    let project_js = fs.readFileSync('./src/simpartic/simpartic.js','utf8');
+    project_js = project_js.replace(/Simpartic\._version\s*=\s*"[^"]+";/gm, `Simpartic._version = "${new_version}";`)
+    fs.writeFileSync('./src/simpartic/simpartic.js', project_js, 'utf8');
     return new_version;
 }
 
@@ -101,7 +101,7 @@ function updateDate() {
 }
 
 console.log(chalk.yellow('###################################'));
-console.log(chalk.yellow('# Sipa build script'));
+console.log(chalk.yellow('# Simpartic build script'));
 console.log(chalk.yellow('###################################'));
 console.log(`Updating version from ${version()} ...`);
 console.log(`... to version ${updateJsProjectVersion()} @ ${updateDate()}`);

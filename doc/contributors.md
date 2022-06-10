@@ -1,7 +1,7 @@
 # Contributor documentation
-This documentation is for contributors and about developing the Sipa framework itself.
+This documentation is for contributors and about developing the Simpartic framework itself.
 
-For developing with the Sipa framework, check out the developer documentation. 
+For developing with the Simpartic framework, check out the developer documentation. 
 
 ## Basic setup
 Run at the root directory
@@ -10,7 +10,7 @@ yarn install
 ```
 
 ## Setup development installation
-To install Sipa from this project directory to be able to use the current development state, run the following command in the project root directory:
+To install Simpartic from this project directory to be able to use the current development state, run the following command in the project root directory:
 ```
 yarn link_dev
 ```

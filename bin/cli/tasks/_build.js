@@ -282,8 +282,8 @@ SipaCliBuild.SECTIONS.unresolved_files = [
 SipaCliBuild.paths = {
     app_base_dir: SipaCliTools.projectRootPath() + '/app',
     dist_base_dir: SipaCliTools.projectRootPath() + '/dist/default',
-    dist_index_minified_js: 'assets/js/sipa.min.js',
-    dist_index_minified_css: 'assets/style/sipa.min.css',
+    dist_index_minified_js: 'assets/js/app.min.js',
+    dist_index_minified_css: 'assets/style/app.min.css',
     fonts_base_dir: 'assets/fonts',
     fonts_production_style_dir: '../fonts',
 }
