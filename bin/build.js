@@ -126,7 +126,7 @@ for(let build_key of Object.keys(builds)) {
     })();
 }
 console.log('Copy static files ...');
-copy_static_files.each((key, value, index) => {
+copy_static_files.eachWithIndex((key, value, index) => {
     console.log(` - ${key} -> ${value}`);
     if(!File.isDirectory(File.getDirname(value))) {
         FileUtils.mkdirP(File.getDirname(value));
