@@ -6,10 +6,15 @@ const prompt = require('prompt-sync')();
 const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
+const SipaCliVersion = require('./tasks/_version');
 
 class SipaCliTools {
 
     static logo() {
+        const version = SipaCliVersion.getVersion();
+        const row_length = 41;
+        const version_padding = 3;
+        let version_line = `${" ".repeat(row_length-version.length-version_padding)}${version}${" ".repeat(version_padding)}`;
         // ASCII-Font: Calvin S
         // Sub title font: Source Code Pro Bold
         return chalk.yellow.bgBlack.bold("\n                                         \n" +
@@ -17,8 +22,8 @@ class SipaCliTools {
             "     ┗━┓ ┃ ┃ ┃ ┣━┛ ┣━┫ ┣┳┛  ┃  ┃ ┃       \n" +
             "     ┗━┛ ┻ ┻ ┻ ┻   ┻ ┻ ┻┗━  ┻  ┻ ┗━┛     \n" + chalk.reset.white.bgBlack(
             "           particularly simple           \n") + chalk.bold.green.bgBlack(
-            "              web framework              \n") +
-            "                                         \n"
+            "              web framework              \n") + chalk.reset.yellow.bgBlack(version_line) + "\n" +
+            "                                         "
         );
     }
 

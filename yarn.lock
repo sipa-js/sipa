@@ -1595,10 +1595,10 @@ rimraf@^3.0.0:
   dependencies:
     glob "^7.1.3"
 
-ruby-nice@^0.0.37:
-  version "0.0.37"
-  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.0.37.tgz#2c2cc6b74c0ffe5484f2b159135c03b14368f581"
-  integrity sha512-uBWb3uDVbnBe9B9McEqGqW+waZf03wHish8+fMTra+lYIvhyRx3CjyN6Sehc/c3rPOIcYwrxfH9lTjAkb7Dnfg==
+ruby-nice@^0.1.3:
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.1.3.tgz#f09a3a72561d12670a09f4480e42a3c74754fb7c"
+  integrity sha512-AKD4dccaZ50fkXz7tpmKj9HIG9HREanzB9zxUQL/dHpS5AVdiXeYNwEXOVya1rJ2etpX+qDnSfvZH0Hmf7JSdw==
   dependencies:
     fs-extra "^10.1.0"
     glob "^8.0.1"

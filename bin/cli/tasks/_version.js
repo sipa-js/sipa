@@ -1,14 +1,30 @@
 #!/usr/bin/env node
 
 const fs = require('fs');
+const File = require('ruby-nice/file');
 
-const SipaCliTools = require('./../_tools');
+var SipaCliTools = require('./../_tools');
 
 class SipaCliVersion {
     static version() {
         const self = SipaCliVersion;
-        const package_json = JSON.parse(SipaCliTools.readFile(__dirname + '/../../../package.json'));
-        console.log(`${package_json.name} ${package_json.version} @ ${package_json.date}`);
+        console.log(self.getFullVersion());
+    }
+
+    static getVersion() {
+        const self = SipaCliVersion;
+        const package_json = self.getPackageJson();
+        return `${package_json.version}`;
+    }
+
+    static getFullVersion() {
+        const self = SipaCliVersion;
+        const package_json = self.getPackageJson();
+        return `${package_json.name} ${package_json.version} @ ${package_json.date}`;
+    }
+
+    static getPackageJson() {
+        return JSON.parse(File.read(__dirname + '/../../../package.json'));
     }
 }
 
