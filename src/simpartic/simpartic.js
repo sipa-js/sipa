@@ -28,4 +28,4 @@ class Simpartic {
  * @type {string}
  * @private
  */
-Simpartic._version = "0.7.4";
+Simpartic._version = "0.7.5";
