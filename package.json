@@ -1,11 +1,11 @@
 {
   "name": "simpartic",
-  "version": "0.7.1",
-  "date": "2022-06-10T21:22:44.371Z",
+  "version": "0.7.2",
+  "date": "2022-06-10T21:34:01.829Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
-    "email": "sipa.npm@mail.magynhard.de"
+    "email": "simpartic.npm@mail.magynhard.de"
   },
   "license": "LGPL",
   "homepage": "https://github.com/magynhard/simpartic#readme",
@@ -20,7 +20,7 @@
     "test_browser": "npx jasmine-browser-runner serve",
     "build": "node bin/build.js",
     "link_dev": "sudo npm link",
-    "unlink_dev": "sudo npm rm --global sipa"
+    "unlink_dev": "sudo npm rm --global simpartic"
   },
   "files": [
     "bin/cli/**/*",
@@ -38,6 +38,7 @@
   "private": false,
   "keywords": [
     "sipa",
+    "simpartic",
     "javascript",
     "web",
     "framework",
