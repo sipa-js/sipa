@@ -19,10 +19,10 @@ class SipaCliTools {
         // Sub title font: Source Code Pro Bold
         return chalk.yellow.bgBlack.bold("\n                                         \n" +
             "     ┏━┓ ┳ ┏┳┓ ┏━┓ ┏━┓ ┏━┓ ┏┳┓ ┳ ┏━┓     \n" +
-            "     ┗━┓ ┃ ┃ ┃ ┣━┛ ┣━┫ ┣┳┛  ┃  ┃ ┃       \n" +
-            "     ┗━┛ ┻ ┻ ┻ ┻   ┻ ┻ ┻┗━  ┻  ┻ ┗━┛     \n" + chalk.reset.white.bgBlack(
-            "           particularly simple           \n") + chalk.bold.green.bgBlack(
-            "              web framework              \n") + chalk.reset.yellow.bgBlack(version_line) + "\n" +
+            "     ┗━┓ ┃ ┃┃┃ ┣━┛ ┣━┫ ┣┳┛  ┃  ┃ ┃       \n" +
+            "     ┗━┛ ┻ ┻ ┻ ┻   ┻ ┻ ┻┗━  ┻  ┻ ┗━┛     \n" + chalk.bold.white.bgBlack(
+            "           PARTICULARLY SIMPLE           \n") + chalk.bold.green.bgBlack(
+            "              WEB FRAMEWORK              \n") + chalk.reset.yellow.bgBlack(version_line) + "\n" +
             "                                         "
         );
     }
