@@ -4,7 +4,8 @@ As `sipa` is not very uniq - about 50 million search results on Google - we go b
 
 Simpartic has only about 200 search results on Google today, where many of them are typos, except our real simpartic itself of course!
 
-
+## Migration steps from 0.6.x to 0.7.x
+Rename `sipa.json` in the project root to `simpartic.json`.
 
 # 0.6.x
 * Now all paths in `sipa.json` are based on the directory `/app`.
