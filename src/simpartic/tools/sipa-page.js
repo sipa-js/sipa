@@ -55,7 +55,7 @@ class SipaPage {
                     url: page_path,
                     method: 'GET',
                     dataType: 'html',
-                    cache: true,
+                    cache: false,
                     success: (data, text, response) => {
                         const j_container = $(self.page_container_css_selector);
                         const load_function = () => {
@@ -243,7 +243,7 @@ class SipaPage {
             url: layout_path,
             method: 'GET',
             dataType: 'html',
-            cache: true,
+            cache: false,
             success: (data, text, response) => {
                 after_loaded_function(data, text, response, 'success');
             },
