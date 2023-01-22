@@ -1,3 +1,8 @@
+# 0.8.1
+* Fix reload issue that occurred coincidentally.
+## Migration steps 0.7.x to 0.8.1
+* Replace `app/assets/lib/simpartic/simpartic.js` with the latest version from repo at `lib/templates/project/default/app/assets/lib/simpartic`. 
+
 # 0.7.x
 ## Sipa goes back to the long name Simpartic
 As `sipa` is not very uniq - about 50 million search results on Google - we go back to its original long version `simpartic` while the shortcut `sipa` will remain for the CLI and class names.

@@ -1,7 +1,7 @@
 {
   "name": "simpartic",
-  "version": "0.7.9",
-  "date": "2023-01-22T12:18:05.354Z",
+  "version": "0.8.1",
+  "date": "2023-01-22T12:19:41.698Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
