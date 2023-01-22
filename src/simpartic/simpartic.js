@@ -18,9 +18,11 @@ class Simpartic {
      * @param {function} init_function
      */
     static init(init_function) {
-        // start in new thread, otherwise it
-        // will collide with live web server
-        setTimeout(init_function,0);
+        document.addEventListener('DOMContentLoaded', function () {
+            // start in new thread, otherwise it
+            // will collide with live web server
+            setTimeout(init_function,0);
+        }, false);
     }
 }
 
@@ -28,7 +30,7 @@ class Simpartic {
  * @type {string}
  * @private
  */
-Simpartic._version = "0.7.8";
+Simpartic._version = "0.7.9";
 
 // Alias
 var Sipa = Simpartic;
