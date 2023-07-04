@@ -19,6 +19,14 @@
 }
 ```
 
+## New option "development_server.mount" in simpartic.json
+```json
+{
+  "development_server": {
+    "mount": "/"
+  }
+}
+```
 
 # 0.8.1
 * Fix reload issue that occurred coincidentally.

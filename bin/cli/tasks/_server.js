@@ -46,7 +46,10 @@ class SipaCliServer {
             } else {
                 throw new Error(`Could not locate live-server.js`);
             }
-            const server_command = `node ${live_server_js_path} --port=${port} --host=${host} --ignore=lang --mount=/:./app --open="/"`;
+            const config = SipaCliTools.readProjectSipaConfig();
+            let mount = config?.development_server?.mount?.trim() || '/';
+            if(!mount.endsWith('/')) mount += '/';
+            const server_command = `node ${live_server_js_path} --port=${port} --host=${host} --ignore=lang --mount=${mount}:./app --open="${mount}"`;
             let server_process = exec(server_command);
             server_process.stdout.on('data', function(data) {
                 console.log(data.toString('utf8'));
