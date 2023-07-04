@@ -1,3 +1,25 @@
+# 0.8.5
+
+
+## New option "hooks" in simpartic.json
+```json
+{
+  "hooks": {
+    "before_all": "",
+    "after_all": "",
+    "before_build": "",
+    "after_build": "npm version patch",
+    "before_generate": "",
+    "after_generate": "",
+    "before_indexer": "",
+    "after_indexer": "",
+    "before_server": "",
+    "after_server": ""
+  }
+}
+```
+
+
 # 0.8.1
 * Fix reload issue that occurred coincidentally.
 ## Migration steps 0.7.x to 0.8.1
