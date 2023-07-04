@@ -151,7 +151,7 @@ class SipaUrl {
             decode_uri: true, // decode url variables
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        let query_string = url.indexOf('?') !== -1 ? url.split('?')[1] : window.location.search.slice(1);
+        let query_string = url.indexOf('?') !== -1 ? url.split('?')[1] : (new URL(url)).search.slice(1);
         let obj = {};
         if (query_string) {
             query_string = self.removeAnchorOfUrl(query_string);
