@@ -24,96 +24,6 @@ class SipaHelper {
     }
 
     /**
-     * Check if given variable is of type Array
-     *
-     * @param {any} value
-     * @returns {boolean} true if Array, otherwise false
-     */
-    static isArray(value) {
-        return value instanceof Array && value.constructor.name === 'Array';
-    }
-
-    /**
-     * Check if given variable is of type Object
-     *
-     * @param {any} value
-     * @returns {boolean} true if Object, otherwise false
-     */
-    static isObject(value) {
-        return value instanceof Object && value.constructor.name === 'Object';
-    }
-
-    /**
-     * Check if given variable is of type String
-     *
-     * @param {any} value
-     * @returns {boolean} true if String, otherwise false
-     */
-    static isString(value) {
-        return typeof value === 'string';
-    }
-
-    /**
-     * Check if given variable is of type Date
-     *
-     * @param {any} value
-     * @returns {boolean} true if Date, otherwise false
-     */
-    static isDate(value) {
-        return value instanceof Date;
-    }
-
-    /**
-     * Check if given variable is of type RegExp
-     *
-     * @param {any} value
-     * @returns {boolean} true if RegExp, otherwise false
-     */
-    static isRegExp(value) {
-        return value instanceof RegExp;
-    }
-
-    /**
-     * Check if given variable is of type NaN
-     *
-     * @param {any} value
-     * @returns {boolean} true if NaN, otherwise false
-     */
-    static isNaN(value) {
-        return typeof value === 'number' && (value).toString() === 'NaN';
-    }
-
-    /**
-     * Check if given variable is of type Infinity
-     *
-     * @param {any} value
-     * @returns {boolean} true if Infinity, otherwise false
-     */
-    static isInfinity(value) {
-        return value === Infinity;
-    }
-
-    /**
-     * Check if given variable is of type undefined
-     *
-     * @param {any} value
-     * @returns {boolean} true if undefined, otherwise false
-     */
-    static isUndefined(value) {
-        return typeof value === 'undefined';
-    }
-
-    /**
-     * Check if given variable is of type null
-     *
-     * @param {any} value
-     * @returns {boolean} true if null, otherwise false
-     */
-    static isNull(value) {
-        return typeof value === null;
-    }
-
-    /**
      * Check if given value is a array (slice) of size 1 and contains type empty
      *
      * @param {any} value
@@ -122,7 +32,7 @@ class SipaHelper {
      */
     static isArrayContainingEmptyValue(value) {
         const self = SipaHelper;
-        if(self.isArray(value) && value.length === 1) {
+        if(Typifier.isArray(value) && value.length === 1) {
             if(Object.entries(value).length === 0) {
                 return true;
             } else {
@@ -130,73 +40,6 @@ class SipaHelper {
             }
         } else {
             throw new Error()
-        }
-    }
-
-    /**
-     * Check if given variable is of type Boolean
-     *
-     * @param {any} value
-     * @returns {boolean} true if Boolean, otherwise false
-     */
-    static isBoolean(value) {
-        return typeof value === 'boolean';
-    }
-
-    /**
-     * Check if given variable is of type Function
-     *
-     * @param {any} value
-     * @returns {boolean} true if Function, otherwise false
-     */
-    static isFunction(value) {
-        return typeof value === 'function';
-    }
-
-    /**
-     * Get the type of the given value as pascal case formatted string
-     *
-     * @example
-     *  'Object'
-     *  'String'
-     *  'Array'
-     *  'MyClass'
-     *
-     * @param {any} value
-     * @returns {string} type in pascal case format
-     */
-    static getType(value) {
-        const self = SipaHelper;
-        if (self.isArray(value)) {
-            return 'Array';
-        } else if (self.isObject(value)) {
-            return 'Object';
-        } else if (self.isString(value)) {
-            return 'String';
-        } else if (self.isDate(value)) {
-            return 'Date';
-        } else if (self.isRegExp(value)) {
-            return 'RegExp';
-        } else if (self.isNaN(value)) {
-            return 'NaN';
-        } else if (self.isInfinity(value)) {
-            return 'Infinity';
-        } else if (self.isUndefined(value)) {
-            return 'Undefined';
-        } else if (self.isNull(value)) {
-            return 'Null';
-        } else if (self.isBoolean(value)) {
-            return 'Boolean';
-        } else {
-            let type = 'Unknown';
-            if (value && value.constructor) {
-                type = value.constructor.name;
-            } else if (value && value.prop && value.prop.constructor) {
-                type = value.prop.constructor;
-            } else {
-                type = typeof value;
-            }
-            return LuckyCase.toPascalCase(type);
         }
     }
 
@@ -221,7 +64,7 @@ class SipaHelper {
     }
 
     static throwParamError(param_name, param, expected_type) {
-        throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '" + ${SipaHelper.getType(param)}!`;
+        throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '${SipaHelper.getType(param)}!'`;
     }
 
     /**

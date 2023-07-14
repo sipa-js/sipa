@@ -186,9 +186,9 @@ class SipaState {
         const self = SipaState;
         let any_key_exists = false;
         let keys = null;
-        if (SipaHelper.isString(key)) {
+        if (Typifier.isString(key)) {
             keys = [key];
-        } else if (SipaHelper.isArray(key)) {
+        } else if (Typifier.isArray(key)) {
             keys = key;
         } else {
             throw `Invalid parameter type for key: ${SipaHelper.getType(key)}`;

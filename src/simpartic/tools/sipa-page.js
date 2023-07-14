@@ -78,10 +78,10 @@ class SipaPage {
                                 SipaUrl.removeParams(options.remove_params);
                             }
                             self.callMethodOfPage(page_id, 'onInit', [{last_page_id: last_page_id}]);
-                            if(SipaHelper.isFunction(options.success)) {
+                            if(Typifier.isFunction(options.success)) {
                                 options.success(data, text, response);
                             }
-                            if(SipaHelper.isFunction(options.always)) {
+                            if(Typifier.isFunction(options.always)) {
                                 options.always(data, text, response);
                             }
                         }
@@ -93,10 +93,10 @@ class SipaPage {
                     },
                     error: (response, text, data) => {
                         j_body.attr('data-page-id', last_page_id);
-                        if(SipaHelper.isFunction(options.error)) {
+                        if(Typifier.isFunction(options.error)) {
                             options.error(response, text, data);
                         }
-                        if(SipaHelper.isFunction(options.always)) {
+                        if(Typifier.isFunction(options.always)) {
                             options.always(data, text, response);
                         }
                     }

@@ -112,7 +112,7 @@ class SipaUrl {
         for (let d in params) {
             let key = d;
             let value = params[d];
-            if(SipaHelper.isArray(value) && options.multi_param_attributes) {
+            if(Typifier.isArray(value) && options.multi_param_attributes) {
                 if(options.url_encode) {
                     ret.push(
                         encodeURIComponent(key) + '=' + value.map(encodeURIComponent).join('&' + encodeURIComponent(key) + '=')
