@@ -1,10 +1,10 @@
 ![SIPA Particularly simple web framework](_assets/_raw/logo_doc.svg)
 # Developer documentation
-Documentation for developing web apps with Simpartic. ![State](https://img.shields.io/badge/-progress-yellow)
+Documentation for developing web apps with Sipa. ![State](https://img.shields.io/badge/-progress-yellow)
 
 ## Table of contents
 * **Introduction / Tutorial**
-  * The Simpartic command line interface (CLI)
+  * The Sipa command line interface (CLI)
   * Create a new project
   * Project structure
   * Start live web server
@@ -14,7 +14,7 @@ Documentation for developing web apps with Simpartic. ![State](https://img.shiel
     * JS-Library (lodash)
   * Add translations
   * Create sample application 
-  * Simpartic helper classes
+  * Sipa helper classes
   * [Production build](developers/production_build.md)
 
 

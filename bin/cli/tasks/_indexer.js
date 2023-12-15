@@ -137,19 +137,19 @@ SipaCliIndexer.SECTIONS.examples = [
         content: [
             {sample: '{green 1}', desc: 'will add option 1 to the {green index.html}'},
             {sample: '{green 1,2}', desc: 'will add option 1 and 2 to the {green index.html}'},
-            {sample: '{red -2}', desc: 'will add option 2 to the ignore list in {green simpartic.json}'},
+            {sample: '{red -2}', desc: 'will add option 2 to the ignore list in {green sipa.json}'},
             {
                 sample: '{red -1}{green ,2}',
-                desc: 'will add option 1 to the ignore list in {green simpartic.json} and add option 2 to the {green index.html}'
+                desc: 'will add option 1 to the ignore list in {green sipa.json} and add option 2 to the {green index.html}'
             },
-            {sample: '{red -}', desc: 'will add all options to the ignore list in {green simpartic.json}'},
+            {sample: '{red -}', desc: 'will add all options to the ignore list in {green sipa.json}'},
             {sample: '{green +}', desc: 'will add all options to the {green index.html}'},
         ]
     }
 ];
 SipaCliIndexer.SECTIONS.files_not_included = [
     {
-        header: 'Files not ignored in simpartic.json or not included in index.html',
+        header: 'Files not ignored in sipa.json or not included in index.html',
     }
 ];
 SipaCliIndexer.SECTIONS.files_not_existing = [

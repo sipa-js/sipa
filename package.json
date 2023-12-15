@@ -1,26 +1,26 @@
 {
-  "name": "simpartic",
-  "version": "0.8.8",
-  "date": "2023-07-14T13:17:37.476Z",
+  "name": "sipa",
+  "version": "0.9.0",
+  "date": "2023-12-15T14:07:37.476Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
-    "email": "simpartic.npm@mail.magynhard.de"
+    "email": "sipa.npm@mail.magynhard.de"
   },
   "license": "LGPL-3.0-only",
-  "homepage": "https://github.com/magynhard/simpartic#readme",
+  "homepage": "https://github.com/sipa-js/sipa#readme",
   "preferGlobal": true,
   "main": "bin/cli/cli.js",
   "bin": {
     "sipa": "./bin/cli/cli.js",
-    "simpartic": "./bin/cli/cli.js"
+    "sipa": "./bin/cli/cli.js"
   },
   "scripts": {
     "test": "npx jasmine-browser-runner runSpecs",
     "test_browser": "npx jasmine-browser-runner serve",
     "build": "node bin/build.js",
     "link_dev": "sudo npm link",
-    "unlink_dev": "sudo npm rm --global simpartic"
+    "unlink_dev": "sudo npm rm --global sipa"
   },
   "files": [
     "bin/cli/**/*",
@@ -30,15 +30,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/magynhard/simpartic.git"
+    "url": "git+https://github.com/sipa-js/sipa.git"
   },
   "bugs": {
-    "url": "https://github.com/magynhard/simpartic/issues"
+    "url": "https://github.com/sipa-js/sipa/issues"
   },
   "private": false,
   "keywords": [
     "sipa",
-    "simpartic",
+    "sipa",
     "javascript",
     "web",
     "framework",

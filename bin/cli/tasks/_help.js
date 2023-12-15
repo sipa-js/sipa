@@ -25,8 +25,8 @@ class SipaCliHelp {
 SipaCliHelp.SECTIONS = {};
 SipaCliHelp.SECTIONS.help = [
     {
-        header: 'Simpartic CLI',
-        content: `The Simpartic CLI (sipa) provides several interactive tasks to ensure programmers happiness. 😊`
+        header: 'Sipa CLI',
+        content: `The Sipa CLI (sipa) provides several interactive tasks to ensure programmers happiness. 😊`
     },
     {
         header: 'Available tasks',
@@ -34,7 +34,7 @@ SipaCliHelp.SECTIONS.help = [
     },
     {
         content: [
-            {name: 'about', alias: 'a', summary: 'About Simpartic'},
+            {name: 'about', alias: 'a', summary: 'About Sipa'},
             {name: 'build', alias: 'b', summary: 'Build app release'},
             {name: 'delete', alias: 'd', summary: 'Start interactive app asset deletion (page, ...)'},
             {name: 'generate', alias: 'g', summary: 'Start interactive app asset generator (page, ...)'},
@@ -43,7 +43,7 @@ SipaCliHelp.SECTIONS.help = [
             {name: 'license', alias: 'l', summary: 'Print the license'},
             {name: 'new', alias: 'n', summary: 'Create new project in current directory'},
             {name: 'server', alias: 's', summary: 'Start live development server'},
-            {name: 'update', alias: 'u', summary: 'Check for Simpartic updates'},
+            {name: 'update', alias: 'u', summary: 'Check for Sipa updates'},
             {name: 'version', alias: 'v', summary: 'Display build version'},
         ]
     },

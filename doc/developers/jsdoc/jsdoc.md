@@ -1,9 +1,9 @@
-#![Simpartic - Particularly simple web framework](../../_assets/_raw/logo_doc.svg)
+#![Sipa - Particularly simple web framework](../../_assets/_raw/logo_doc.svg)
 # jsdoc documentation
-Here we provide auto generated json doc documentations of all the Simpartic parts.
+Here we provide auto generated json doc documentations of all the Sipa parts.
 
 ## Contents
-* [Simpartic](sipa.md) - Basic app information
+* [Sipa](sipa.md) - Basic app information
   
 
 * [SipaHelper](sipa_helper.md) - Several common helper functions

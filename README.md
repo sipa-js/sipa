@@ -1,6 +1,6 @@
-![SIMPARTIC Particularly simple web framework](doc/_assets/_raw/logo_doc.svg)<br>
-[![npm package](https://img.shields.io/npm/v/simpartic?color=63a618&style=plastic&logo=npm)](https://www.npmjs.com/package/simpartic)
-![downloads](https://img.shields.io/npm/dt/simpartic?color=dce2df&style=plastic)
+![SIPA Particularly simple web framework](doc/_assets/_raw/logo_doc.svg)<br>
+[![npm package](https://img.shields.io/npm/v/sipa?color=63a618&style=plastic&logo=npm)](https://www.npmjs.com/package/sipa)
+![downloads](https://img.shields.io/npm/dt/sipa?color=dce2df&style=plastic)
 [![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-fabd09.svg?style=plastic)](LICENSE)
 
 > Particularly simple old school single page lightweight web framework for clever javascript developers.
@@ -16,7 +16,7 @@ But I allow you to use it anyway!
 ```
 
 **TALBE OF CONTENTS**
-* [Why Simpartic?](#why-simpartic)
+* [Why Sipa?](#why-sipa)
     * [Main features](#main-features)
     * [Shipped libraries](#shipped-libraries)
 * [Installation](#installation)
@@ -30,8 +30,8 @@ But I allow you to use it anyway!
 
 
 <!-- -------------------------- SECTION -------------------------- -->
-<a name="why-simpartic"></a>
-## Why Simpartic?
+<a name="why-sipa"></a>
+## Why Sipa?
 I just want to develop with Javascript: The code i write IS the code i run in the browser. 
 
 Writing Javascript and HTML the old way! So I can directly run and debug my code in the browser. Instant!
@@ -75,7 +75,7 @@ You may use npm instead of yarn.
 
 ### Install the framework with yarn
 ```bash
-yarn global add simpartic
+yarn global add sipa
 ```
 
 #### Add to PATH environment variable
@@ -95,19 +95,19 @@ Run `yarn global bin` and add the returned PATH to your global PATH environment 
 
 ### Install the framework with npm
 ```bash
-npm install -g simpartic
+npm install -g sipa
 ```
 
 Depending on your global npm directory, you may need to run this command with sudo or as root:
 ```bash
-sudo npm install -g simpartic
+sudo npm install -g sipa
 ```
 
 ### After installing with yarn or npm
 
 That's it!
 
-The command `sipa` (and its long version `simpartic`) is now available on the command line.
+The command `sipa` (and its long version `sipa`) is now available on the command line.
 
 Run `sipa help` for more information.
 
@@ -142,7 +142,7 @@ A interactive setup assists you and generates the project depending on your inpu
 <a name="contributing"></a>
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/simpartic. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/sipa. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 More technical information to setup, you can find in the [contributors dcoumentation](doc/contributors.md).
 

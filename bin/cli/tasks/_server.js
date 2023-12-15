@@ -100,7 +100,7 @@ class SipaCliServer {
                 content: [
                     `Starting live web server listening on {green ${config.development_server.host}} at port {green ${config.development_server.port}}`,
                     '',
-                    'If you want to modify the {green host} or {green port} of the live development web server, edit {green simpartic.json} in your project root directory.',
+                    'If you want to modify the {green host} or {green port} of the live development web server, edit {green sipa.json} in your project root directory.',
                     '',
                 ]
             },
@@ -111,7 +111,7 @@ class SipaCliServer {
                     '',
                     `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => { return chalk.green(`app/${e}`); }).join("\n  - ")}`,
                     '',
-                    'If you want to modify the watch paths of the live development sass compilation server, edit {green simpartic.json} in your project root directory.',
+                    'If you want to modify the watch paths of the live development sass compilation server, edit {green sipa.json} in your project root directory.',
                     '',
                 ]
             },

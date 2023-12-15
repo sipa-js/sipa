@@ -9,8 +9,8 @@ const CurlyBracketParser = require('curly-bracket-parser');
 
 const SipaCliTools = require('./../_tools');
 const SipaIndexManager = require('./../_index-manager');
-const SipaHelper = require('./../../../src/simpartic/tools/sipa-helper');
-const SipaPage = require('./../../../src/simpartic/tools/sipa-page');
+const SipaHelper = require('./../../../src/sipa/tools/sipa-helper');
+const SipaPage = require('./../../../src/sipa/tools/sipa-page');
 
 class SipaCliGenerate {
     static generate() {

@@ -1,7 +1,12 @@
+# 0.9.0
+## And again we go back to Sipa from Simpartic
+We had a lot of pain using the word simpartic compared to sipa. So we switch back once again. Hopefully the last time. ;-D
+
+
+
 # 0.8.5
 
-
-## New option "hooks" in simpartic.json
+## New option "hooks" in sipa.json
 ```json
 {
   "hooks": {
@@ -19,7 +24,7 @@
 }
 ```
 
-## New option "development_server.mount" in simpartic.json
+## New option "development_server.mount" in sipa.json
 ```json
 {
   "development_server": {
@@ -31,16 +36,16 @@
 # 0.8.1
 * Fix reload issue that occurred coincidentally.
 ## Migration steps 0.7.x to 0.8.1
-* Replace `app/assets/lib/simpartic/simpartic.js` with the latest version from repo at `lib/templates/project/default/app/assets/lib/simpartic`. 
+* Replace `app/assets/lib/sipa/sipa.js` with the latest version from repo at `lib/templates/project/default/app/assets/lib/sipa`. 
 
 # 0.7.x
 ## Sipa goes back to the long name Simpartic
-As `sipa` is not very uniq - about 50 million search results on Google - we go back to its original long version `simpartic` while the shortcut `sipa` will remain for the CLI and class names.
+As `sipa` is not very uniq - about 50 million search results on Google - we go back to its original long version `sipa` while the shortcut `sipa` will remain for the CLI and class names.
 
-Simpartic has only about 200 search results on Google today, where many of them are typos, except our real simpartic itself of course!
+Simpartic has only about 200 search results on Google today, where many of them are typos, except our real sipa itself of course!
 
 ## Migration steps from 0.6.x to 0.7.x
-Rename `sipa.json` in the project root to `simpartic.json`.
+Rename `sipa.json` in the project root to `sipa.json`.
 
 # 0.6.x
 * Now all paths in `sipa.json` are based on the directory `/app`.
@@ -76,8 +81,8 @@ add the following lines:
 
 ```html
     <!---------------===== CUSTOM =====--------------->
-    <!-- Section for your very custom content, e.g. if you want to embed Simpartic into another framework -->
-    <!-- Here are only files included, that are defined in simpartic.json at 'custom_assets_paths' -->
+    <!-- Section for your very custom content, e.g. if you want to embed Sipa into another framework -->
+    <!-- Here are only files included, that are defined in sipa.json at 'custom_assets_paths' -->
     <!-- CUSTOM-JS -->
     <!-- /CUSTOM-JS -->
     <!-- CUSTOM-CSS -->
