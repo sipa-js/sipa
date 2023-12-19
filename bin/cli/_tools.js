@@ -22,8 +22,8 @@ class SipaCliTools {
                 "             ┏━┓ ┳ ┏━┓ ┏━┓              \n" +
                 "             ┗━┓ ┃ ┣━┛ ┣━┫              \n" +
                 "             ┗━┛ ┻ ┻   ┻ ┻              \n" +  chalk.bold.white.bgBlack(
-                "           PARTICULARLY SIMPLE          \n") + chalk.bold.green.bgBlack(
-                "              WEB FRAMEWORK             \n") + chalk.reset.yellow.bgBlack(version_line) + "\n" +
+                "          PARTICULARLY SIMPLE           \n") + chalk.bold.green.bgBlack(
+                "             WEB FRAMEWORK              \n") + chalk.reset.yellow.bgBlack(version_line) + "\n" +
                 "                                        "
         );
     }
