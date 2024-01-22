@@ -30,7 +30,7 @@ class Sipa {
  * @type {string}
  * @private
  */
-Sipa._version = "0.9.1";
+Sipa._version = "0.9.3";
 
 // Alias
 var Simpartic = Sipa;
