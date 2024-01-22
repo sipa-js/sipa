@@ -103,6 +103,11 @@ class SipaCliBuild {
             SipaCliTools.printLine(`    → minify css to ${green_path} ...`);
             SipaCliServer.runSass(`"${self._finalDistCssStylePath()}" --no-source-map --style=compressed "${self._finalDistCssStylePath()}"`, false, true);
         }
+        // remove zero width white spaces and utf8 line breaks from css
+        // https://stackoverflow.com/questions/11305797/remove-zero-width-space-characters-from-a-javascript-string
+        final_css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
+        final_css_file_content = final_css_file_content.replace(/[\u200B-\u200D\uFEFF\u2028\u2029]/g, '');
+        SipaCliTools.writeFile(self._finalDistCssStylePath(), final_css_file_content);
     }
 
     /**
