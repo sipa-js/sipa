@@ -191,7 +191,7 @@ class SipaState {
         } else if (Typifier.isArray(key)) {
             keys = key;
         } else {
-            throw `Invalid parameter type for key: ${SipaHelper.getType(key)}`;
+            throw `Invalid parameter type for key: ${Typifier.getType(key)}`;
         }
         keys.forEach((key) => {
             const key_exists = self.hasKey(key);

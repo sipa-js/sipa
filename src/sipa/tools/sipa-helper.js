@@ -52,11 +52,11 @@ class SipaHelper {
      */
     static validateParams(params = []) {
         const self = SipaHelper;
-        if (self.getType(params) !== 'Array') {
+        if (Typifier.getType(params) !== 'Array') {
             self.throwParamError('params', params, 'Array');
         } else {
             params.forEach((elem) => {
-                if (self.getType(elem.param_value) !== elem.expected_type) {
+                if (Typifier.getType(elem.param_value) !== elem.expected_type) {
                     self.throwParamError(elem.param_name, elem.param_value, elem.expected_type);
                 }
             });
@@ -64,7 +64,7 @@ class SipaHelper {
     }
 
     static throwParamError(param_name, param, expected_type) {
-        throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '${SipaHelper.getType(param)}!'`;
+        throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '${Typifier.getType(param)}!'`;
     }
 
     /**

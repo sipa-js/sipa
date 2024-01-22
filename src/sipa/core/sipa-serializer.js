@@ -320,7 +320,7 @@ class SipaSerializer {
         } else if(Typifier.isObject(obj)) {
             clone = Object.assign({}, obj);
         } else {
-            throw `Parameter must be of type 'Array' or 'Object'! Given type: '${SipaHelper.getType(obj)}'`;
+            throw `Parameter must be of type 'Array' or 'Object'! Given type: '${Typifier.getType(obj)}'`;
         }
         return clone;
     }
