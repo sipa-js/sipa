@@ -13,7 +13,7 @@
   "main": "bin/cli/cli.js",
   "bin": {
     "sipa": "./bin/cli/cli.js",
-    "sipa": "./bin/cli/cli.js"
+    "simpartic": "./bin/cli/cli.js"
   },
   "scripts": {
     "test": "npx jasmine-browser-runner runSpecs",
