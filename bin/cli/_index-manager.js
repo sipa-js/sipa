@@ -188,7 +188,7 @@ class SipaCliIndexManager {
             type: 'page'
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        SipaHelper.validateParams([{param_name: 'path', param_value: path, expected_type: 'String'}]);
+        SipaHelper.validateParams([{param_name: 'path', param_value: path, expected_type: 'string'}]);
         const final_path = self._makePath(path, options);
         if (path.endsWith('.css')) {
             return `<link rel="stylesheet" href="${final_path}">`;

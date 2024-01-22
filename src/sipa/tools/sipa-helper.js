@@ -64,7 +64,7 @@ class SipaHelper {
     }
 
     static throwParamError(param_name, param, expected_type) {
-        throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '${Typifier.getType(param)}!'`;
+        throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '${Typifier.getType(param)}'!`;
     }
 
     /**
@@ -81,7 +81,7 @@ class SipaHelper {
     static cutLeadingCharacters(text, leading_characters) {
         const self = SipaHelper;
         self.validateParams([
-            {param_name: 'text', param_value: text, expected_type: 'String'},
+            {param_name: 'text', param_value: text, expected_type: 'string'},
             {param_name: 'leading_characters', param_value: leading_characters, expected_type: 'String'},
         ]);
         if (text.startsWith(leading_characters)) {
@@ -105,8 +105,8 @@ class SipaHelper {
     static cutTrailingCharacters(text, trailing_characters) {
         const self = SipaHelper;
         self.validateParams([
-            {param_name: 'text', param_value: text, expected_type: 'String'},
-            {param_name: 'trailing_characters', param_value: trailing_characters, expected_type: 'String'},
+            {param_name: 'text', param_value: text, expected_type: 'string'},
+            {param_name: 'trailing_characters', param_value: trailing_characters, expected_type: 'string'},
         ]);
         if (text.endsWith(trailing_characters)) {
             return text.substr(0,text.indexOf(trailing_characters));

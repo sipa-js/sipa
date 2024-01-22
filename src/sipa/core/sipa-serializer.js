@@ -277,12 +277,11 @@ class SipaSerializer {
      * @private
      */
     static _isSpecialType(value) {
-        const h = SipaHelper;
-        return h.isUndefined(value) ||
-            h.isNaN(value) ||
-            h.isInfinity(value) ||
-            h.isDate(value) ||
-            h.isRegExp(value)
+        return Typifier.isUndefined(value) ||
+            Typifier.isNaN(value) ||
+            Typifier.isInfinity(value) ||
+            Typifier.isDate(value) ||
+            Typifier.isRegExp(value)
     }
 
     /**

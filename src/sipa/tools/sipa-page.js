@@ -30,7 +30,7 @@ class SipaPage {
     static load(page_id, options = {}) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'page_id', param_value: page_id, expected_type: 'String'},
+            {param_name: 'page_id', param_value: page_id, expected_type: 'string'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         const default_options = {
@@ -116,7 +116,7 @@ class SipaPage {
     static extractIdOfTemplate(template, options = {}) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'template', param_value: template, expected_type: 'String'},
+            {param_name: 'template', param_value: template, expected_type: 'string'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         const default_options = {
@@ -141,7 +141,7 @@ class SipaPage {
     static getClassNameOfTemplate(template, options = {}) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'template', param_value: template, expected_type: 'String'},
+            {param_name: 'template', param_value: template, expected_type: 'string'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         const default_options = {
@@ -204,7 +204,7 @@ class SipaPage {
     static loadLayout(layout_id, options = {}) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'layout_id', param_value: layout_id, expected_type: 'String'},
+            {param_name: 'layout_id', param_value: layout_id, expected_type: 'string'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         const default_options = {
@@ -269,8 +269,8 @@ class SipaPage {
     static callMethodOfPage(page_id, method_name, parameters = []) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'page_id', param_value: page_id, expected_type: 'String'},
-            {param_name: 'method_name', param_value: method_name, expected_type: 'String'},
+            {param_name: 'page_id', param_value: page_id, expected_type: 'string'},
+            {param_name: 'method_name', param_value: method_name, expected_type: 'string'},
             {param_name: 'parameters', param_value: parameters, expected_type: 'Array'},
         ]);
         const page_class = self.getClassNameOfTemplate(page_id, {type: 'page'});
@@ -293,8 +293,8 @@ class SipaPage {
     static callMethodOfLayout(layout_id, method_name, parameters = []) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'layout_id', param_value: layout_id, expected_type: 'String'},
-            {param_name: 'method_name', param_value: method_name, expected_type: 'String'},
+            {param_name: 'layout_id', param_value: layout_id, expected_type: 'string'},
+            {param_name: 'method_name', param_value: method_name, expected_type: 'string'},
             {param_name: 'parameters', param_value: parameters, expected_type: 'Array'},
         ]);
         const layout_class = self.getClassNameOfTemplate(layout_id, {type: 'layout'});
@@ -319,7 +319,7 @@ class SipaPage {
     static _makeFullPath(template, options = {}) {
         const self = SipaPage;
         SipaHelper.validateParams([
-            {param_name: 'template', param_value: template, expected_type: 'String'},
+            {param_name: 'template', param_value: template, expected_type: 'string'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         const default_options = {

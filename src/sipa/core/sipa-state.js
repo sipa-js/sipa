@@ -24,7 +24,7 @@ class SipaState {
     static set(key, value, options = {}) {
         const self = SipaState;
         SipaHelper.validateParams([
-            {param_name: 'key', param_value: key, expected_type: 'String'},
+            {param_name: 'key', param_value: key, expected_type: 'string'},
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         if (!options) options = {};

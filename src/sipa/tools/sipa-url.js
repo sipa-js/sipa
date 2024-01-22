@@ -58,7 +58,7 @@ class SipaUrl {
      */
     static setParam(param_key, value) {
         const self = SipaUrl;
-        SipaHelper.validateParams([{param_value: param_key, param_name: 'param_key', expected_type: 'String'}]);
+        SipaHelper.validateParams([{param_value: param_key, param_name: 'param_key', expected_type: 'string'}]);
         let param = {};
         param[param_key] = value;
         self.setParams(param);
@@ -78,7 +78,7 @@ class SipaUrl {
 
     static removeParam(param_key) {
         const self = SipaUrl;
-        SipaHelper.validateParams([{param_value: param_key, param_name: 'param_key', expected_type: 'String'}]);
+        SipaHelper.validateParams([{param_value: param_key, param_name: 'param_key', expected_type: 'string'}]);
         self.removeParams([param_key]);
     }
 
@@ -144,7 +144,7 @@ class SipaUrl {
     static getParamsOfUrl(url, options = {}) {
         const self = SipaUrl;
         SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'String'},
+            {param_value: url, param_name: 'url', expected_type: 'string'},
             {param_value: options, param_name: 'options', expected_type: 'Object'}
         ]);
         const default_options = {
@@ -210,7 +210,7 @@ class SipaUrl {
         const self = SipaUrl;
         SipaHelper.validateParams([
             {param_name: 'param_keys', param_value: param_keys, expected_type: 'Array'},
-            {param_name: 'url', param_value: url, expected_type: 'String'},
+            {param_name: 'url', param_value: url, expected_type: 'string'},
         ]);
         let curr_params = self.getParamsOfUrl(url);
         const anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
@@ -231,8 +231,8 @@ class SipaUrl {
     static removeParamOfUrl(url, param_key) {
         const self = SipaUrl;
         SipaHelper.validateParams([
-            {param_value: param_key, param_name: 'param_key', expected_type: 'String'},
-            {param_value: url, param_name: 'url', expected_type: 'String'},
+            {param_value: param_key, param_name: 'param_key', expected_type: 'string'},
+            {param_value: url, param_name: 'url', expected_type: 'string'},
         ]);
         self.removeParamsOfUrl(url, [param_key]);
     }
@@ -248,7 +248,7 @@ class SipaUrl {
         const self = SipaUrl;
         SipaHelper.validateParams([
             {param_value: params, param_name: 'params', expected_type: 'Object'},
-            {param_value: url, param_name: 'url', expected_type: 'String'},
+            {param_value: url, param_name: 'url', expected_type: 'string'},
         ]);
         let curr_params = self.getParamsOfUrl(url);
         const anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
@@ -268,7 +268,7 @@ class SipaUrl {
      */
     static getAnchorOfUrl(url, options = {}) {
         SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'String'},
+            {param_value: url, param_name: 'url', expected_type: 'string'},
             {param_value: options, param_name: 'options', expected_type: 'Object'}
         ]);
         const default_options = {
@@ -294,7 +294,7 @@ class SipaUrl {
      */
     static removeAnchorOfUrl(url) {
         SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'String'}
+            {param_value: url, param_name: 'url', expected_type: 'string'}
         ]);
         if (url.indexOf('#') !== -1) {
             return url.split('#')[0];
@@ -312,7 +312,7 @@ class SipaUrl {
      */
     static _getUrlWithoutParams(url) {
         SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'String'}
+            {param_value: url, param_name: 'url', expected_type: 'string'}
         ]);
         return url.substr(0, url.indexOf('?'));
     }
@@ -325,7 +325,7 @@ class SipaUrl {
      */
     static _setUrl(url) {
         SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'String'}
+            {param_value: url, param_name: 'url', expected_type: 'string'}
         ]);
         window.history.replaceState(window.history.state, '', url);
     }
