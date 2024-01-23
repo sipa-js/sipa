@@ -370,7 +370,7 @@ class SipaPage {
         const self = SipaPage;
         SipaHelper.validateParams([
             {param_name: 'state', param_value: state, expected_type: 'Object'},
-            {param_name: 'replace_state', param_value: replace_state, expected_type: 'Boolean'},
+            {param_name: 'replace_state', param_value: replace_state, expected_type: 'boolean'},
         ]);
         const original_url = SipaUrl.getUrl();
         let params = {page: state.page_id};

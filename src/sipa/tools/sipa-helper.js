@@ -82,7 +82,7 @@ class SipaHelper {
         const self = SipaHelper;
         self.validateParams([
             {param_name: 'text', param_value: text, expected_type: 'string'},
-            {param_name: 'leading_characters', param_value: leading_characters, expected_type: 'String'},
+            {param_name: 'leading_characters', param_value: leading_characters, expected_type: 'string'},
         ]);
         if (text.startsWith(leading_characters)) {
             return text.substr(leading_characters.length);
