@@ -1,3 +1,9 @@
+//<!-- MODULE -->//
+if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
+    var LuckyCase = require('lucky-case');
+}
+//<!-- /MODULE -->//
+
 /**
  * SipaHelper
  *
