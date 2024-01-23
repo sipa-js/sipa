@@ -107,7 +107,7 @@ sudo npm install -g sipa
 
 That's it!
 
-The command `sipa` (and its long version `sipa`) is now available on the command line.
+The command `sipa` (and its long version `simpartic`) is now available on the command line.
 
 Run `sipa help` for more information.
 
