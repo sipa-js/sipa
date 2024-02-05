@@ -12,8 +12,8 @@ We had a lot of pain using the word simpartic compared to sipa. So we switch bac
   "hooks": {
     "before_all": "",
     "after_all": "",
-    "before_build": "",
-    "after_build": "npm version patch",
+    "before_build": "npm version patch",
+    "after_build": "",
     "before_generate": "",
     "after_generate": "",
     "before_indexer": "",
