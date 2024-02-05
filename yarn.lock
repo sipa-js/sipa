@@ -1164,25 +1164,6 @@ lie@~3.3.0:
   dependencies:
     immediate "~3.0.5"
 
-live-server@^1.2.1:
-  version "1.2.2"
-  resolved "https://registry.yarnpkg.com/live-server/-/live-server-1.2.2.tgz#20b4fe5c2ca886faa61813310e28680804f48dad"
-  integrity sha512-t28HXLjITRGoMSrCOv4eZ88viHaBVIjKjdI5PO92Vxlu+twbk6aE0t7dVIaz6ZWkjPilYFV6OSdMYl9ybN2B4w==
-  dependencies:
-    chokidar "^2.0.4"
-    colors "1.4.0"
-    connect "^3.6.6"
-    cors latest
-    event-stream "3.3.4"
-    faye-websocket "0.11.x"
-    http-auth "3.1.x"
-    morgan "^1.9.1"
-    object-assign latest
-    opn latest
-    proxy-middleware latest
-    send latest
-    serve-index "^1.9.1"
-
 lodash.camelcase@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/lodash.camelcase/-/lodash.camelcase-4.3.0.tgz#b28aa6288a2b9fc651035c7711f65ab6190331a6"
@@ -1732,6 +1713,25 @@ side-channel@^1.0.4:
     call-bind "^1.0.0"
     get-intrinsic "^1.0.2"
     object-inspect "^1.9.0"
+
+sipa-live-server@^0.0.3:
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/sipa-live-server/-/sipa-live-server-0.0.3.tgz#f0e5d002bdf3961fc9f2905e0ba147176a2aefc8"
+  integrity sha512-5e/TT9E6SjzEpd+9W4tGuGxfj1fHGoPCJNAd5YgLga60OWCwQmzEhR1l5Z00bu1/wll+JugveOqB18vfbfqrgQ==
+  dependencies:
+    chokidar "^2.0.4"
+    colors "1.4.0"
+    connect "^3.6.6"
+    cors latest
+    event-stream "3.3.4"
+    faye-websocket "0.11.x"
+    http-auth "3.1.x"
+    morgan "^1.9.1"
+    object-assign latest
+    opn latest
+    proxy-middleware latest
+    send latest
+    serve-index "^1.9.1"
 
 snapdragon-node@^2.0.1:
   version "2.1.1"

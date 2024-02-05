@@ -34,8 +34,8 @@ class SipaCliServer {
         (async function run() {
             const host = SipaCliTools.readProjectSipaConfig().development_server?.host || '7000';
             const port = SipaCliTools.readProjectSipaConfig().development_server?.port || '0.0.0.0';
-            const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/live-server/live-server.js`;
-            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/live-server/live-server.js`);
+            const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/sipa-live-server/sipa-live-server.js`;
+            const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/sipa-live-server/sipa-live-server.js`);
             let live_server_js_path = null;
             // npm path
             if(File.isExisting(npm_path)) {
@@ -44,7 +44,7 @@ class SipaCliServer {
             else if(File.isExisting((yarn_path))) {
                 live_server_js_path = yarn_path;
             } else {
-                throw new Error(`Could not locate live-server.js`);
+                throw new Error(`Could not locate sipa-live-server.js`);
             }
             const config = SipaCliTools.readProjectSipaConfig();
             let mount = config?.development_server?.mount?.trim() || '/';
