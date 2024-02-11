@@ -23,9 +23,12 @@ Documentation for developing web apps with Sipa. ![State](https://img.shields.io
 
 
 * **Javascript class reference (JSdoc)**
-    * [SipaEnv](sipa_env.md) - Environment class
-    * [SipaHelper](sipa_helper.md) - Several common helper functions
-    * [SipaHelper](sipa_hooks.md) - Register hooks to specific events
-    * [SipaPage](sipa_page.md) - Page loader and router
-    * [SipaState](sipa_state.md) - Global state with three persistence levels
-    * [SipaUrl](sipa_url.md) - Read and modify URLs
+    * [Sipa](jsdoc/sipa.jsdoc.md) 
+    * [SipaBasicView](jsdoc/sipa-basic-view.jsdoc.md) 
+    * [SipaEnv](jsdoc/sipa-env.jsdoc.md) 
+    * [SipaHelper](jsdoc/sipa-helper.jsdoc.md) 
+    * [SipaHooks](jsdoc/sipa-hooks.jsdoc.md)
+    * [SipaPage](jsdoc/sipa-page.jsdoc.md)
+    * [SipaSerializer](jsdoc/sipa-serializer.jsdoc.md)
+    * [SipaState](jsdoc/sipa-state.jsdoc.md)
+    * [SipaUrl](jsdoc/sipa-url.jsdoc.md)

@@ -19,6 +19,7 @@
     "test": "npx jasmine-browser-runner runSpecs",
     "test_browser": "npx jasmine-browser-runner serve",
     "build": "node bin/build.js",
+    "doc": "node bin/doc.js",
     "link_dev": "sudo npm link",
     "unlink_dev": "sudo npm rm --global sipa"
   },
@@ -58,6 +59,8 @@
     "glob": "^7.1.6",
     "jasmine-browser-runner": "^0.10.0",
     "jasmine-core": "^3.10.1",
+    "jsdoc": "^3.6.6",
+    "jsdoc-to-markdown": "^6.0.1",
     "sipa-live-server": "^0.0.3",
     "lucky-case": "^1.1.8",
     "prompt-sync": "^4.2.0",

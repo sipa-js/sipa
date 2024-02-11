@@ -18,7 +18,7 @@ class SipaState {
      * @param {string} key
      * @param {any} value
      * @param {object} options
-     * @param {SipaState.LEVEL.VARIABLE, SipaState.LEVEL.SESSION, SipaState.LEVEL.STORAGE} options.level=SipaState.LEVEL.SESSION
+     * @param {SipaState.Level} options.level='session'
      * @param {boolean} options.force=false overwrite value, if it is set at another level already
      */
     static set(key, value, options = {}) {
@@ -91,7 +91,7 @@ class SipaState {
      * If key is not set at any level, returns null.
      *
      * @param {string} key
-     * @returns {SipaState.LEVEL.VARIABLE, SipaState.LEVEL.SESSION, SipaState.LEVEL.STORAGE, null}
+     * @returns {SipaState.LEVEL|null}
      */
     static getLevel(key) {
         const self = SipaState;
@@ -236,8 +236,8 @@ class SipaState {
 
     /**
      *
-     * @param {SipaState.LEVEL.VARIABLE, SipaState.LEVEL.SESSION, SipaState.LEVEL.STORAGE} level
-     * @return {object<string, any>}
+     * @param {SipaState.Level} level
+     * @return {Object<string, any>}
      * @private
      */
     static _getAllBy(level) {
@@ -256,7 +256,7 @@ class SipaState {
     /**
      * Get store by level
      *
-     * @param {SipaState.LEVEL.VARIABLE, SipaState.LEVEL.SESSION, SipaState.LEVEL.STORAGE} level
+     * @param {SipaState.Level} level
      * @returns {Storage|object}
      * @private
      */
@@ -325,3 +325,7 @@ SipaState.LEVEL = {
 SipaState.PERSISTENCE_PREFIX = 'SipaState_';
 
 SipaState._variables = {}; // Level 1 persistence
+
+/**
+ * @typedef {'variable'|'session'|'storage'} SipaState.Level
+ */

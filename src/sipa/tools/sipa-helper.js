@@ -16,6 +16,10 @@ class SipaHelper {
      *
      * Works only fine with one level depth, don't merge nested (Object) options, as references are copied then!
      *
+     * @example
+     * SipaHelper.mergeOptions({ a: 1, b: "two"},{b: "TWO", c: null });
+     * // => { a: 1, b: "TWO", c: null }
+     *
      * @param {Object} source
      * @param {Object} addition
      * @returns {Object} merged object
@@ -32,6 +36,14 @@ class SipaHelper {
 
     /**
      * Check if given value is a array (slice) of size 1 and contains type empty
+     *
+     * @example
+     * let arr = ["one"];
+     * delete arr[1]:
+     * arr;
+     * // => [empty]
+     * SipaHelper.isArrayContainingEmptyValue(arr);
+     * // => true
      *
      * @param {any} value
      * @returns {boolean} true if a array of size 1 and contains empty => [empty], if size is 1 and not of type empty then false
@@ -53,6 +65,16 @@ class SipaHelper {
     /**
      * Check the given parameter to be of the expected type.
      * If is is not valid, throw an exception.
+     *
+     * @example
+     * function Example(param_one, other_param) {
+     *     SipaHelper.validateParams([
+     *         {param_name: 'param_one', param_value: param_one, expected_type: 'Object'},
+     *         {param_name: 'other_param', param_value: other_param, expected_type: 'boolean'},
+     *     ]);
+     * }
+     * Example("one",true);
+     * // => Invalid parameter 'param_one' given. Expected type 'Object' but got type 'string'!`
      *
      * @param {Array<SipaParamValidation>} params
      * @throws {Error} throws an error if given parameter is not valid.

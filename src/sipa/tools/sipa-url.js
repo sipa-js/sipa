@@ -5,6 +5,15 @@
  * the current or given URLs
  */
 class SipaUrl {
+    /**
+     * Get the current address of the website
+     *
+     * @example
+     * SipaUrl.getUrl();
+     * // => https://my-website.com/web/?page=abc&param=ok
+     *
+     * @returns {string}
+     */
     static getUrl() {
         return window.location.href;
     }
@@ -12,7 +21,11 @@ class SipaUrl {
     /**
      * Get the protocol of the current url (without colon)
      *
-     * @returns {('http'|'https')}
+     * @example
+     * SipaUrl.getProtocol();
+     * // => 'https'
+     *
+     * @returns {'http'|'https'}
      */
     static getProtocol() {
         return window.location.protocol.replace(':', '');
@@ -33,6 +46,16 @@ class SipaUrl {
         return window.location.hostname;
     }
 
+    /**
+     * Get all params of the current URL
+     *
+     * @example
+     * // URL: https://my-business.com/?one=1&stat=true
+     * SipaUrl.getParams();
+     * // => { "one": "1", "stat": "true" }
+     *
+     * @returns {Object<string, string>}
+     */
     static getParams() {
         const self = SipaUrl;
         return self.getParamsOfUrl(self.getUrl());
@@ -40,6 +63,11 @@ class SipaUrl {
 
     /**
      * Set or overwrite given parameters of the current url
+     *
+     * @example
+     * // URL: https://my-business.com/?one=1&stat=true&that=cool
+     * SipaUrl.setParams({ "more": "better", "stat": "false"});
+     * // URL: https://my-business.com/?one=1&stat=false&that=cool&more=better
      *
      * @param {Object<string, string>} params in format { param1: value1, param2: value2, ... }
      */
@@ -52,6 +80,11 @@ class SipaUrl {
 
     /**
      * Set or overwrite one specific parameter of the current url
+     *
+     * @example
+     * // URL: https://my-business.com/?super=banana&coca=cola
+     * SipaUrl.setParam("pepsi","coke");
+     * // URL: https://my-business.com/?super=banana&coca=cola&pepsi=coke
      *
      * @param {string} param_key
      * @param {string} value
@@ -67,6 +100,11 @@ class SipaUrl {
     /**
      * Remove given params of the current url
      *
+     * @example
+     * // URL: https://my-business.com/?some=stuff&foo=bar&more=power
+     * SipaUrl.removeParams(["some","more"]);
+     * // URL: https://my-business.com/?foo=bar
+     *
      * @param {Array<String>} param_keys
      */
     static removeParams(param_keys) {
@@ -76,12 +114,30 @@ class SipaUrl {
         self._setUrl(new_url);
     }
 
+    /**
+     * Remove given param of the current url
+     *
+     * @example
+     * // URL: https://my-business.com/?some=stuff&foo=bar
+     * SipaUrl.removeParam("foo");
+     * // URL: https://my-business.com/?some=stuff
+     * @param {string} param_key
+     */
     static removeParam(param_key) {
         const self = SipaUrl;
         SipaHelper.validateParams([{param_value: param_key, param_name: 'param_key', expected_type: 'string'}]);
         self.removeParams([param_key]);
     }
 
+    /**
+     * Remove the anchor of the URL
+     *
+     * @example
+     * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl.removeAnchor();
+     * // URL: https://my-business.com/?some=stuff&foo=bar
+     *
+     */
     static removeAnchor() {
         const self = SipaUrl;
         const new_url = self.removeAnchorOfUrl(self.getUrl());
@@ -135,6 +191,10 @@ class SipaUrl {
 
     /**
      * Create a JSON, containing the parameters of the given url
+     *
+     * @example
+     * SipaUrl.getParamsOfUrl("https://my-business.com/?some=stuff&foo=bar");
+     * // => { "some": "stuff", "foo": "bar" }
      *
      * @param {string} url the url to extract parameters from
      * @param {Object} options

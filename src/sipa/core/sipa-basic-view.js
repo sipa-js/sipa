@@ -18,6 +18,11 @@ class SipaBasicView {
     /**
      * Check if the current view is loaded
      *
+     * @example
+     * // ImprintPage is loaded
+     * LoginPage.isLoaded();
+     * // => false
+     *
      * @returns {boolean}
      */
     static isLoaded() {
@@ -32,6 +37,14 @@ class SipaBasicView {
     /**
      * Get the class name of the current view
      *
+     * @example
+     * class MyPage extends SipaBasicView {
+     * }
+     *
+     * const a = MyPage;
+     * a.className()
+     * // => 'MyPage'
+     *
      * @returns {string}
      */
     static className() {
@@ -41,7 +54,14 @@ class SipaBasicView {
     /**
      * Get the type of the current view
      *
-     * @returns {('page','layout')}
+     * @example
+     * class MyLayout extends SipaBasicView {
+     * }
+     *
+     * MyLayout.type()
+     * // => 'layout'
+     *
+     * @returns {'page'|'layout'}
      */
     static type() {
         const self = SipaBasicView;

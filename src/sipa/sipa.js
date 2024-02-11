@@ -13,7 +13,14 @@ class Sipa {
         return self._version;
     }
     /**
-     * Function to fire to init the whole Sipa app
+     * Callback function to fire to init the whole Sipa app.
+     *
+     * This is the entry point for your app. The given callback is called after Sipa is initialized.
+     *
+     * @example
+     * Sipa.init(() => {
+     *   SipaPage.load('login');
+     * });
      *
      * @param {function} init_function
      */

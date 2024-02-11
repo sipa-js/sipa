@@ -22,7 +22,7 @@ class SipaEnv {
     /**
      * Check if Sipa is running at localhost
      *
-     * @returns {boolean} true if localhost, otherweise false
+     * @returns {boolean} true if localhost, otherwise false
      */
     static isRunningLocalHost() {
         const host = window.location.hostname;
@@ -31,6 +31,8 @@ class SipaEnv {
 
     /**
      * Check if debug mode is enabled
+     *
+     * The debug mode can be enabled, by adding a query parameter 'debug=true' into your URL
      *
      * @returns {boolean} true if enabled, otherwise false
      */
@@ -41,7 +43,7 @@ class SipaEnv {
     /**
      * Debug output on console if debug mode is enabled
      *
-     * @param {string, any} text
+     * @param {string|any} text
      */
     static debugLog(text) {
         const self = SipaEnv;

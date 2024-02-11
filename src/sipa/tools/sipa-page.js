@@ -110,7 +110,7 @@ class SipaPage {
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
-     * @param {('layout','page')} options.type='page'
+     * @param {SipaPage.PageType} options.type='page'
      * @returns {string} absolute path
      */
     static extractIdOfTemplate(template, options = {}) {
@@ -135,7 +135,7 @@ class SipaPage {
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
-     * @param {('layout','page')} options.type='page'
+     * @param {SipaPage.PageType} options.type='page'
      * @returns {string} class name
      */
     static getClassNameOfTemplate(template, options = {}) {
@@ -155,7 +155,7 @@ class SipaPage {
     /**
      * Get the options of the given type
      *
-     * @param {('page','layout')} type
+     * @param {SipaPage.PageType} type
      * @returns {TypeOptionsType} type options
      */
     static typeOptions(type) {
@@ -217,7 +217,7 @@ class SipaPage {
         const last_layout_id = self.currentLayoutId();
         j_body.attr('data-layout-id', layout_id);
         /**
-         * @param {('success','always')} type
+         * @param {'success'|'always'} type
          */
         const after_loaded_function = (data, text, response, type) => {
             SipaHooks.beforeDestroyLayout('trigger');
@@ -312,7 +312,7 @@ class SipaPage {
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
-     * @param {('layout','page')} options.type='page'
+     * @param {SipaPage.PageType} options.type='page'
      * @returns {string} absolute path
      * @private
      */
@@ -431,6 +431,9 @@ SipaPage.config = null;
  * @typedef {Object} SipaPageConfig
  * @param {string} default_layout
  * @param {Object} default_layouts
+ *
+ *
+ * @typedef {'layout'|'page'} SipaPage.PageType
  */
 
 
