@@ -23,12 +23,12 @@ Documentation for developing web apps with Sipa. ![State](https://img.shields.io
 
 
 * **Javascript class reference (JSdoc)**
-    * [Sipa](jsdoc/sipa.jsdoc.md) 
-    * [SipaBasicView](jsdoc/sipa-basic-view.jsdoc.md) 
-    * [SipaEnv](jsdoc/sipa-env.jsdoc.md) 
-    * [SipaHelper](jsdoc/sipa-helper.jsdoc.md) 
-    * [SipaHooks](jsdoc/sipa-hooks.jsdoc.md)
-    * [SipaPage](jsdoc/sipa-page.jsdoc.md)
-    * [SipaSerializer](jsdoc/sipa-serializer.jsdoc.md)
-    * [SipaState](jsdoc/sipa-state.jsdoc.md)
-    * [SipaUrl](jsdoc/sipa-url.jsdoc.md)
+    * [Sipa](jsdoc/Sipa.md) 
+    * [SipaBasicView](jsdoc/SipaBasicView.md) 
+    * [SipaEnv](jsdoc/SipaEnv.md) 
+    * [SipaHelper](jsdoc/SipaHelper.md) 
+    * [SipaHooks](jsdoc/SipaHooks.md)
+    * [SipaPage](jsdoc/SipaPage.md)
+    * [SipaSerializer](jsdoc/SipaSerializer.md)
+    * [SipaState](jsdoc/SipaState.md)
+    * [SipaUrl](jsdoc/SipaUrl.md)

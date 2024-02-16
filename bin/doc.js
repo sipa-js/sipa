@@ -22,7 +22,7 @@ const files_to_doc = [
 
 function generateDoc() {
     for(let source_file of files_to_doc) {
-        const doc_file = './doc/jsdoc/' + source_file.split('/').getLast().replace(/\.js$/gm,'.jsdoc.md');
+        const doc_file = './doc/jsdoc/' + source_file.split('/').getLast().toPascalCase().replace(/\.js$/gm,'.md');
         execSync(`./node_modules/jsdoc-to-markdown/bin/cli.js --files ${source_file} > ${doc_file}`);
         beautifyDoc(doc_file);
     }
