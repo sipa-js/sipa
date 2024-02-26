@@ -405,15 +405,14 @@ class SipaPage {
             {param_name: 'config', param_value: config, expected_type: 'Object'},
         ]);
         self.config = config;
+        // init only when running in browser
+        if(typeof window !== 'undefined') {
+            SipaPage.initHistoryState();
+        }
     }
 }
 
 SipaPage.page_container_css_selector = '#page-container';
-
-// init only when running in browser
-if(typeof window !== 'undefined') {
-    SipaPage.initHistoryState();
-}
 
 /**
  * @type {SipaPageConfig}
