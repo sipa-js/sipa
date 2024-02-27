@@ -27,10 +27,17 @@ class SipaBasicView {
      */
     static isLoaded() {
         const self = SipaBasicView;
-        if(self.type() === 'page') {
-            return LuckyCase.toPascalCase(SipaPage.extractIdOfTemplate(SipaPage.currentPageId())).endsWith(self.className());
+        const navigator = SipaPage.isInitialized() ? SipaPage : SipaOnsenPage.isInitialized() ? SipaOnsenPage : false;
+        if(navigator === false) {
+            throw `SipaPage.setConfig or SipaOnsenPage.setConfig was not executed before application start.`;
+        }
+        // no page loaded at all
+        if(!navigator.currentPageId()) {
+            return false;
+        } else if(this.type() === 'page') {
+            return (LuckyCase.toPascalCase(navigator.extractIdOfTemplate(navigator.currentPageId().replace(/\//g,'-'))) + 'Page').endsWith(this.className() );
         } else {
-            return LuckyCase.toPascalCase(SipaPage.extractIdOfTemplate(SipaPage.currentLayoutId())).endsWith(self.className());
+            return (LuckyCase.toPascalCase(navigator.extractIdOfTemplate(navigator.currentLayoutId().replace(/\//g,'-'))) + 'Layout').endsWith(this.className());
         }
     }
 
@@ -65,7 +72,7 @@ class SipaBasicView {
      */
     static type() {
         const self = SipaBasicView;
-        if(self.className().endsWith('Page')) {
+        if(this.className().endsWith('Page')) {
             return 'page';
         } else {
             return 'layout';

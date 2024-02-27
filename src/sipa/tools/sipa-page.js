@@ -410,6 +410,11 @@ class SipaPage {
             SipaPage.initHistoryState();
         }
     }
+
+    static isInitialized() {
+        const self = SipaPage;
+        return self.config !== null;
+    }
 }
 
 SipaPage.page_container_css_selector = '#page-container';
