@@ -59,12 +59,12 @@ class SipaPage {
                     success: (data, text, response) => {
                         const j_container = $(self.page_container_css_selector);
                         const load_function = () => {
-                            SipaHooks.beforeDestroyPage('trigger');
+                            SipaHooks.beforeDestroyPage('trigger', null, last_page_id);
                             if (last_page_id) {
                                 self.callMethodOfPage(last_page_id, 'onDestroy', [{next_page_id: page_id}]);
                             }
                             j_container.html(data);
-                            SipaHooks.beforeInitPage('trigger');
+                            SipaHooks.beforeInitPage('trigger', null, page_id);
                             if (options.fade_effect) {
                                 j_container.fadeIn(150);
                             }
@@ -220,13 +220,13 @@ class SipaPage {
          * @param {'success'|'always'} type
          */
         const after_loaded_function = (data, text, response, type) => {
-            SipaHooks.beforeDestroyLayout('trigger');
+            SipaHooks.beforeDestroyLayout('trigger', null, last_layout_id);
             if (last_layout_id) {
                 self.callMethodOfLayout(last_layout_id, 'onDestroy', [{next_layout_id: layout_id}]);
             }
             j_body.hide();
             j_body.html(data);
-            SipaHooks.beforeInitLayout('trigger');
+            SipaHooks.beforeInitLayout('trigger', null, layout_id);
             self.callMethodOfLayout(layout_id, 'onInit', [{last_layout_id: last_layout_id}]);
             if (typeof options[type] === 'function') {
                 options[type](data, text, response);

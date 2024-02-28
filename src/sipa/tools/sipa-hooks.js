@@ -16,8 +16,9 @@ class SipaHooks {
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
+     * @param {string} page_id
      */
-    static beforeInitPage(type, func) {
+    static beforeInitPage(type, func, page_id) {
         const self = SipaHooks;
         switch (type) {
             case 'on':
@@ -27,7 +28,7 @@ class SipaHooks {
                 self._removeFunction(self._before_init_page_functions, func);
                 break;
             case 'trigger':
-                self._triggerFunctions(self._before_init_page_functions);
+                self._triggerFunctions(self._before_init_page_functions, page_id);
                 break;
             default:
                 throw `Invalid type '${type}'`;
@@ -44,8 +45,9 @@ class SipaHooks {
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
+     * @param {string} page_id
      */
-    static beforeDestroyPage(type, func) {
+    static beforeDestroyPage(type, func, page_id) {
         const self = SipaHooks;
         switch (type) {
             case 'on':
@@ -55,7 +57,7 @@ class SipaHooks {
                 self._removeFunction(self._before_destroy_page_functions, func);
                 break;
             case 'trigger':
-                self._triggerFunctions(self._before_destroy_page_functions);
+                self._triggerFunctions(self._before_destroy_page_functions, page_id);
                 break;
             default:
                 throw `Invalid type '${type}'`;
@@ -72,8 +74,9 @@ class SipaHooks {
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
+     * @param {string} layout_id
      */
-    static beforeInitLayout(type, func) {
+    static beforeInitLayout(type, func, layout_id) {
         const self = SipaHooks;
         switch (type) {
             case 'on':
@@ -83,7 +86,7 @@ class SipaHooks {
                 self._removeFunction(self._before_init_layout_functions, func);
                 break;
             case 'trigger':
-                self._triggerFunctions(self._before_init_layout_functions);
+                self._triggerFunctions(self._before_init_layout_functions, layout_id);
                 break;
             default:
                 throw `Invalid type '${type}'`;
@@ -100,8 +103,9 @@ class SipaHooks {
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
+     * @param {string} layout_id
      */
-    static beforeDestroyLayout(type, func) {
+    static beforeDestroyLayout(type, func, layout_id) {
         const self = SipaHooks;
         switch (type) {
             case 'on':
@@ -111,7 +115,7 @@ class SipaHooks {
                 self._removeFunction(self._before_destroy_layout_functions, func);
                 break;
             case 'trigger':
-                self._triggerFunctions(self._before_destroy_layout_functions);
+                self._triggerFunctions(self._before_destroy_layout_functions, layout_id);
                 break;
             default:
                 throw `Invalid type '${type}'`;
@@ -146,10 +150,10 @@ class SipaHooks {
         }
     }
 
-    static _triggerFunctions(array) {
+    static _triggerFunctions(array, element_id) {
         array.forEach((fun) => {
             if (typeof fun === 'function') {
-                fun();
+                fun(element_id);
             }
         });
     }
