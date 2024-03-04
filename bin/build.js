@@ -49,9 +49,12 @@ const builds = {
             './src/sipa/tools/sipa-env.js',
             './src/sipa/tools/sipa-helper.js',
             './src/sipa/tools/sipa-hooks.js',
+            './src/sipa/tools/sipa-onsen-hooks.js',
             './src/sipa/tools/sipa-page.js',
+            './src/sipa/tools/sipa-onsen-page.js',
             './src/sipa/tools/sipa-url.js',
             './src/sipa/sipa.js',
+            './src/sipa/sipa-onsen.js',
         ]}
 }
 
