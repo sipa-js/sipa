@@ -96,7 +96,7 @@ class SipaOnsenPage {
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
-     * @param {('layout','page')} options.type='page'
+     * @param {SipaPage.PageType} options.type='page'
      * @returns {string} absolute path
      */
     static extractIdOfTemplate(template, options = {}) {
@@ -121,7 +121,7 @@ class SipaOnsenPage {
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
-     * @param {('layout','page')} options.type='page'
+     * @param {SipaPage.PageType} options.type='page'
      * @returns {string} class name
      */
     static getClassNameOfTemplate(template, options = {}) {
@@ -141,7 +141,7 @@ class SipaOnsenPage {
     /**
      * Get the options of the given type
      *
-     * @param {('page','layout')} type
+     * @param {SipaPage.PageType} type
      * @returns {TypeOptionsType} type options
      */
     static typeOptions(type) {
@@ -215,7 +215,7 @@ class SipaOnsenPage {
         } else {
             j_body.attr('data-layout-id', layout_id);
             /**
-             * @param {('success','always')} type
+             * @param {'success'|'always'} type
              */
             const after_loaded_function = (data, text, response, type) => {
                 if (last_layout_id) {
@@ -315,7 +315,7 @@ class SipaOnsenPage {
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
-     * @param {('layout','page')} options.type='page'
+     * @param {SipaPage.PageType} options.type='page'
      * @returns {string} absolute path
      * @private
      */

@@ -6,21 +6,22 @@ SipaHooks
 App hook manager
 
 * [SipaHooks](#SipaHooks)
-    * [.beforeInitPage(type, func)](#SipaHooks.beforeInitPage)
-    * [.beforeDestroyPage(type, func)](#SipaHooks.beforeDestroyPage)
-    * [.beforeInitLayout(type, func)](#SipaHooks.beforeInitLayout)
-    * [.beforeDestroyLayout(type, func)](#SipaHooks.beforeDestroyLayout)
+    * [.beforeInitPage(type, func, page_id)](#SipaHooks.beforeInitPage)
+    * [.beforeDestroyPage(type, func, page_id)](#SipaHooks.beforeDestroyPage)
+    * [.beforeInitLayout(type, func, layout_id)](#SipaHooks.beforeInitLayout)
+    * [.beforeDestroyLayout(type, func, layout_id)](#SipaHooks.beforeDestroyLayout)
     * [.HookType](#SipaHooks.HookType) : <code>&#x27;on&#x27;</code> \| <code>&#x27;off&#x27;</code> \| <code>&#x27;trigger&#x27;</code>
 
 <a name="SipaHooks.beforeInitPage"></a>
 
-### SipaHooks.beforeInitPage(type, func)
+### SipaHooks.beforeInitPage(type, func, page_id)
 Set, remove or trigger event 'beforeInitPage'
 
 | Param | Type | Description |
 | --- | --- | --- |
 | type | [<code>HookType</code>](#SipaHooks.HookType) |  |
 | func | <code>function</code> | function to set or remove, ignored if parameter type is 'trigger' |
+| page_id | <code>string</code> |  |
 
 
 **Example**
@@ -31,13 +32,14 @@ SipaHooks.beforeInitPage('on', () => {
 ```
 <a name="SipaHooks.beforeDestroyPage"></a>
 
-### SipaHooks.beforeDestroyPage(type, func)
+### SipaHooks.beforeDestroyPage(type, func, page_id)
 Set, remove or trigger event 'beforeDestroyPage'
 
 | Param | Type | Description |
 | --- | --- | --- |
 | type | [<code>HookType</code>](#SipaHooks.HookType) |  |
 | func | <code>function</code> | function to set or remove, ignored if parameter type is 'trigger' |
+| page_id | <code>string</code> |  |
 
 
 **Example**
@@ -48,13 +50,14 @@ SipaHooks.beforeDestroyPage('on', () => {
 ```
 <a name="SipaHooks.beforeInitLayout"></a>
 
-### SipaHooks.beforeInitLayout(type, func)
+### SipaHooks.beforeInitLayout(type, func, layout_id)
 Set, remove or trigger event 'beforeInitLayout'
 
 | Param | Type | Description |
 | --- | --- | --- |
 | type | [<code>HookType</code>](#SipaHooks.HookType) |  |
 | func | <code>function</code> | function to set or remove, ignored if parameter type is 'trigger' |
+| layout_id | <code>string</code> |  |
 
 
 **Example**
@@ -65,13 +68,14 @@ SipaHooks.beforeInitLayout('on', () => {
 ```
 <a name="SipaHooks.beforeDestroyLayout"></a>
 
-### SipaHooks.beforeDestroyLayout(type, func)
+### SipaHooks.beforeDestroyLayout(type, func, layout_id)
 Set, remove or trigger event 'beforeDestroyLayout'
 
 | Param | Type | Description |
 | --- | --- | --- |
 | type | [<code>HookType</code>](#SipaHooks.HookType) |  |
 | func | <code>function</code> | function to set or remove, ignored if parameter type is 'trigger' |
+| layout_id | <code>string</code> |  |
 
 
 **Example**

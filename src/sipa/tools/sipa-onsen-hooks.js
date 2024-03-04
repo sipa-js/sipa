@@ -9,7 +9,7 @@ class SipaOnsenHooks extends SipaHooks {
     /**
      * Set, remove or trigger event 'beforeShowPage'
      *
-     * @param {('on','off','trigger')} type
+     * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
      * @param {string} page_id
      */
@@ -33,7 +33,7 @@ class SipaOnsenHooks extends SipaHooks {
     /**
      * Set, remove or trigger event 'beforeHidePage'
      *
-     * @param {('on','off','trigger')} type
+     * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
      * @param {string} page_id
      */

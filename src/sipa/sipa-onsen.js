@@ -1,7 +1,11 @@
-
+/**
+ * SipaOnsen
+ *
+ * Framework core class to provide core functionality for OnsenUI.
+ */
 class SipaOnsen extends Sipa {
     /**
-     * Function to fire to init the whole Sipa app
+     * Function to fire to init the whole Sipa OnsenUI based app
      *
      * @param {function} init_function
      */
