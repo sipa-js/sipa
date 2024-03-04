@@ -16,7 +16,8 @@ require('ruby-nice/object');
 
 const SipaCliTools = require('./cli/_tools');
 
-const build_destination_dir = './lib/templates/project/default/app/assets/lib/sipa/';
+const sipa_build_destination_dir = './lib/templates/project/default/app/assets/lib/sipa/';
+const sipa_onsen_build_destination_dir = './lib/templates/project/onsenui/app/assets/lib/sipa/';
 
 const build_exclusion_markers = [
     /\/\/<!-- MODULE -->\/\/(.*?)\/\/<!-- \/MODULE -->\/\//gs,
@@ -41,7 +42,23 @@ const release_header_template = `/**
 
 const builds = {
     default_build: {
-        destination_file: build_destination_dir + 'sipa.js',
+        destination_file: sipa_build_destination_dir + 'sipa.js',
+        source_files: [
+            './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/core/sipa-serializer.js',
+            './src/sipa/core/sipa-state.js',
+            './src/sipa/tools/sipa-env.js',
+            './src/sipa/tools/sipa-helper.js',
+            './src/sipa/tools/sipa-hooks.js',
+            './src/sipa/tools/sipa-onsen-hooks.js',
+            './src/sipa/tools/sipa-page.js',
+            './src/sipa/tools/sipa-onsen-page.js',
+            './src/sipa/tools/sipa-url.js',
+            './src/sipa/sipa.js',
+            './src/sipa/sipa-onsen.js',
+        ]},
+    onsenui_build: {
+        destination_file: sipa_onsen_build_destination_dir + 'sipa.js',
         source_files: [
             './src/sipa/core/sipa-basic-view.js',
             './src/sipa/core/sipa-serializer.js',
@@ -58,16 +75,27 @@ const builds = {
         ]}
 }
 
-const copy_static_files = {
-    './node_modules/typifier/dist/typifier.js': File.expandPath(build_destination_dir + '/../typifier/') + '/typifier.js',
-    './node_modules/typifier/LICENSE': File.expandPath(build_destination_dir + '/../typifier/') + '/LICENSE',
+const copy_static_files = [
+    // default project
+    ['./node_modules/typifier/dist/typifier.js', File.expandPath(sipa_build_destination_dir + '/../typifier/') + '/typifier.js'],
+    ['./node_modules/typifier/LICENSE', File.expandPath(sipa_build_destination_dir + '/../typifier/') + '/LICENSE'],
 
-    './node_modules/curly-bracket-parser/dist/curly-bracket-parser.js': File.expandPath(build_destination_dir + '/../curly-bracket-parser/') + '/curly-bracket-parser.js',
-    './node_modules/curly-bracket-parser/LICENSE': File.expandPath(build_destination_dir + '/../curly-bracket-parser/') + '/LICENSE',
+    ['./node_modules/curly-bracket-parser/dist/curly-bracket-parser.js', File.expandPath(sipa_build_destination_dir + '/../curly-bracket-parser/') + '/curly-bracket-parser.js'],
+    ['./node_modules/curly-bracket-parser/LICENSE', File.expandPath(sipa_build_destination_dir + '/../curly-bracket-parser/') + '/LICENSE'],
 
-    './node_modules/lucky-case/dist/lucky-case.js': File.expandPath(build_destination_dir + '/../lucky-case/') + '/lucky-case.js',
-    './node_modules/lucky-case/LICENSE': File.expandPath(build_destination_dir + '/../lucky-case/') + '/LICENSE',
-}
+    ['./node_modules/lucky-case/dist/lucky-case.js', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/lucky-case.js'],
+    ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
+
+    // onsenui project
+    ['./node_modules/typifier/dist/typifier.js', File.expandPath(sipa_onsen_build_destination_dir + '/../typifier/') + '/typifier.js'],
+    ['./node_modules/typifier/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../typifier/') + '/LICENSE'],
+
+    ['./node_modules/curly-bracket-parser/dist/curly-bracket-parser.js', File.expandPath(sipa_onsen_build_destination_dir + '/../curly-bracket-parser/') + '/curly-bracket-parser.js'],
+    ['./node_modules/curly-bracket-parser/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../curly-bracket-parser/') + '/LICENSE'],
+
+    ['./node_modules/lucky-case/dist/lucky-case.js', File.expandPath(sipa_onsen_build_destination_dir + '/../lucky-case/') + '/lucky-case.js'],
+    ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
+]
 
 function version() {
     const package_json = SipaCliTools.readFile('./package.json');
@@ -129,7 +157,9 @@ for(let build_key of Object.keys(builds)) {
     })();
 }
 console.log('Copy static files ...');
-copy_static_files.eachWithIndex((key, value, index) => {
+copy_static_files.eachWithIndex((val, index) => {
+    const key = val[0];
+    const value = val[1];
     console.log(` - ${key} -> ${value}`);
     if(!File.isDirectory(File.getDirname(value))) {
         FileUtils.mkdirP(File.getDirname(value));
