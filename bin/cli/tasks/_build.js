@@ -77,7 +77,13 @@ class SipaCliBuild {
                 throw new Error(`Could not locate sass.js`);
             }
             const minify_command = `node ${terser_path} "${final_file_path}" -m -c -o "${final_file_path}"`;
-            execSync(minify_command);
+            // workaround for systems with bash if they are run without bin/bash shell path explicitly, e.g. Jenkins runs on /bin/sh by default
+            // https://stackoverflow.com/questions/17860339/process-substitution-node-js-child-process
+            let options = undefined;
+            if(File.isExisting(`/bin/bash`)) {
+                options = {shell: `/bin/bash`};
+            }
+            execSync(minify_command, options);
         }
     }
 
