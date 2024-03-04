@@ -77,6 +77,7 @@ const builds = {
 
 const copy_static_files = [
     // default project
+    // TODO: add ruby-nice
     ['./node_modules/typifier/dist/typifier.js', File.expandPath(sipa_build_destination_dir + '/../typifier/') + '/typifier.js'],
     ['./node_modules/typifier/LICENSE', File.expandPath(sipa_build_destination_dir + '/../typifier/') + '/LICENSE'],
 
@@ -87,6 +88,7 @@ const copy_static_files = [
     ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
 
     // onsenui project
+    // TODO: add ruby-nice
     ['./node_modules/typifier/dist/typifier.js', File.expandPath(sipa_onsen_build_destination_dir + '/../typifier/') + '/typifier.js'],
     ['./node_modules/typifier/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../typifier/') + '/LICENSE'],
 
