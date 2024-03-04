@@ -1,0 +1,3 @@
+Store any files other then libraries, styles, javascripts or images inside this directory.
+
+Files for download for example.

@@ -1,0 +1,28 @@
+/*
+  Global style asset file!
+
+  Put in here your (S)CSS and it will
+  get compiled to the .css file within the same directory!
+
+*/
+
+body {
+  font-family: sans-serif;
+  background: #424a4d;
+  color: white;
+  margin: 0;
+  padding: 0;
+}
+
+h1, h2 {
+  color: #fccd4d;
+}
+
+#top-navi-bar {
+  background: #2e3436;
+  padding: 16px;
+}
+
+#page-container {
+  padding: 16px;
+}
