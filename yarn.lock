@@ -1961,15 +1961,15 @@ ruby-nice@^0.1.12:
     mime "^3.0.0"
     typifier "^0.0.10"
 
-ruby-nice@^0.1.3:
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.1.3.tgz#f09a3a72561d12670a09f4480e42a3c74754fb7c"
-  integrity sha512-AKD4dccaZ50fkXz7tpmKj9HIG9HREanzB9zxUQL/dHpS5AVdiXeYNwEXOVya1rJ2etpX+qDnSfvZH0Hmf7JSdw==
+ruby-nice@^0.2.7:
+  version "0.2.7"
+  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.2.7.tgz#487022ea1101e71684273c5cb949df117def452f"
+  integrity sha512-xelv0Khf+rzC5n6V2SfAT3ShmrdhoJlB+J7IZHfVAmOr7QvwwOhpfYn8mnJdboD+XbAaKzs6KQRsP+++6P4dog==
   dependencies:
     fs-extra "^10.1.0"
     glob "^8.0.1"
     mime "^3.0.0"
-    typifier "^0.0.8"
+    typifier "^0.1.2"
 
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
@@ -2434,13 +2434,6 @@ typifier@^0.0.13:
   version "0.0.13"
   resolved "https://registry.yarnpkg.com/typifier/-/typifier-0.0.13.tgz#48b1b5cac3dbec18dc1685d2f1bda784618b3094"
   integrity sha512-GxCse7jlKWpGM2Lre5AUHRSzPE4B8gIiIQxDRKZKNjeurRxPaXb85W8N2zFvwQXyDfYwdC/muFTTzgFBvx9RUw==
-  dependencies:
-    lucky-case "^1.1.3"
-
-typifier@^0.0.8:
-  version "0.0.8"
-  resolved "https://registry.yarnpkg.com/typifier/-/typifier-0.0.8.tgz#011a98be26b4900b14944f6d5451b9bfad83af24"
-  integrity sha512-YkM2x/VTDvDXfmM+5w3SeewaXCq+0pHTO+eqRtyAJPr3QyVD9XJ5S0/dxEmNxGH3ya1xnHczhYmBIkkx2twGhA==
   dependencies:
     lucky-case "^1.1.3"
 
