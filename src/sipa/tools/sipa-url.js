@@ -130,7 +130,30 @@ class SipaUrl {
     }
 
     /**
-     * Remove the anchor of the URL
+     * Set or overwrite given anchor of the current url
+     *
+     * @param {string} anchor without leading # character
+     * @param {boolean} jump jump to anchor
+     */
+    static setAnchor(anchor, jump=false) {
+        const self = SipaUrl;
+        if(jump) {
+            let state = {};
+            if(window.history.state) {
+                state = window.history.state;
+            }
+            let params = {page: state.page_id};
+            self.removeAnchor();
+            window.location.href = window.location.href + '#' + anchor;
+            window.history.replaceState(state, '', SipaUrl.setParamsOfUrl(SipaUrl.getUrl(), params));
+        } else {
+            const new_url = self.setAnchorOfUrl(self.getUrl(), anchor);
+            self._setUrl(new_url);
+        }
+    }
+
+    /**
+     * Remove the anchor of the current URL
      *
      * @example
      * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
@@ -142,6 +165,16 @@ class SipaUrl {
         const self = SipaUrl;
         const new_url = self.removeAnchorOfUrl(self.getUrl());
         self._setUrl(new_url);
+    }
+
+    /**
+     * Get the anchor of the current URL without leading #
+     *
+     * @returns {string}
+     */
+    static getAnchor() {
+        const self = SipaUrl;
+        return self.getAnchorOfUrl(self.getUrl());
     }
 
     /**
@@ -211,8 +244,13 @@ class SipaUrl {
             decode_uri: true, // decode url variables
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        let query_string = url.indexOf('?') !== -1 ? url.split('?')[1] : (new URL(url)).search.slice(1);
         let obj = {};
+        let query_string = null;
+        try {
+            query_string = url.indexOf('?') !== -1 ? url.split('?')[1] : (new URL(url)).search.slice(1);
+        } catch (e) {
+            return obj; // return empty object if it is no valid url
+        }
         if (query_string) {
             query_string = self.removeAnchorOfUrl(query_string);
             // split our query string into its parts
@@ -318,6 +356,29 @@ class SipaUrl {
         return self._getUrlWithoutParams(url) + '?' + self.createUrlParams(curr_params) + anchor;
     }
 
+
+
+    /**
+     * Set/overwrite the anchor of the given url
+     *
+     * @param {string} url
+     * @param {string} anchor as string, without leading #
+     * @returns {string} with given anchor
+     */
+    static setAnchorOfUrl(url, anchor) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: anchor, param_name: 'anchor', expected_type: 'string'},
+            {param_value: url, param_name: 'url', expected_type: 'string'},
+        ]);
+        let curr_params = self.getParamsOfUrl(url);
+        let final_url = self._getUrlWithoutParams(url);
+        if(Object.keys(curr_params).length > 0) {
+            final_url += '?';
+        }
+        return final_url + self.createUrlParams(curr_params) + '#' + anchor;
+    }
+
     /**
      * Get the anchor of the given url
      *
@@ -374,7 +435,11 @@ class SipaUrl {
         SipaHelper.validateParams([
             {param_value: url, param_name: 'url', expected_type: 'string'}
         ]);
-        return url.substr(0, url.indexOf('?'));
+        if(url.indexOf('?') !== -1) {
+            return url.substr(0, url.indexOf('?'));
+        } else {
+            return url;
+        }
     }
 
     /**

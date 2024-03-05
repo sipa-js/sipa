@@ -39,16 +39,22 @@ class SipaPage {
             fade_effect: true,
             stack_page: true
         }
-        if(!options.layout_id && self.config.default_layouts && self.config.default_layouts.hasOwnProperty(page_id)) {
-            options.layout_id = self.config.default_layouts[page_id];
+        const new_page_id = self.extractIdOfTemplate(page_id, {type: 'page'});
+        if(!options.layout_id && self.config.default_layouts && self.config.default_layouts.hasOwnProperty(new_page_id)) {
+            options.layout_id = self.config.default_layouts[new_page_id];
         }
         options = SipaHelper.mergeOptions(default_options, options);
-        page_id = self.extractIdOfTemplate(page_id, {type: 'page'});
+        if(!options.anchor && SipaUrl.getAnchorOfUrl(page_id)) {
+            options.anchor = SipaUrl.getAnchorOfUrl(page_id);
+        }
+        if(!options.params && Object.keys(SipaUrl.getParamsOfUrl(page_id)).length > 0) {
+            options.params = SipaUrl.getParamsOfUrl(page_id);
+        }
         const last_page_id = self.currentPageId();
         const layout_id = self.extractIdOfTemplate(options.layout_id, {type: 'layout'});
-        const page_path = self._makeFullPath(page_id, {type: 'page'});
+        const page_path = self._makeFullPath(new_page_id, {type: 'page'});
         const j_body = $('body');
-        j_body.attr('data-page-id', page_id);
+        j_body.attr('data-page-id', new_page_id);
         self.loadLayout(layout_id, {
             success: (data, text, response) => {
                 $.ajax({
@@ -59,17 +65,17 @@ class SipaPage {
                     success: (data, text, response) => {
                         const j_container = $(self.page_container_css_selector);
                         const load_function = () => {
-                            SipaHooks.beforeDestroyPage('trigger', null, last_page_id);
+                            SipaHooks.beforeDestroyPage('trigger');
                             if (last_page_id) {
-                                self.callMethodOfPage(last_page_id, 'onDestroy', [{next_page_id: page_id}]);
+                                self.callMethodOfPage(last_page_id, 'onDestroy', [{next_page_id: new_page_id}]);
                             }
                             j_container.html(data);
-                            SipaHooks.beforeInitPage('trigger', null, page_id);
+                            SipaHooks.beforeInitPage('trigger');
                             if (options.fade_effect) {
                                 j_container.fadeIn(150);
                             }
                             if (options.stack_page) {
-                                self.stackHistoryState({page_id: page_id, layout_id: layout_id, options: options});
+                                self.stackHistoryState({page_id: new_page_id, layout_id: layout_id, options: options});
                             }
                             if (options.params) {
                                 SipaUrl.setParams(options.params);
@@ -77,7 +83,12 @@ class SipaPage {
                             if (options.remove_params) {
                                 SipaUrl.removeParams(options.remove_params);
                             }
-                            self.callMethodOfPage(page_id, 'onInit', [{last_page_id: last_page_id}]);
+                            // ensure anchor is set and jumped to on page load or initial (re)load
+                            if (options.anchor || SipaUrl.getAnchor()) {
+                                const current_anchor = options.anchor || SipaUrl.getAnchor();
+                                SipaUrl.setAnchor(current_anchor, true);
+                            }
+                            self.callMethodOfPage(new_page_id, 'onInit', [{last_page_id: last_page_id}]);
                             if(Typifier.isFunction(options.success)) {
                                 options.success(data, text, response);
                             }
@@ -125,6 +136,14 @@ class SipaPage {
         options = SipaHelper.mergeOptions(default_options, options);
         const type = self.typeOptions(options.type);
         let id = SipaHelper.cutLeadingCharacters(template, '/');
+        // cut params
+        if(id.indexOf('?') !== -1) {
+            id = id.split('?')[0];
+        }
+        // cut anchor
+        if(id.indexOf('#') !== -1) {
+            id = id.split('#')[0];
+        }
         id = SipaHelper.cutLeadingCharacters(id, type.prefix);
         id = SipaHelper.cutTrailingCharacters(id, type.file_ext);
         return LuckyCase.toDashCase(id);
@@ -220,13 +239,13 @@ class SipaPage {
          * @param {'success'|'always'} type
          */
         const after_loaded_function = (data, text, response, type) => {
-            SipaHooks.beforeDestroyLayout('trigger', null, last_layout_id);
+            SipaHooks.beforeDestroyLayout('trigger');
             if (last_layout_id) {
                 self.callMethodOfLayout(last_layout_id, 'onDestroy', [{next_layout_id: layout_id}]);
             }
             j_body.hide();
             j_body.html(data);
-            SipaHooks.beforeInitLayout('trigger', null, layout_id);
+            SipaHooks.beforeInitLayout('trigger');
             self.callMethodOfLayout(layout_id, 'onInit', [{last_layout_id: last_layout_id}]);
             if (typeof options[type] === 'function') {
                 options[type](data, text, response);
