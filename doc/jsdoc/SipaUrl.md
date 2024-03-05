@@ -15,12 +15,15 @@ the current or given URLs
     * [.setParam(param_key, value)](#SipaUrl.setParam)
     * [.removeParams(param_keys)](#SipaUrl.removeParams)
     * [.removeParam(param_key)](#SipaUrl.removeParam)
+    * [.setAnchor(anchor, jump)](#SipaUrl.setAnchor)
     * [.removeAnchor()](#SipaUrl.removeAnchor)
+    * [.getAnchor()](#SipaUrl.getAnchor) &rarr; <code>string</code>
     * [.createUrlParams(params, options)](#SipaUrl.createUrlParams) &rarr; <code>string</code>
     * [.getParamsOfUrl(url, options)](#SipaUrl.getParamsOfUrl) &rarr; <code>Object.&lt;string, string&gt;</code>
     * [.removeParamsOfUrl(url, param_keys)](#SipaUrl.removeParamsOfUrl) &rarr; <code>string</code>
     * [.removeParamOfUrl(url, param_key)](#SipaUrl.removeParamOfUrl)
     * [.setParamsOfUrl(url, params)](#SipaUrl.setParamsOfUrl) &rarr; <code>string</code>
+    * [.setAnchorOfUrl(url, anchor)](#SipaUrl.setAnchorOfUrl) &rarr; <code>string</code>
     * [.getAnchorOfUrl(url, options)](#SipaUrl.getAnchorOfUrl) &rarr; <code>string</code>
     * [.removeAnchorOfUrl(url)](#SipaUrl.removeAnchorOfUrl) &rarr; <code>string</code>
 
@@ -132,10 +135,20 @@ Remove given param of the current url
 SipaUrl.removeParam("foo");
 // URL: https://my-business.com/?some=stuff
 ```
+<a name="SipaUrl.setAnchor"></a>
+
+### SipaUrl.setAnchor(anchor, jump)
+Set or overwrite given anchor of the current url
+
+| Param | Type | Default | Description |
+| --- | --- | --- | --- |
+| anchor | <code>string</code> |  | without leading # character |
+| jump | <code>boolean</code> | <code>false</code> | jump to anchor |
+
 <a name="SipaUrl.removeAnchor"></a>
 
 ### SipaUrl.removeAnchor()
-Remove the anchor of the URL
+Remove the anchor of the current URL
 
 **Example**
 ```js
@@ -143,6 +156,10 @@ Remove the anchor of the URL
 SipaUrl.removeAnchor();
 // URL: https://my-business.com/?some=stuff&foo=bar
 ```
+<a name="SipaUrl.getAnchor"></a>
+
+### SipaUrl.getAnchor() &rarr; <code>string</code>
+Get the anchor of the current URL without leading #
 <a name="SipaUrl.createUrlParams"></a>
 
 ### SipaUrl.createUrlParams(params, options) &rarr; <code>string</code>
@@ -212,6 +229,18 @@ Set/overwrite the parameters of the given url
 | --- | --- | --- |
 | url | <code>string</code> |  |
 | params | <code>Object.&lt;string, string&gt;</code> | in format { param1: value1, param2: value2, ... } |
+
+<a name="SipaUrl.setAnchorOfUrl"></a>
+
+### SipaUrl.setAnchorOfUrl(url, anchor) &rarr; <code>string</code>
+Set/overwrite the anchor of the given url
+
+**Returns**: <code>string</code> - with given anchor  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| url | <code>string</code> |  |
+| anchor | <code>string</code> | as string, without leading # |
 
 <a name="SipaUrl.getAnchorOfUrl"></a>
 
