@@ -16,8 +16,8 @@ const SipaCliTools = require('./../_tools');
 class SipaCliServer {
     static server() {
         const self = SipaCliServer;
-        if(SipaCliTools.isRunningInsideValidSipaProject()) {
-            if(SipaCliTools.invalidConfigPaths().length === 0) {
+        if (SipaCliTools.isRunningInsideValidSipaProject()) {
+            if (SipaCliTools.invalidConfigPaths().length === 0) {
                 const usage = commandLineUsage(self._sectionServerStart());
                 console.log(usage);
                 self._runLiveServerAndSass();
@@ -38,20 +38,20 @@ class SipaCliServer {
             const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/sipa-live-server/sipa-live-server.js`);
             let live_server_js_path = null;
             // npm path
-            if(File.isExisting(npm_path)) {
+            if (File.isExisting(npm_path)) {
                 live_server_js_path = npm_path;
             } // yarn path
-            else if(File.isExisting((yarn_path))) {
+            else if (File.isExisting((yarn_path))) {
                 live_server_js_path = yarn_path;
             } else {
                 throw new Error(`Could not locate sipa-live-server.js`);
             }
             const config = SipaCliTools.readProjectSipaConfig();
             let mount = config?.development_server?.mount?.trim() || '/';
-            if(!mount.endsWith('/')) mount += '/';
+            if (!mount.endsWith('/')) mount += '/';
             const server_command = `node ${live_server_js_path} --port=${port} --host=${host} --ignore=lang --mount=${mount}:./app --open="${mount}"`;
             let server_process = exec(server_command);
-            server_process.stdout.on('data', function(data) {
+            server_process.stdout.on('data', function (data) {
                 console.log(data.toString('utf8'));
             });
             self.runSass(`--watch --update ${self._sassWatchPathsInline()} --no-source-map --style=compressed`);
@@ -69,22 +69,22 @@ class SipaCliServer {
         const yarn_path = `${SipaCliTools.sipaRootPath()}/../../node_modules/sass/sass.js`;
         let sass_server_js_path = null;
         // npm path
-        if(File.isExisting(npm_path)) {
+        if (File.isExisting(npm_path)) {
             sass_server_js_path = npm_path;
         } // yarn path
-        else if(File.isExisting((yarn_path))) {
+        else if (File.isExisting((yarn_path))) {
             sass_server_js_path = yarn_path;
         } else {
             throw new Error(`Could not locate sass.js`);
         }
-        const sass_command = `node ${sass_server_js_path} ${parameters}`;
+        const sass_command = `node "${sass_server_js_path}" ${parameters}`;
         let sass_process = null;
-        if(sync) {
+        if (sync) {
             sass_process = execSync(sass_command);
         } else {
             sass_process = exec(sass_command);
-            if(log) {
-                sass_process.stdout.on('data', function(data) {
+            if (log) {
+                sass_process.stdout.on('data', function (data) {
                     console.log(data.toString('utf8'));
                 });
             }
@@ -109,7 +109,9 @@ class SipaCliServer {
                 content: [
                     `Starting live sass file watcher listening on {green *.scss} files to compile to {green *.css} files automatically`,
                     '',
-                    `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => { return chalk.green(`app/${e}`); }).join("\n  - ")}`,
+                    `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => {
+                        return chalk.green(`app/${e}`);
+                    }).join("\n  - ")}`,
                     '',
                     'If you want to modify the watch paths of the live development sass compilation server, edit {green sipa.json} in your project root directory.',
                     '',
@@ -123,12 +125,22 @@ class SipaCliServer {
     }
 
     static _sassWatchPaths() {
-        return SipaCliTools.readProjectSipaConfig().development_server?.sass_watch_paths || ['assets/style','views'];
+        return SipaCliTools.readProjectSipaConfig().development_server?.sass_watch_paths || ['assets/style', 'views'];
     }
 
-    static _sassWatchPathsInline() {
+    static _sassWatchPathsInline(quote_paths = true) {
         const self = SipaCliServer;
-        return self._sassWatchPaths().map((el) => { return el.startsWith('./') ? `./app/${el.substring(2)}` : `./app/${el}` }).join(' ');
+        return self._sassWatchPaths().map((el) => {
+            let quote = '';
+            if (quote_paths) {
+                quote = '"';
+            }
+            if (el.startsWith('./')) {
+                return `${quote}./app/${el.substring(2)}${quote}`;
+            } else {
+                return `${quote}./app/${el}${quote}`;
+            }
+        }).join(' ');
     }
 }
 
