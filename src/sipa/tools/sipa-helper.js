@@ -1,7 +1,7 @@
 //<!-- MODULE -->//
 if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
-    var LuckyCase = require('lucky-case');
-    var Typifier = require('typifier');
+    LuckyCase = require('lucky-case');
+    Typifier = require('typifier');
 }
 //<!-- /MODULE -->//
 

@@ -22,7 +22,7 @@
     "doc": "node bin/doc.js",
     "link_dev": "sudo npm link",
     "unlink_dev": "sudo npm rm --global sipa",
-    "debug": "CWD=$(pwd) && cd $PROJECT_DIR && node $CWD/bin/cli/cli.js s"
+    "debug": "CWD=$(pwd) && cd $PROJECT_DIR && node $CWD/bin/cli/cli.js n"
   },
   "files": [
     "bin/cli/**/*",
@@ -65,7 +65,7 @@
     "sipa-live-server": "^0.0.3",
     "lucky-case": "^1.1.8",
     "prompt-sync": "^4.2.0",
-    "ruby-nice": "^0.2.7",
+    "ruby-nice": "^0.2.8",
     "sass": "^1.32.0",
     "terser": "^5.10.0",
     "typifier": "^0.1.2"

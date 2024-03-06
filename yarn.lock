@@ -1961,10 +1961,10 @@ ruby-nice@^0.1.12:
     mime "^3.0.0"
     typifier "^0.0.10"
 
-ruby-nice@^0.2.7:
-  version "0.2.7"
-  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.2.7.tgz#487022ea1101e71684273c5cb949df117def452f"
-  integrity sha512-xelv0Khf+rzC5n6V2SfAT3ShmrdhoJlB+J7IZHfVAmOr7QvwwOhpfYn8mnJdboD+XbAaKzs6KQRsP+++6P4dog==
+ruby-nice@^0.2.8:
+  version "0.2.8"
+  resolved "https://registry.yarnpkg.com/ruby-nice/-/ruby-nice-0.2.8.tgz#c93e6107aeee6b42e7ef9a065f5b00e905a008e8"
+  integrity sha512-NuHiHDE2q7T/46GW8hfgmHPQsa1NHBcaImR9oWwIs2MQ7tj0dZ7MKPa66qr6EFVPOmjN7k1srV/G1QKxuFzouA==
   dependencies:
     fs-extra "^10.1.0"
     glob "^8.0.1"

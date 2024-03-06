@@ -1,8 +1,8 @@
 //<!-- MODULE -->//
 if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
-    var SipaHelper = require('./sipa-helper');
-    var LuckyCase = require('lucky-case');
-    var CurlyBracketParser = require('curly-bracket-parser');
+    SipaHelper = require('./sipa-helper');
+    LuckyCase = require('lucky-case');
+    CurlyBracketParser = require('curly-bracket-parser');
 }
 //<!-- /MODULE -->//
 

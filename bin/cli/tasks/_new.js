@@ -22,10 +22,10 @@ class SipaCliNew {
     static _enterVariables() {
         const self = SipaCliNew;
         let project_name = null;
-        while(true) {
+        while (true) {
             project_name = SipaCliTools.cliQuestion('Please enter your project name', null, null, true);
             const project_dir = process.cwd() + '/' + project_name.toDashCase();
-            if(fs.existsSync(project_dir)) {
+            if (fs.existsSync(project_dir)) {
                 console.log(chalk.red(`  Invalid project name '${project_name}'. There is already a directory '${project_name.toDashCase()}'.`));
             } else {
                 break;
@@ -62,7 +62,7 @@ class SipaCliNew {
             name: LuckyCase.toDashCase(self.options.project_name),
             description: self.options.project_name,
             version: self.options.project_version,
-            author: { name: self.options.author, email: self.options.email }
+            author: {name: self.options.author, email: self.options.email}
         };
         const final_json = JSON.stringify(package_json, null, 2);
         SipaCliTools.writeFile(project_dir + '/package.json', final_json);
@@ -71,10 +71,8 @@ class SipaCliNew {
             version: package_json.version,
             project_name: package_json.name,
         }
-        glob(project_dir + "/**/*", { nodir: true }, function (er, files) {
-            files.forEach((file) => {
-                CurlyBracketParser.parseFileWrite(file,file_variables, { unresolved_vars: 'keep' });
-            });
+        glob.sync(project_dir + "/**/*", {nodir: true}).forEach((file) => {
+            CurlyBracketParser.parseFileWrite(file, file_variables, {unresolved_vars: 'keep'});
         });
         SipaCliTools.printLine(chalk.green('done'));
         // final message
