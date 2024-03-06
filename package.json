@@ -21,7 +21,8 @@
     "build": "node bin/build.js",
     "doc": "node bin/doc.js",
     "link_dev": "sudo npm link",
-    "unlink_dev": "sudo npm rm --global sipa"
+    "unlink_dev": "sudo npm rm --global sipa",
+    "debug": "CWD=$(pwd) && cd $PROJECT_DIR && node $CWD/bin/cli/cli.js s"
   },
   "files": [
     "bin/cli/**/*",
