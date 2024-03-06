@@ -1,7 +1,7 @@
 {
   "name": "sipa",
-  "version": "0.9.14",
-  "date": "2024-03-05T22:27:59.046Z",
+  "version": "0.9.15",
+  "date": "2024-03-06T15:22:38.447Z",
   "description": "Particularly simple old school single page lightweight web framework for clever javascript developers.",
   "author": {
     "name": "Matthäus J. N. Beyrle",
