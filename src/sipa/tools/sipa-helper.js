@@ -143,7 +143,40 @@ class SipaHelper {
             return text;
         }
     }
+
+    /**
+     * Transform the given string into its constant representation.
+     *
+     * @example
+     * class Foo {
+     *     static function bar() { console.log("foobar"); }
+     * }
+     *
+     * SipaHelper.constantizeString("Foo").bar();
+     * // => foobar
+     *
+     * @param {string} constant
+     * @returns {*}
+     */
+    static constantizeString(constant) {
+        const self = SipaHelper;
+        if (!self._constant_cache[constant]) {
+            // check for valid constant name
+            if (constant.match(/^[a-zA-Z0-9_]+$/)) {
+                self._constant_cache[constant] = eval(constant);
+            } else {
+                throw new Error(`Invalid constant '${constant}'`);
+            }
+        }
+        return self._constant_cache[constant];
+    }
 }
+
+/**
+ * @type {Object.<string, any>}
+ * @private
+ */
+SipaHelper._constant_cache = {};
 
 /**
  * Custom type definitions for excellent IDE auto complete support
@@ -153,7 +186,6 @@ class SipaHelper {
  * @property {string} param_name
  * @property {string} expected_type, e.g. 'Object', 'String, 'Array', ...
  */
-
 
 //<!-- MODULE -->//
 if (typeof module !== 'undefined' && module.exports) {
