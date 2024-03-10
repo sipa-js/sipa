@@ -14,6 +14,9 @@ class SipaOnsenPage {
      * @param {boolean} options.replace=false replace current page with given page. If reset=true is set, this setting will be ignored
      * @param {boolean} options.init_history_tree=false force to load history tree, default false
      * @param {Object} options.params parameters to be set at the new page
+     * @param {boolean} options.keep_params=true keep parameters when loading other page
+     * @param {string} options.anchor anchor to be set at the new page
+     * @param {boolean} options.keep_anchor=false keep current anchor when loading other page
      * @param {Array<String>} options.remove_params parameters to be removed at the new page
      * @param {function} options.success function to be called after successful loading
      * @param {function} options.error function to be called after loading fails
@@ -30,9 +33,26 @@ class SipaOnsenPage {
             const default_options = {
                 layout_id: self.config.default_layout,
                 fade_effect: true,
-                stack_page: true
+                stack_page: true,
+                keep_anchor: Typifier.isBoolean(self.config.keep_anchor) ? self.config.keep_anchor : false,
+                keep_params: Typifier.isBoolean(self.config.keep_params) ? self.config.keep_params : true,
             }
             options = SipaHelper.mergeOptions(default_options, options);
+            if(!options.anchor && SipaUrl.getAnchorOfUrl(page_id)) {
+                options.anchor = SipaUrl.getAnchorOfUrl(page_id);
+            } else if(!options.anchor && !options.keep_anchor && !SipaUrl.getAnchorOfUrl(page_id)) {
+                SipaUrl.removeAnchor();
+            }
+            if(!options.params && Object.keys(SipaUrl.getParamsOfUrl(page_id)).length > 0) {
+                if(options.keep_params) {
+                    options.params = SipaHelper.mergeOptions(SipaUrl.getParams(), SipaUrl.getParamsOfUrl(page_id));
+                } else {
+                    options.params = SipaUrl.getParamsOfUrl(page_id);
+                }
+            }
+            if(!options.keep_params) {
+                SipaUrl.removeParams(Object.keys(SipaUrl.getParams()));
+            }
             page_id = self.extractIdOfTemplate(page_id, {type: 'page'});
             const last_page_id = self.currentPageId();
             const layout_id = self.extractIdOfTemplate(options.layout_id, {type: 'layout'});
@@ -111,6 +131,14 @@ class SipaOnsenPage {
         options = SipaHelper.mergeOptions(default_options, options);
         const type = self.typeOptions(options.type);
         let id = SipaHelper.cutLeadingCharacters(template, '/');
+        // cut params
+        if(id.indexOf('?') !== -1) {
+            id = id.split('?')[0];
+        }
+        // cut anchor
+        if(id.indexOf('#') !== -1) {
+            id = id.split('#')[0];
+        }
         id = SipaHelper.cutLeadingCharacters(id, type.prefix);
         id = SipaHelper.cutTrailingCharacters(id, type.file_ext);
         return LuckyCase.toDashCase(id);
@@ -172,6 +200,16 @@ class SipaOnsenPage {
         if (last_page) {
             return self._getPageStack().getLast().getAttribute('data-page-id');
         }
+    }
+
+    /**
+     * Get current page class
+     *
+     * @return {SipaBasicView}
+     */
+    static currentPageClass() {
+        const self = SipaPage;
+        return SipaHelper.constantizeString(SipaOnsenPage.getClassNameOfTemplate(SipaOnsenPage.currentPageId()));
     }
 
     /**

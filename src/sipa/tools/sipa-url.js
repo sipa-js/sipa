@@ -244,6 +244,7 @@ class SipaUrl {
             decode_uri: true, // decode url variables
         };
         options = SipaHelper.mergeOptions(default_options, options);
+        url = self.removeAnchorOfUrl(url);
         let obj = {};
         let query_string = null;
         try {
@@ -317,7 +318,11 @@ class SipaUrl {
                 delete curr_params[key];
             }
         });
-        return self._getUrlWithoutParams(url) + '?' + self.createUrlParams(curr_params) + anchor;
+        let query_params = self.createUrlParams(curr_params);
+        if(query_params) {
+            query_params = '?' + query_params;
+        }
+        return self._getUrlWithoutParams(url) + query_params + anchor;
     }
 
     /**
@@ -353,7 +358,7 @@ class SipaUrl {
         for (let key of Object.keys(params)) {
             curr_params[key] = params[key];
         }
-        return self._getUrlWithoutParams(url) + '?' + self.createUrlParams(curr_params) + anchor;
+        return self.removeAnchorOfUrl(self._getUrlWithoutParams(url)) + '?' + self.createUrlParams(curr_params) + anchor;
     }
 
 
