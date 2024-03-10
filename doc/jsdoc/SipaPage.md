@@ -12,6 +12,7 @@ Tool class with page loader with included router
     * [.getClassNameOfTemplate(template, options)](#SipaPage.getClassNameOfTemplate) &rarr; <code>string</code>
     * [.typeOptions(type)](#SipaPage.typeOptions) &rarr; <code>TypeOptionsType</code>
     * [.currentPageId()](#SipaPage.currentPageId) &rarr; <code>string</code>
+    * [.currentPageClass()](#SipaPage.currentPageClass) &rarr; <code>SipaBasicView</code>
     * [.currentLayoutId()](#SipaPage.currentLayoutId) &rarr; <code>string</code>
     * [.loadLayout(layout_id, options)](#SipaPage.loadLayout)
     * [.callMethodOfPage(page_id, method_name, parameters)](#SipaPage.callMethodOfPage)
@@ -39,6 +40,9 @@ Load given page by page_id
 | options.fade_effect | <code>boolean</code> | <code>true</code> | use fade effect for the page container |
 | options.stack_page | <code>boolean</code> | <code>true</code> | stack page in page history |
 | options.params | <code>Object</code> |  | parameters to be set at the new page |
+| options.keep_params | <code>boolean</code> | <code>true</code> | keep parameters when loading other page |
+| options.anchor | <code>string</code> |  | anchor to be set at the new page |
+| options.keep_anchor | <code>boolean</code> | <code>false</code> | keep current anchor when loading other page |
 | options.remove_params | <code>Array.&lt;String&gt;</code> |  | parameters to be removed at the new page |
 | options.success | <code>function</code> |  | function to be called after successful loading |
 | options.error | <code>function</code> |  | function to be called after loading fails |
@@ -87,6 +91,10 @@ Get the options of the given type
 Get page id of current loaded page
 
 **Returns**: <code>string</code> - page id  
+<a name="SipaPage.currentPageClass"></a>
+
+### SipaPage.currentPageClass() &rarr; <code>SipaBasicView</code>
+Get current page class
 <a name="SipaPage.currentLayoutId"></a>
 
 ### SipaPage.currentLayoutId() &rarr; <code>string</code>
@@ -149,9 +157,7 @@ Set the configuration of pages and layouts
 
 | Param | Type |
 | --- | --- |
-| config | <code>Object</code> | 
-| config.default_layout | <code>string</code> | 
-| config.default_layouts | <code>Object</code> | 
+| config | <code>SipaPage.Config</code> | 
 
 
 **Example**
@@ -175,6 +181,7 @@ Custom type definitions for excellent IDE auto complete support
 | --- | --- |
 | default_layout | <code>string</code> | 
 | default_layouts | <code>Object</code> | 
+| keep_anchor | <code>boolean</code> | 
 
 **Properties**
 

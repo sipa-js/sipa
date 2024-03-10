@@ -11,6 +11,7 @@ Tool helper class with common helper methods
     * [.validateParams(params)](#SipaHelper.validateParams)
     * [.cutLeadingCharacters(text, leading_characters)](#SipaHelper.cutLeadingCharacters) &rarr; <code>string</code>
     * [.cutTrailingCharacters(text, trailing_characters)](#SipaHelper.cutTrailingCharacters) &rarr; <code>string</code>
+    * [.constantizeString(constant)](#SipaHelper.constantizeString) &rarr; <code>\*</code>
 
 <a name="SipaHelper.mergeOptions"></a>
 
@@ -114,6 +115,25 @@ Cut trailing characters (string) from given text
 ```js
 .cutLeadingCharacters('/some/path/file.ext','.ext')
  // => 'some/path/file'
+```
+<a name="SipaHelper.constantizeString"></a>
+
+### SipaHelper.constantizeString(constant) &rarr; <code>\*</code>
+Transform the given string into its constant representation.
+
+| Param | Type |
+| --- | --- |
+| constant | <code>string</code> | 
+
+
+**Example**
+```js
+class Foo {
+    static function bar() { console.log("foobar"); }
+}
+
+SipaHelper.constantizeString("Foo").bar();
+// => foobar
 ```
 <a name="SipaParamValidation"></a>
 

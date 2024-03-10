@@ -12,6 +12,7 @@ Tool class with page loader with included router for OnsenUI
     * [.getClassNameOfTemplate(template, options)](#SipaOnsenPage.getClassNameOfTemplate) &rarr; <code>string</code>
     * [.typeOptions(type)](#SipaOnsenPage.typeOptions) &rarr; <code>TypeOptionsType</code>
     * [.currentPageId()](#SipaOnsenPage.currentPageId) &rarr; <code>string</code>
+    * [.currentPageClass()](#SipaOnsenPage.currentPageClass) &rarr; <code>SipaBasicView</code>
     * [.currentLayoutId()](#SipaOnsenPage.currentLayoutId) &rarr; <code>string</code>
     * [.loadLayout(layout_id, options)](#SipaOnsenPage.loadLayout)
     * [.callMethodOfPage(page_id, method_name, parameters)](#SipaOnsenPage.callMethodOfPage)
@@ -38,6 +39,9 @@ Load given page by page_id
 | options.replace | <code>boolean</code> | <code>false</code> | replace current page with given page. If reset=true is set, this setting will be ignored |
 | options.init_history_tree | <code>boolean</code> | <code>false</code> | force to load history tree, default false |
 | options.params | <code>Object</code> |  | parameters to be set at the new page |
+| options.keep_params | <code>boolean</code> | <code>true</code> | keep parameters when loading other page |
+| options.anchor | <code>string</code> |  | anchor to be set at the new page |
+| options.keep_anchor | <code>boolean</code> | <code>false</code> | keep current anchor when loading other page |
 | options.remove_params | <code>Array.&lt;String&gt;</code> |  | parameters to be removed at the new page |
 | options.success | <code>function</code> |  | function to be called after successful loading |
 | options.error | <code>function</code> |  | function to be called after loading fails |
@@ -86,6 +90,10 @@ Get the options of the given type
 Get page id of current loaded page
 
 **Returns**: <code>string</code> - page id  
+<a name="SipaOnsenPage.currentPageClass"></a>
+
+### SipaOnsenPage.currentPageClass() &rarr; <code>SipaBasicView</code>
+Get current page class
 <a name="SipaOnsenPage.currentLayoutId"></a>
 
 ### SipaOnsenPage.currentLayoutId() &rarr; <code>string</code>
