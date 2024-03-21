@@ -135,16 +135,22 @@ class SipaUrl {
      * @param {string} anchor without leading # character
      * @param {boolean} jump jump to anchor
      */
-    static setAnchor(anchor, jump=false) {
+    static setAnchor(anchor, jump = false) {
         const self = SipaUrl;
-        if(jump) {
+        if(typeof anchor === "undefined") {
+            self.removeAnchor();
+        }
+        if (jump) {
             let state = {};
-            if(window.history.state) {
+            if (window.history.state) {
                 state = window.history.state;
             }
             let params = {page: state.page_id};
-            self.removeAnchor();
-            window.location.href = window.location.href + '#' + anchor;
+            if(typeof anchor !== "undefined") {
+                window.location.href = window.location.href + '#' + anchor;
+            } else {
+                window.location.href = self.removeAnchorOfUrl(window.location.href);
+            }
             window.history.replaceState(state, '', SipaUrl.setParamsOfUrl(SipaUrl.getUrl(), params));
         } else {
             const new_url = self.setAnchorOfUrl(self.getUrl(), anchor);
@@ -201,8 +207,8 @@ class SipaUrl {
         for (let d in params) {
             let key = d;
             let value = params[d];
-            if(Typifier.isArray(value) && options.multi_param_attributes) {
-                if(options.url_encode) {
+            if (Typifier.isArray(value) && options.multi_param_attributes) {
+                if (options.url_encode) {
                     ret.push(
                         encodeURIComponent(key) + '=' + value.map(encodeURIComponent).join('&' + encodeURIComponent(key) + '=')
                     );
@@ -212,7 +218,7 @@ class SipaUrl {
                     );
                 }
             } else {
-                if(options.url_encode) {
+                if (options.url_encode) {
                     ret.push(encodeURIComponent(d) + '=' + encodeURIComponent(params[d]));
                 } else {
                     ret.push(d + '=' + params[d]);
@@ -312,15 +318,18 @@ class SipaUrl {
             {param_name: 'url', param_value: url, expected_type: 'string'},
         ]);
         let curr_params = self.getParamsOfUrl(url);
-        const anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
+        let anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
         param_keys.forEach((key) => {
             if (curr_params[key]) {
                 delete curr_params[key];
             }
         });
         let query_params = self.createUrlParams(curr_params);
-        if(query_params) {
+        if (query_params) {
             query_params = '?' + query_params;
+        }
+        if(typeof anchor === "undefined") {
+            anchor = "";
         }
         return self._getUrlWithoutParams(url) + query_params + anchor;
     }
@@ -354,13 +363,15 @@ class SipaUrl {
             {param_value: url, param_name: 'url', expected_type: 'string'},
         ]);
         let curr_params = self.getParamsOfUrl(url);
-        const anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
+        let anchor = self.getAnchorOfUrl(url, {return_prefixed_hash: true});
+        if(typeof anchor === "undefined") {
+            anchor = "";
+        }
         for (let key of Object.keys(params)) {
             curr_params[key] = params[key];
         }
         return self.removeAnchorOfUrl(self._getUrlWithoutParams(url)) + '?' + self.createUrlParams(curr_params) + anchor;
     }
-
 
 
     /**
@@ -372,13 +383,16 @@ class SipaUrl {
      */
     static setAnchorOfUrl(url, anchor) {
         const self = SipaUrl;
+        if(typeof anchor === "undefined") {
+            return url;
+        }
         SipaHelper.validateParams([
             {param_value: anchor, param_name: 'anchor', expected_type: 'string'},
             {param_value: url, param_name: 'url', expected_type: 'string'},
         ]);
         let curr_params = self.getParamsOfUrl(url);
         let final_url = self._getUrlWithoutParams(url);
-        if(Object.keys(curr_params).length > 0) {
+        if (Object.keys(curr_params).length > 0) {
             final_url += '?';
         }
         return final_url + self.createUrlParams(curr_params) + '#' + anchor;
@@ -408,7 +422,7 @@ class SipaUrl {
         if (url.indexOf('#') !== -1) {
             return prefix + url.split('#')[1];
         } else {
-            return '';
+            return undefined;
         }
     }
 
@@ -440,7 +454,7 @@ class SipaUrl {
         SipaHelper.validateParams([
             {param_value: url, param_name: 'url', expected_type: 'string'}
         ]);
-        if(url.indexOf('?') !== -1) {
+        if (url.indexOf('?') !== -1) {
             return url.substr(0, url.indexOf('?'));
         } else {
             return url;
