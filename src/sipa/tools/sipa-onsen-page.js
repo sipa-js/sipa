@@ -25,7 +25,7 @@ class SipaOnsenPage {
     static load(page_id, options = {}) {
         return new Promise((resolve, reject) => {
             const self = SipaOnsenPage;
-            self.connectOnsenHooks();
+            self._connectOnsenHooks();
             SipaHelper.validateParams([
                 {param_name: 'page_id', param_value: page_id, expected_type: 'string'},
                 {param_name: 'options', param_value: options, expected_type: 'Object'},
@@ -360,6 +360,60 @@ class SipaOnsenPage {
         }
     }
 
+    /**
+     * Set the configuration of pages and layouts
+     *
+     * @example
+     *   SipaOnsenPage.setConfig({
+     *       // default layout for all pages
+     *       default_layout: 'default',
+     *       // specific layouts for some pages { <page-name>: <layout-name> }
+     *       default_layouts: {
+     *           // overwrites the layout for the page 'login-page' with layout 'mini-dialog'
+     *           'login-page': 'mini-dialog'
+     *       }
+     *   });
+     *
+     * @param {Object} config
+     * @param {string} config.default_layout
+     * @param {Object} config.default_layouts
+     */
+    static setConfig(config) {
+        const self = SipaOnsenPage;
+        SipaHelper.validateParams([
+            {param_name: 'config', param_value: config, expected_type: 'Object'},
+        ]);
+        self.config = config;
+    }
+
+    static isInitialized() {
+        const self = SipaOnsenPage;
+        return self.config !== null;
+    }
+
+    /**
+     * @returns {Promise}
+     */
+    static popPage(options = {}) {
+        const self = SipaOnsenPage;
+        if (self._page_stack_history.length > 1) {
+            const last_page_history = self._page_stack_history.pop();
+        }
+        if (!self.config.keep_params) {
+            SipaUrl.removeParams(Object.keys(SipaUrl.getParams()));
+        }
+        const current_page_history = self._page_stack_history[self._page_stack_history.length - 1];
+        if (current_page_history) {
+            SipaUrl.setParams(current_page_history.params);
+            if(self.config.keep_anchor && current_page_history.anchor) {
+                SipaUrl.setAnchor(current_page_history.anchor);
+            } else if(!self.config.keep_anchor) {
+                SipaUrl.removeAnchor();
+            }
+        }
+        return self.getOnsenNavigator().popPage();
+    }
+
     static _getPageStack() {
         return [...document.querySelectorAll('ons-navigator ons-page')];
     }
@@ -395,7 +449,7 @@ class SipaOnsenPage {
         return full_path;
     }
 
-    static connectOnsenHooks() {
+    static _connectOnsenHooks() {
         const self = SipaOnsenPage;
         if (!self._onsen_hooks_connected) {
             document.addEventListener('init', function (event) {
@@ -452,7 +506,7 @@ class SipaOnsenPage {
                 const j_body = $('body');
                 j_body.attr('data-page-id', page_id);
                 if (self._getPageStack().length > 0) {
-                    self.initHistoryTree();
+                    self._initHistoryTree();
                 } else {
                     // layout show
                 }
@@ -465,7 +519,7 @@ class SipaOnsenPage {
         }
     }
 
-    static initHistoryTree(force = false) {
+    static _initHistoryTree(force = false) {
         const self = SipaOnsenPage;
         if (!self._history_tree_loaded || force) {
             self._is_loading_history_tree = true;
@@ -509,26 +563,7 @@ class SipaOnsenPage {
         }
     }
 
-    /**
-     * @returns {Promise}
-     */
-    static popPage(options = {}) {
-        const self = SipaOnsenPage;
-        if (self._page_stack_history.length > 1) {
-            const last_page_history = self._page_stack_history.pop();
-        }
-        if (!self.config.keep_params) {
-            SipaUrl.removeParams(Object.keys(SipaUrl.getParams()));
-        }
-        const current_page_history = self._page_stack_history[self._page_stack_history.length - 1];
-        if (current_page_history) {
-            SipaUrl.setParams(current_page_history.params);
-            SipaUrl.setAnchor(current_page_history.anchor);
-        }
-        return self.getOnsenNavigator().popPage();
-    }
-
-    static initializeBackButton() {
+    static _initializeBackButton() {
         const self = SipaOnsenPage;
         const back_buttons = [...document.querySelectorAll('ons-back-button')];
         if (back_buttons && back_buttons.length > 0) {
@@ -540,37 +575,6 @@ class SipaOnsenPage {
                 };
             });
         }
-    }
-
-    /**
-     * Set the configuration of pages and layouts
-     *
-     * @example
-     *   SipaOnsenPage.setConfig({
-     *       // default layout for all pages
-     *       default_layout: 'default',
-     *       // specific layouts for some pages { <page-name>: <layout-name> }
-     *       default_layouts: {
-     *           // overwrites the layout for the page 'login-page' with layout 'mini-dialog'
-     *           'login-page': 'mini-dialog'
-     *       }
-     *   });
-     *
-     * @param {Object} config
-     * @param {string} config.default_layout
-     * @param {Object} config.default_layouts
-     */
-    static setConfig(config) {
-        const self = SipaOnsenPage;
-        SipaHelper.validateParams([
-            {param_name: 'config', param_value: config, expected_type: 'Object'},
-        ]);
-        self.config = config;
-    }
-
-    static isInitialized() {
-        const self = SipaOnsenPage;
-        return self.config !== null;
     }
 
     /**
@@ -623,7 +627,7 @@ class SipaOnsenPage {
         self._getPageStack().getLast().setAttribute('data-page-id', page_id);
         SipaOnsenHooks.beforeInitPage("trigger", null, page_id);
         self.callMethodOfPage(page_id, 'onInit', [{last_page_id: last_page_id}]);
-        self.initializeBackButton();
+        self._initializeBackButton();
     }
 }
 
