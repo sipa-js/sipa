@@ -137,27 +137,7 @@ class SipaOnsenPage {
      */
     static extractIdOfTemplate(template, options = {}) {
         const self = SipaOnsenPage;
-        SipaHelper.validateParams([
-            {param_name: 'template', param_value: template, expected_type: 'string'},
-            {param_name: 'options', param_value: options, expected_type: 'Object'},
-        ]);
-        const default_options = {
-            type: 'page'
-        }
-        options = SipaHelper.mergeOptions(default_options, options);
-        const type = self.typeOptions(options.type);
-        let id = SipaHelper.cutLeadingCharacters(template, '/');
-        // cut params
-        if (id.indexOf('?') !== -1) {
-            id = id.split('?')[0];
-        }
-        // cut anchor
-        if (id.indexOf('#') !== -1) {
-            id = id.split('#')[0];
-        }
-        id = SipaHelper.cutLeadingCharacters(id, type.prefix);
-        id = SipaHelper.cutTrailingCharacters(id, type.file_ext);
-        return LuckyCase.toDashCase(id);
+        return SipaPage.extractIdOfTemplate(template, options);
     }
 
     /**
@@ -170,16 +150,7 @@ class SipaOnsenPage {
      */
     static getClassNameOfTemplate(template, options = {}) {
         const self = SipaOnsenPage;
-        SipaHelper.validateParams([
-            {param_name: 'template', param_value: template, expected_type: 'string'},
-            {param_name: 'options', param_value: options, expected_type: 'Object'},
-        ]);
-        const default_options = {
-            type: 'page'
-        }
-        options = SipaHelper.mergeOptions(default_options, options);
-        const id = CurlyBracketParser._replaceAll(self.extractIdOfTemplate(template, options), '/', '_');
-        return LuckyCase.toPascalCase(id + '_' + options.type);
+        return SipaPage.getClassNameOfTemplate(template, options);
     }
 
     /**
@@ -189,20 +160,7 @@ class SipaOnsenPage {
      * @returns {TypeOptionsType} type options
      */
     static typeOptions(type) {
-        const types = {
-            page: {
-                prefix: 'views/pages/',
-                file_ext: '.html'
-            },
-            layout: {
-                prefix: 'views/layouts/',
-                file_ext: '.html'
-            }
-        };
-        if (!types[type]) {
-            throw `Invalid type '${type}'. Valid types are: ${Object.keys(types).join(' ')}`;
-        }
-        return types[type];
+        return SipaPage.typeOptions(type);
     }
 
     /**
@@ -321,19 +279,7 @@ class SipaOnsenPage {
      */
     static callMethodOfPage(page_id, method_name, parameters = []) {
         const self = SipaOnsenPage;
-        SipaHelper.validateParams([
-            {param_name: 'page_id', param_value: page_id, expected_type: 'string'},
-            {param_name: 'method_name', param_value: method_name, expected_type: 'string'},
-            {param_name: 'parameters', param_value: parameters, expected_type: 'Array'},
-        ]);
-        const page_class = self.getClassNameOfTemplate(page_id, {type: 'page'});
-        const class_exists = eval(`typeof ${page_class} !== 'undefined'`);
-        if (class_exists) {
-            const method_exists = eval(`typeof ${page_class}.${method_name} === 'function'`);
-            if (method_exists) {
-                eval(`${page_class}.${method_name}(...parameters);`)
-            }
-        }
+        return SipaPage.callMethodOfPage(page_id, method_name, parameters);
     }
 
     /**
@@ -345,19 +291,7 @@ class SipaOnsenPage {
      */
     static callMethodOfLayout(layout_id, method_name, parameters = []) {
         const self = SipaOnsenPage;
-        SipaHelper.validateParams([
-            {param_name: 'layout_id', param_value: layout_id, expected_type: 'string'},
-            {param_name: 'method_name', param_value: method_name, expected_type: 'string'},
-            {param_name: 'parameters', param_value: parameters, expected_type: 'Array'},
-        ]);
-        const layout_class = self.getClassNameOfTemplate(layout_id, {type: 'layout'});
-        const class_exists = eval(`typeof ${layout_class} !== 'undefined'`);
-        if (class_exists) {
-            const method_exists = eval(`typeof ${layout_class}.${method_name} === 'function'`);
-            if (method_exists) {
-                eval(`${layout_class}.${method_name}(...parameters);`)
-            }
-        }
+        return SipaPage.callMethodOfPage(layout_id, method_name, parameters);
     }
 
     /**
@@ -427,26 +361,8 @@ class SipaOnsenPage {
      * @returns {string} absolute path
      * @private
      */
-    static _makeFullPath(template, options = {}) {
-        const self = SipaOnsenPage;
-        SipaHelper.validateParams([
-            {param_name: 'template', param_value: template, expected_type: 'string'},
-            {param_name: 'options', param_value: options, expected_type: 'Object'},
-        ]);
-        const default_options = {
-            type: 'page'
-        }
-        options = SipaHelper.mergeOptions(default_options, options);
-        const type = self.typeOptions(options.type);
-        const id_split = template.split('/');
-        const file_name = id_split[id_split.length - 1];
-        let full_path = SipaHelper.cutLeadingCharacters(template, '/');
-        full_path = SipaHelper.cutTrailingCharacters(full_path, type.file_ext);
-        if (!full_path.startsWith(type.prefix)) {
-            full_path = type.prefix + full_path;
-        }
-        full_path += '/' + file_name + type.file_ext;
-        return full_path;
+    static _makeFullPath(template, options = {}) {        const self = SipaOnsenPage;
+        return SipaPage._makeFullPath(template, options);
     }
 
     static _connectOnsenHooks() {

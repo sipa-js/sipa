@@ -151,11 +151,11 @@ class SipaPage {
         const type = self.typeOptions(options.type);
         let id = SipaHelper.cutLeadingCharacters(template, '/');
         // cut params
-        if(id.indexOf('?') !== -1) {
+        if (id.indexOf('?') !== -1) {
             id = id.split('?')[0];
         }
         // cut anchor
-        if(id.indexOf('#') !== -1) {
+        if (id.indexOf('#') !== -1) {
             id = id.split('#')[0];
         }
         id = SipaHelper.cutLeadingCharacters(id, type.prefix);
@@ -181,7 +181,7 @@ class SipaPage {
             type: 'page'
         }
         options = SipaHelper.mergeOptions(default_options, options);
-        const id = CurlyBracketParser._replaceAll(self.extractIdOfTemplate(template, options),'/', '_');
+        const id = CurlyBracketParser._replaceAll(self.extractIdOfTemplate(template, options), '/', '_');
         return LuckyCase.toPascalCase(id + '_' + options.type);
     }
 
