@@ -354,7 +354,7 @@ class SipaOnsenPage {
      */
     static addStatusBarMock() {
         const self = SipaOnsenPage;
-        if (!document.querySelector('div.ons-status-bar-mock')) {
+        if (!document.querySelector('div.ons-status-bar-mock') && document.querySelector('body')) {
             document.querySelector('body').prepend(new DOMParser().parseFromString(`<div class="ons-status-bar-mock ios"><div>No SIM <i class="fa fa-wifi"></i></div><div>12:28 PM</div><div>80% <i class="fa fa-battery-three-quarters"></i></div></div>`, "text/html").body.childNodes[0]);
             [...document.querySelectorAll('ons-navigator ons-page')].eachWithIndex((el, i) => {
                 el.setAttribute("status-bar-fill", "");
