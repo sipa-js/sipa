@@ -159,7 +159,12 @@ class SipaPage {
             id = id.split('#')[0];
         }
         id = SipaHelper.cutLeadingCharacters(id, type.prefix);
+        // cut .html file from path
+        if(id.match(/\/[^\/]+\.html$/)) {
+            id = id.split("/").slice(0,id.split("/").length-1).join("/");
+        }
         id = SipaHelper.cutTrailingCharacters(id, type.file_ext);
+        id = SipaHelper.cutTrailingCharacters(id, '/');
         return LuckyCase.toDashCase(id);
     }
 

@@ -79,6 +79,7 @@ class SipaOnsenPage {
                                 if (options && options.init_history_tree) {
                                     self._history_tree_loaded = false;
                                 }
+                                self._initStatusBarMock();
                                 resolve(page_id);
                             };
                             if (options && options.reset) {
@@ -348,6 +349,47 @@ class SipaOnsenPage {
         return self.getOnsenNavigator().popPage();
     }
 
+    /**
+     * Add a status bar mock to the app
+     */
+    static addStatusBarMock() {
+        const self = SipaOnsenPage;
+        if (!document.querySelector('div.ons-status-bar-mock')) {
+            document.querySelector('body').prepend(new DOMParser().parseFromString(`<div class="ons-status-bar-mock ios"><div>No SIM <i class="fa fa-wifi"></i></div><div>12:28 PM</div><div>80% <i class="fa fa-battery-three-quarters"></i></div></div>`, "text/html").body.childNodes[0]);
+            [...document.querySelectorAll('ons-navigator ons-page')].eachWithIndex((el, i) => {
+                el.setAttribute("status-bar-fill", "");
+            })
+        }
+        self._status_bar_mock_enabled = true;
+    }
+
+    /**
+     * Remove status bar mock of the app
+     */
+    static removeStatusBarMock() {
+        if (document.querySelector('div.ons-status-bar-mock')) {
+            document.querySelector('div.ons-status-bar-mock').remove();
+            [...document.querySelectorAll('ons-navigator ons-page')].eachWithIndex((el, i) => {
+                el.removeAttribute("status-bar-fill");
+            })
+        }
+        self._status_bar_mock_enabled = false;
+    }
+
+    /**
+     * Initialize status bar mock - do not run before first page is loaded!
+     */
+    static _initStatusBarMock() {
+        const self = SipaOnsenPage;
+        if (!self._status_bar_mock_initialized) {
+            if (self._status_bar_mock_enabled) {
+                self.addStatusBarMock();
+            } else {
+                self.removeStatusBarMock();
+            }
+        }
+    }
+
     static _getPageStack() {
         return [...document.querySelectorAll('ons-navigator ons-page')];
     }
@@ -570,3 +612,10 @@ SipaOnsenPage._page_stack_history = [];
  * @param {string} default_layout
  * @param {Object} default_layouts
  */
+
+// wrap original mock status bar method
+if(typeof ons !== 'undefined') {
+    ons.mockStatusBar = () => {
+        SipaOnsenPage.addStatusBarMock();
+    }
+}
