@@ -11,6 +11,7 @@ const SipaCliTools = require('./../_tools');
 const SipaCliServer = require('./../tasks/_server');
 const SipaCliIndexManager = require('./../_index-manager');
 const File = require("ruby-nice/file");
+const Dir = require('ruby-nice/dir');
 
 class SipaCliBuild {
     static build() {
@@ -29,6 +30,7 @@ class SipaCliBuild {
         SipaCliTools.removePath(self.paths.dist_base_dir);
         SipaCliTools.makeDir(self.paths.dist_base_dir);
         self.createDistIndexHtml();
+        self.updateProjectVersion();
         self.createMinifiedJsFile();
         self.createMinifiedCssFile();
         self.processFonts();
@@ -41,6 +43,22 @@ class SipaCliBuild {
         const target_path = self.paths.dist_base_dir + '/index.html';
         SipaCliTools.printLine(`→ building ${chalk.green('index.html')} ...`);
         SipaCliTools.writeFile(target_path, self._generateDistIndexHtml());
+    }
+
+    static updateProjectVersion() {
+        const self = SipaCliBuild;
+        const sipa_js_path = Dir.glob(self.paths.app_base_dir + '/**/sipa.js')[0];
+        if(!sipa_js_path) {
+            console.error(`Could not update project version. Could not find file 'sipa.js' in your projects app directory.`);
+        }
+        const package_json_path = SipaCliTools.projectRootPath() + '/package.json';
+        const package_json = JSON.parse(File.read(package_json_path));
+        // SipaEnv class
+        let sipa_js = fs.readFileSync(sipa_js_path,'utf8');
+        sipa_js = sipa_js.replace(/\"version\"\: \"[0-9]+.[0-9]+.[0-9]+\",/, `"version": "${package_json.version}",`);
+        sipa_js = sipa_js.replace(/\"name\"\: \"[^\"]+\",/, `"name": "${package_json.name}",`);
+        sipa_js = sipa_js.replace(/\"description\"\: \"[^\"]+\",/, `"description": "${package_json.description}",`);
+        fs.writeFileSync(sipa_js_path, sipa_js, 'utf8');
     }
 
     static createMinifiedJsFile() {
