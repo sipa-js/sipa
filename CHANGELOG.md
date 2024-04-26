@@ -1,4 +1,47 @@
+# 0.9.26
+* Added basic sipa compontents
+## Migration steps from 0.9.x to 0.9.26
+* Replace `app/assets/lib/sipa/sipa.js` with the latest version from repo at `lib/templates/project/default/app/assets/lib/sipa`.
+* Copy folder `lib/templates/project/default/app/assets/components` from repo to `app/assets/js`.
+* Add in your `app/index.html` after `<!---------------===== /LAYOUTS =====--------------->` the following lines:
+```html
+
+    <!---------------===== COMPONENTS =====--------------->
+    <!-- section for your layouts -->
+    <!-- COMPONENT-JS -->
+    <script type="text/javascript" src="assets/components/example-component/example-component.js"></script>
+    <!-- /COMPONENT-JS -->
+    <!-- COMPONENT-CSS -->
+    <link rel="stylesheet" href="assets/components/example-component/example-component.css">
+    <!-- /COMPONENT-CSS -->
+    <!---------------===== /COMPONENTS =====--------------->
+
+```
+* Add the following line in the block of `SipaHooks.beforeInitPage() {}` in `apps/config/hooks.js`:
+```javascript
+  SipaHooks.beforeInitPage('on', () => {
+    // add this line to your beforeInitPage hook
+    SipaComponent.init();
+  });
+```
+* Add `"assets/components"` to `"sass_watch_paths"` in your `sipa.json`
+```yaml
+# sipa.json
+  {
+    "development_server": {
+      ...
+      "sass_watch_paths": [
+        "assets/style",
+        # add the following line:
+        "assets/components",
+        "views"
+      ]
+    }
+  ...
+  }
+```
 * Add `"type": "desktop",` at the first line after the opening brackets `{}` in your `sipa.json`.
+* 
 
 # 0.9.0
 ## And again we go back to Sipa from Simpartic

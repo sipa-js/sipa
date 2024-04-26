@@ -23,13 +23,17 @@ class SipaCliGenerate {
         const usage = commandLineUsage(section);
         console.log(usage);
         const valid_options = [
-            'page', 'p', 'layout', 'l', 'style', 's', 'javascript', 'j'
+            'page', 'p', 'component', 'c', 'layout', 'l', 'style', 's', 'javascript', 'j'
         ];
         const choice = SipaCliTools.cliQuestion('Make your choice', valid_options, 'page', true);
         switch (choice) {
             case 'page':
             case 'p':
                 self._generateView({ type: 'page'});
+                break;
+            case 'component':
+            case 'c':
+                self._generateComponent();
                 break;
             case 'layout':
             case 'l':
@@ -176,6 +180,50 @@ class SipaCliGenerate {
     }
 
     /**
+     * Generate asset of type component
+     * @private
+     */
+    static _generateComponent() {
+        const self = SipaCliGenerate;
+        const project_dir = SipaCliTools.projectRootPath();
+        // list existing components
+        console.log(commandLineUsage(self.SECTIONS['generate_example_components']));
+        console.log(commandLineUsage(self.SECTIONS['generate_existing_components']));
+        let existing_components = self._listExistingFilesOrDirs(project_dir + `/app/assets/components/**/*.js`, { prefix: `app/assets/components/`, cut_file_names: true, print_paths: true });
+        console.log();
+        let component_input = self._prompt(`component name`, existing_components);
+        let component_id = CurlyBracketParser._replaceAll(component_input, "\\", '/').split('/').map((e) => {
+            return LuckyCase.toDashCase(e);
+        }).join('/');
+        component_id = SipaHelper.cutLeadingCharacters(component_id, '/');
+        component_id = SipaHelper.cutTrailingCharacters(component_id, '/');
+        console.log(commandLineUsage(self.SECTIONS.generate_generate));
+        const final_component_dir = SipaCliTools.projectRootPath() + `/app/assets/components/` + component_id;
+        fs.mkdirSync(final_component_dir, {recursive: true});
+        SipaCliTools.printLine(`Generate new ${chalk.green('component')} by default component template ...`);
+        SipaCliTools.printLine();
+        const template_src = SipaCliTools.sipaRootPath() + `/lib/templates/assets/default/component`;
+        fs.copySync(template_src, final_component_dir);
+        const component_files = glob.sync(final_component_dir + '/*.*', {});
+        const component_id_last_segment = component_id.substr(component_id.lastIndexOf('/') + 1);
+        component_files.forEach((file) => {
+            const file_ext = file.substr(file.lastIndexOf('.'));
+            const view_dir = file.substr(0, file.lastIndexOf('/'));
+            const view_id_file_name = component_id_last_segment + file_ext;
+            CurlyBracketParser.parseFileWrite(file, {
+                class: LuckyCase.toPascalCase(view_id_file_name.substring(0,view_id_file_name.lastIndexOf('.'))) + 'Component',
+            });
+            fs.renameSync(file, view_dir + '/' + view_id_file_name);
+        });
+        SipaCliTools.printLine(chalk.green(component_id));
+        // modify index.html
+        console.log(commandLineUsage(self.SECTIONS.generate_include));
+        SipaIndexManager.appendEntry(`COMPONENT-JS`,final_component_dir + '/' + component_id_last_segment + '.js');
+        SipaIndexManager.appendEntry(`COMPONENT-CSS`,final_component_dir + '/' + component_id_last_segment + '.css');
+        console.log(`  ${chalk.green('done')}`);
+    }
+
+    /**
      * List existing files or directories by given pattern
      *
      * @param {string} dir_pattern, e.g. '/my/path/*.ext', '/my/path/**'
@@ -262,8 +310,9 @@ SipaCliGenerate.SECTIONS.generate_overview = [
     {
         content: [
             {name: 'page', alias: 'p', summary: 'Add new page asset set containing .html, .js, .css and .scss'},
-            {name: 'layout', alias: 'l', summary: 'Add new layout asset set containing .html, .js, .css and .scss'},
+            {name: 'component', alias: 'c', summary: 'Add new component asset set containing .js, .css and .scss'},
             {name: 'style', alias: 's', summary: 'Add new global stylesheet definition set, containing .css and .scss'},
+            {name: 'layout', alias: 'l', summary: 'Add new layout asset set containing .html, .js, .css and .scss'},
             {name: 'javascript', alias: 'j', summary: 'Add new global javascript file'},
         ]
     },
@@ -288,7 +337,7 @@ SipaCliGenerate.SECTIONS.generate_existing_pages = [
     {
         header: 'Existing page ids',
         content: [
-            'An overview about the existing page ids to make the choice for the new page id easier.',
+            'An overview about the existing page ids to make the choice for the new page id easier:',
         ]
     }
 ];
@@ -311,7 +360,27 @@ SipaCliGenerate.SECTIONS.generate_existing_layouts = [
     {
         header: 'Existing layout ids',
         content: [
-            'An overview about the existing layout ids to make the choice for the new layout id easier.',
+            'An overview about the existing layout ids to make the choice for the new layout id easier:',
+        ]
+    }
+];
+SipaCliGenerate.SECTIONS.generate_example_components = [
+    {
+        header: 'Component asset file format',
+        content: [
+            'The component asset file must be in lower (dash) case, and can be structured in different directories by slashes (/). The postfix \'-component\' will be added automatically to its name.',
+            '',
+            '{bold Examples:}',
+            '  → {green dropdown}',
+            '  → {green some-collections}/{green checkbox}',
+        ]
+    }
+];
+SipaCliGenerate.SECTIONS.generate_existing_components = [
+    {
+        header: 'Existing components',
+        content: [
+            'An overview about the existing components to make the choice for the new component name easier:',
         ]
     }
 ];
@@ -333,7 +402,7 @@ SipaCliGenerate.SECTIONS.generate_existing_javascript = [
     {
         header: 'Existing javascript assets',
         content: [
-            'An overview about the existing javascript assets to make the choice for the new javascript asset name easier.',
+            'An overview about the existing javascript assets to make the choice for the new javascript asset name easier:',
         ]
     }
 ];
@@ -355,7 +424,7 @@ SipaCliGenerate.SECTIONS.generate_existing_style = [
     {
         header: 'Existing style assets',
         content: [
-            'An overview about the existing style assets to make the choice for the new style asset name easier.',
+            'An overview about the existing style assets to make the choice for the new style asset name easier:',
         ]
     }
 ];

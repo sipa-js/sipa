@@ -6,6 +6,7 @@
     "mount": "/",
     "sass_watch_paths": [
       "assets/style",
+      "assets/components",
       "views"
     ]
   },

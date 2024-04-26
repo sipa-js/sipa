@@ -1,0 +1,14 @@
+/* inherit from other component? */
+// @import "../other-component/other-component";
+
+example-component {
+    height: 32px;
+    width: 128px;
+    border: 1px solid gray;
+    background: #ececec;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin: 2px;
+    user-select: none;
+    position: relative;
+}

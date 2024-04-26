@@ -45,6 +45,7 @@ const builds = {
         destination_file: sipa_build_destination_dir + 'sipa.js',
         source_files: [
             './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/core/sipa-component.js',
             './src/sipa/core/sipa-serializer.js',
             './src/sipa/core/sipa-state.js',
             './src/sipa/tools/sipa-env.js',
@@ -61,6 +62,7 @@ const builds = {
         destination_file: sipa_onsen_build_destination_dir + 'sipa.js',
         source_files: [
             './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/core/sipa-component.js',
             './src/sipa/core/sipa-serializer.js',
             './src/sipa/core/sipa-state.js',
             './src/sipa/tools/sipa-env.js',
@@ -113,7 +115,7 @@ function releaseTemplate() {
     return release_header_template.replace('{{version}}', version()).replace('{{date}}',(new Date).toISOString());
 }
 
-function updateJsProjectVersion() {
+function updateSipaVersion() {
     let split_version = version().split('.');
     split_version[split_version.length-1] = parseInt(split_version[split_version.length-1])+1;
     const new_version = split_version.join('.');
@@ -141,7 +143,7 @@ console.log(chalk.yellow('###################################'));
 console.log(chalk.yellow('# Sipa build script'));
 console.log(chalk.yellow('###################################'));
 console.log(`Updating version from ${version()} ...`);
-console.log(`... to version ${updateJsProjectVersion()} @ ${updateDate()}`);
+console.log(`... to version ${updateSipaVersion()} @ ${updateDate()}`);
 console.log();
 console.log('Building JS ...');
 for(let build_key of Object.keys(builds)) {
