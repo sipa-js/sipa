@@ -234,6 +234,9 @@ class SipaCliIndexManager {
             case 'lib':
                 relative_prefix = 'assets/lib';
                 break;
+            case 'component':
+                relative_prefix = 'assets/component';
+                break;
             case 'custom':
                 relative_prefix = '';
                 break;
@@ -282,6 +285,9 @@ class SipaCliIndexManager {
             case 'LIB-JS':
             case 'LIB-CSS':
                 return 'lib';
+            case 'COMPONENT-JS':
+            case 'COMPONENT-CSS':
+                return 'component';
             case 'APP-INIT-JS':
                 return 'app-init';
             case 'CUSTOM-JS':
@@ -311,6 +317,10 @@ class SipaCliIndexManager {
             return 'LIB-JS';
         } else if (rel_path.startsWith('assets/lib') && rel_path.endsWith('.css')) {
             return 'LIB-CSS';
+        } else if (rel_path.startsWith('assets/components') && rel_path.endsWith('.js')) {
+            return 'COMPONENT-JS';
+        } else if (rel_path.startsWith('assets/components') && rel_path.endsWith('.css')) {
+            return 'COMPONENT-CSS';
         } else if (rel_path.startsWith('config/') && rel_path.endsWith('.js')) {
             return 'APP-INIT-JS';
         } else if (!rel_path.startsWith('files/') && rel_path.endsWith('.css')) {
