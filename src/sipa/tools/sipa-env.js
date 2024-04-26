@@ -8,19 +8,51 @@ class SipaEnv {
      * Get the current version of your app.
      *
      * The returned value within this method will automatically be
-     * updated at every release build cycle
+     * updated from your package.json at every release build cycle.
      *
      * @returns {string}
      */
     static version() {
         const obj = {
-            "version": "0.0.1"
+            "version": "0.0.1", "unique_id": "SipaEnv.version.selector"
         }
         return obj.version;
     }
 
     /**
-     * Check if Sipa is running at localhost
+     * Get the current name of your app.
+     *
+     * The returned value within this method will automatically be
+     * updated from your package.json at every release build cycle.
+     *
+     * @returns {string}
+     */
+    static name() {
+        const obj = {
+            "name": "Name", "unique_id": "SipaEnv.name.selector"
+        }
+        return obj.version;
+    }
+
+
+
+    /**
+     * Get the current description of your app.
+     *
+     * The returned value within this method will automatically be
+     * updated from your package.json at every release build cycle.
+     *
+     * @returns {string}
+     */
+    static description() {
+        const obj = {
+            "description": "Description", "unique_id": "SipaEnv.description.selector"
+        }
+        return obj.version;
+    }
+
+    /**
+     * Check if Sipa is running at localhost.
      *
      * @returns {boolean} true if localhost, otherwise false
      */

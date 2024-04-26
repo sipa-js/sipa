@@ -211,11 +211,17 @@ class SipaCliTools {
     static executeHook(hook_name) {
         const self = SipaCliTools;
         if (self.isRunningInsideValidSipaProject()) {
-            const config = self.readProjectSipaConfig();
-            if (config?.hooks?.[hook_name]) {
-                console.log(`hook ${chalk.blue(hook_name)} (start)`);
-                const hook_process = execSync(config?.hooks?.[hook_name], {stdio: 'inherit'});
-                console.log(`hook ${chalk.blue(hook_name)} (end)`);
+            try {
+                const config = self.readProjectSipaConfig();
+                if (config?.hooks?.[hook_name]) {
+                    console.log(`hook ${chalk.blue(hook_name)} (start)`);
+                    const hook_process = execSync(config?.hooks?.[hook_name], {stdio: 'inherit'});
+                    console.log(`hook ${chalk.blue(hook_name)} (end)`);
+                }
+            } catch (e) {
+                console.error(`Error when executing hook '${hook_name}'`);
+                console.error(e.message);
+                process.exit(1);
             }
         }
     }
