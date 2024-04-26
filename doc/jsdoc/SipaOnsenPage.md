@@ -17,9 +17,11 @@ Tool class with page loader with included router for OnsenUI
     * [.loadLayout(layout_id, options)](#SipaOnsenPage.loadLayout)
     * [.callMethodOfPage(page_id, method_name, parameters)](#SipaOnsenPage.callMethodOfPage)
     * [.callMethodOfLayout(layout_id, method_name, parameters)](#SipaOnsenPage.callMethodOfLayout)
-    * [.initHistoryState()](#SipaOnsenPage.initHistoryState)
-    * [.stackHistoryState(state, replace_state)](#SipaOnsenPage.stackHistoryState)
     * [.setConfig(config)](#SipaOnsenPage.setConfig)
+    * [.popPage()](#SipaOnsenPage.popPage) &rarr; <code>Promise</code>
+    * [.addStatusBarMock()](#SipaOnsenPage.addStatusBarMock)
+    * [.removeStatusBarMock()](#SipaOnsenPage.removeStatusBarMock)
+    * [._initStatusBarMock()](#SipaOnsenPage._initStatusBarMock)
 
 <a name="SipaOnsenPage.config"></a>
 
@@ -34,9 +36,9 @@ Load given page by page_id
 | --- | --- | --- | --- |
 | page_id | <code>string</code> |  | to load |
 | options | <code>Object</code> |  |  |
-| options.stack_page | <code>boolean</code> | <code>true</code> | stack page in page history |
 | options.reset | <code>boolean</code> | <code>false</code> | reset page to given page |
-| options.replace | <code>boolean</code> | <code>false</code> | replace current page with given page. If reset=true is set, this setting will be ignored |
+| options.replace | <code>boolean</code> | <code>false</code> | replace current page with given page. If reset=true is set, this option will be ignored |
+| options.push | <code>boolean</code> | <code>false</code> | stack given page over current page, independent if it exists already. If reset=true or replace=true is set, this option will be ignored |
 | options.init_history_tree | <code>boolean</code> | <code>false</code> | force to load history tree, default false |
 | options.params | <code>Object</code> |  | parameters to be set at the new page |
 | options.keep_params | <code>boolean</code> | <code>true</code> | keep parameters when loading other page |
@@ -132,23 +134,6 @@ Call the given method of the given layout with given parameters (optional)
 | method_name | <code>string</code> | 
 | parameters | <code>Array</code> | 
 
-<a name="SipaOnsenPage.initHistoryState"></a>
-
-### SipaOnsenPage.initHistoryState()
-Initialize the router for single page app browser history
-<a name="SipaOnsenPage.stackHistoryState"></a>
-
-### SipaOnsenPage.stackHistoryState(state, replace_state)
-Stack the current page and layout state to the browser history
-
-| Param | Type | Default |
-| --- | --- | --- |
-| state | <code>Object</code> |  | 
-| state.page_id | <code>string</code> |  | 
-| state.layout_id | <code>string</code> |  | 
-| state.options | <code>Object</code> |  | 
-| replace_state | <code>boolean</code> | <code>false</code> | 
-
 <a name="SipaOnsenPage.setConfig"></a>
 
 ### SipaOnsenPage.setConfig(config)
@@ -173,6 +158,22 @@ SipaOnsenPage.setConfig({
       }
   });
 ```
+<a name="SipaOnsenPage.popPage"></a>
+
+### SipaOnsenPage.popPage() &rarr; <code>Promise</code>
+**Kind**: static method of [<code>SipaOnsenPage</code>](#SipaOnsenPage)  
+<a name="SipaOnsenPage.addStatusBarMock"></a>
+
+### SipaOnsenPage.addStatusBarMock()
+Add a status bar mock to the app
+<a name="SipaOnsenPage.removeStatusBarMock"></a>
+
+### SipaOnsenPage.removeStatusBarMock()
+Remove status bar mock of the app
+<a name="SipaOnsenPage._initStatusBarMock"></a>
+
+### SipaOnsenPage.\_initStatusBarMock()
+Initialize status bar mock - do not run before first page is loaded!
 <a name="SipaOnsenPageConfig"></a>
 
 ## SipaOnsenPageConfig : <code>Object</code>
