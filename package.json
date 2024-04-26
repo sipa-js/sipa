@@ -41,7 +41,6 @@
   "private": false,
   "keywords": [
     "sipa",
-    "sipa",
     "javascript",
     "web",
     "framework",
@@ -50,7 +49,10 @@
     "old school",
     "node-js",
     "single page app",
-    "particularly"
+    "particularly",
+    "sipa js",
+    "sipa-js",
+    "sipajs"
   ],
   "dependencies": {
     "chalk": "^4.1.0",
