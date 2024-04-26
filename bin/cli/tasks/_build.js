@@ -10,6 +10,7 @@ const execSync = require("child_process").execSync;
 const SipaCliTools = require('./../_tools');
 const SipaCliServer = require('./../tasks/_server');
 const SipaCliIndexManager = require('./../_index-manager');
+const SipaCliVersion = require('./_version');
 const File = require("ruby-nice/file");
 const Dir = require('ruby-nice/dir');
 
@@ -227,10 +228,11 @@ class SipaCliBuild {
         if (!doc_beginning || !doc_header || !doc_body_open_tag) {
             throw `Original index.html is malformed and cannot be parsed anymore!`;
         }
+        const version = SipaCliVersion.getVersion();
         return `${self._removeWhiteSpacesBetweenLines(doc_beginning)}
 ${self._removeWhiteSpacesBetweenLines(doc_header)}
-<script type="text/javascript" src="${self.paths.dist_index_minified_js}"></script>
-<link rel="stylesheet" href="${self.paths.dist_index_minified_css}">
+<script type="text/javascript" src="${self.paths.dist_index_minified_js}?v=${version}"></script>
+<link rel="stylesheet" href="${self.paths.dist_index_minified_css}?v=${version}">
 </head>
 ${doc_body_open_tag}
 </body>

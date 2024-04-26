@@ -62,7 +62,7 @@ else if (tasks.indexer || tasks.command && (tasks.command[0] === 'indexer' || ta
 //
 else if (tasks.version || tasks.command && (tasks.command[0] === 'version' || tasks.command[0] === 'v')) {
     const SipaCliVersion = require('./tasks/_version');
-    SipaCliVersion.version();
+    SipaCliVersion.printFullVersion();
 }
 //
 // license

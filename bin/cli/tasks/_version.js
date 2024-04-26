@@ -6,7 +6,7 @@ const File = require('ruby-nice/file');
 var SipaCliTools = require('./../_tools');
 
 class SipaCliVersion {
-    static version() {
+    static printFullVersion() {
         const self = SipaCliVersion;
         console.log(self.getFullVersion());
     }
