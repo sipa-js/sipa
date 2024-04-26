@@ -16,8 +16,8 @@ require('ruby-nice/object');
 
 const SipaCliTools = require('./cli/_tools');
 
-const sipa_build_destination_dir = './lib/templates/project/default/app/assets/lib/sipa/';
-const sipa_onsen_build_destination_dir = './lib/templates/project/onsenui/app/assets/lib/sipa/';
+const sipa_build_destination_dir = './lib/templates/project/desktop/app/assets/lib/sipa/';
+const sipa_onsen_build_destination_dir = './lib/templates/project/mobile/app/assets/lib/sipa/';
 
 const build_exclusion_markers = [
     /\/\/<!-- MODULE -->\/\/(.*?)\/\/<!-- \/MODULE -->\/\//gs,
@@ -76,7 +76,7 @@ const builds = {
 }
 
 const copy_static_files = [
-    // default project
+    // 'desktop' project (default)
     ['./node_modules/ruby-nice/dist/ruby-nice.js', File.expandPath(sipa_build_destination_dir + '/../ruby-nice/') + '/ruby-nice.js'],
     ['./node_modules/ruby-nice/LICENSE', File.expandPath(sipa_build_destination_dir + '/../ruby-nice/') + '/LICENSE'],
 
@@ -89,7 +89,7 @@ const copy_static_files = [
     ['./node_modules/lucky-case/dist/lucky-case.js', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/lucky-case.js'],
     ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
 
-    // onsenui project
+    // 'mobile' project (onsenui)
     ['./node_modules/ruby-nice/dist/ruby-nice.js', File.expandPath(sipa_onsen_build_destination_dir + '/../ruby-nice/') + '/ruby-nice.js'],
     ['./node_modules/ruby-nice/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../ruby-nice/') + '/LICENSE'],
 
