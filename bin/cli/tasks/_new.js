@@ -21,6 +21,10 @@ class SipaCliNew {
 
     static _enterVariables() {
         const self = SipaCliNew;
+        let section = SipaCliTools.colorizeValues(self.SECTIONS.new_types, ['desc'], 'green');
+        let usage = commandLineUsage(section);
+        console.log(usage);
+        self.project_type = SipaCliTools.cliQuestion('Please choose your project type', ['desktop','mobile'], 'desktop', true);
         let project_name = null;
         while (true) {
             project_name = SipaCliTools.cliQuestion('Please enter your project name', null, null, true);
@@ -52,7 +56,7 @@ class SipaCliNew {
         SipaCliTools.printLine();
         // copy project template
         SipaCliTools.print(`Copying default project template ...`);
-        const template_src = SipaCliTools.sipaRootPath() + '/lib/templates/project/default';
+        const template_src = SipaCliTools.sipaRootPath() + '/lib/templates/project/' + self.project_type;
         fs.copySync(template_src, project_dir);
         SipaCliTools.printLine(chalk.green('done'));
         // fit project files
@@ -95,10 +99,9 @@ SipaCliNew.SECTIONS.new_begin = [
         content: [
             'Welcome to the project wizard to create a new Sipa project! 🧙',
             'Answer the questions wisely!',
+            '',
+            "Let's get started ..."
         ]
-    },
-    {
-        header: "Let's get started ...",
     }
 ];
 SipaCliNew.SECTIONS.new_create = [
@@ -117,6 +120,18 @@ SipaCliNew.SECTIONS.new_ready = [
             "And don't forget to tell one person today, that you love him or her! ❤️",
             '',
             "To start and run your development live web server {green cd} into your project directory and then run {green sipa server} or its shortcut {green sipa s}!"
+        ]
+    }
+];
+SipaCliNew.SECTIONS.new_types = [
+    {
+        header: 'Choose your project type!',
+        content: [
+            `Hey, you have the choice between {green desktop} and {green mobile} development!`,
+            '',
+            `When choosing '{green mobile}', your project will be created with a adjusted project template optimized and especially forged for and based on OnsenUI. {underline.blue https://onsen.io}`,
+            '',
+            "When choosing '{green desktop}', your project will be created with basic example to create web applications! Then you can add your CSS framework of choice later! In doubt, choose '{green desktop}'!",
         ]
     }
 ];
