@@ -1,7 +1,8 @@
 # 0.9.26
 * Added basic sipa compontents
 ## Migration steps from 0.9.x to 0.9.26
-* Replace `app/assets/lib/sipa/sipa.js` with the latest version from repo at `lib/templates/project/desktop/app/assets/lib/sipa`.
+* Replace `app/assets/lib` with the latest version from repo at `lib/templates/project/desktop/app/assets/lib`.
+  * Check if you had already included one of these libs in `lib/<lib-folder>` in another folder and if, then remove them
 * Copy folder `lib/templates/project/desktop/app/assets/components` from repo to `app/assets`.
 * Add in your `app/index.html` after `<!---------------===== /LAYOUTS =====--------------->` the following lines:
 ```html
@@ -17,7 +18,7 @@
     <!---------------===== /COMPONENTS =====--------------->
 
 ```
-* Add the following line in the block of `SipaHooks.beforeInitPage() {}` in `apps/config/hooks.js`:
+* Add the following line in the block of `SipaHooks.beforeInitPage() {}` in `app/config/hooks.js`:
 ```javascript
   SipaHooks.beforeInitPage('on', () => {
     // add this line to your beforeInitPage hook
@@ -41,7 +42,6 @@
   }
 ```
 * Add `"type": "desktop",` at the first line after the opening brackets `{}` in your `sipa.json`.
-* 
 
 # 0.9.0
 ## And again we go back to Sipa from Simpartic
