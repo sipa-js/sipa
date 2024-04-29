@@ -23,6 +23,7 @@
       }
     },
     "static_files_to_copy": {
+      "favicon.svg": "favicon.svg",
       "files": "files",
       "assets/img": "assets/img"
     }

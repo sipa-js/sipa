@@ -59,6 +59,14 @@ class SipaCliBuild {
         sipa_js = sipa_js.replace(/\"name\"\: \"[^\"]+\",/, `"name": "${package_json.name}",`);
         sipa_js = sipa_js.replace(/\"description\"\: \"[^\"]+\",/, `"description": "${package_json.description}",`);
         fs.writeFileSync(sipa_js_path, sipa_js, 'utf8');
+        // manifest.json if available
+        const version = self.getProjectPackageJson().version;
+        const manifest_path = SipaCliTools.projectRootPath() + '/app/manifest.json';
+        if(File.isExisting(manifest_path)) {
+            let manifest_json = fs.readFileSync(manifest_path,'utf8');
+            manifest_json = manifest_json.replace(/\"version\"\: \"[0-9]+.[0-9]+.[0-9]+\"/, `"version": "${version}"`);
+            fs.writeFileSync(manifest_path, manifest_json, 'utf8');
+        }
     }
 
     static getProjectPackageJson() {

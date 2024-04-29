@@ -24,7 +24,8 @@ class SipaCliNew {
         let section = SipaCliTools.colorizeValues(self.SECTIONS.new_types, ['desc'], 'green');
         let usage = commandLineUsage(section);
         console.log(usage);
-        self.project_type = SipaCliTools.cliQuestion('Please choose your project type', ['desktop','mobile'], 'desktop', true);
+        const options = ['desktop','mobile'];
+        self.project_type = SipaCliTools.cliQuestion(`Please choose your project type (${options.join(",")})`, options, 'desktop', true);
         let project_name = null;
         while (true) {
             project_name = SipaCliTools.cliQuestion('Please enter your project name', null, null, true);
@@ -74,6 +75,8 @@ class SipaCliNew {
         const file_variables = {
             version: package_json.version,
             project_name: package_json.name,
+            description: package_json.description,
+            author: package_json.author?.name,
         }
         glob.sync(project_dir + "/**/*", {nodir: true}).forEach((file) => {
             CurlyBracketParser.parseFileWrite(file, file_variables, {unresolved_vars: 'keep'});

@@ -23,6 +23,8 @@
       }
     },
     "static_files_to_copy": {
+      "favicon.svg": "favicon.svg",
+      "manifest.json": "manifest.json",
       "files": "files",
       "assets/img": "assets/img"
     }
