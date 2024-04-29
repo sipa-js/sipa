@@ -1,7 +1,7 @@
 # 0.9.26
 * Added basic sipa compontents
 ## Migration steps from 0.9.x to 0.9.26
-* Replace `app/assets/lib/sipa/sipa.js` with the latest version from repo at `lib/templates/project/default/app/assets/lib/sipa`.
+* Replace `app/assets/lib/sipa/sipa.js` with the latest version from repo at `lib/templates/project/desktop/app/assets/lib/sipa`.
 * Copy folder `lib/templates/project/default/app/assets/components` from repo to `app/assets/js`.
 * Add in your `app/index.html` after `<!---------------===== /LAYOUTS =====--------------->` the following lines:
 ```html
