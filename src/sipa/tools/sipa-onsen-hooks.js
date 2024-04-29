@@ -1,7 +1,7 @@
 /**
  * SipaOnsenHooks
  *
- * App hook manager
+ * App hook manager extending SipaHooks with additional hooks for OnsenUI.
  */
 
 class SipaOnsenHooks extends SipaHooks {
