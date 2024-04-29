@@ -62,6 +62,9 @@ class SipaCliGenerate {
         const default_options = {
             type: 'page'
         }
+        const sipa_project_type = SipaCliTools.readProjectSipaConfig().type;
+        console.log("TYPE", sipa_project_type);
+        console.log("JSON", SipaCliTools.readProjectPackageJson());
         options = SipaHelper.mergeOptions(default_options, options);
         const singular_type = LuckyCase.toLowerCase(options.type);
         const plural_type = singular_type + 's';
@@ -82,7 +85,7 @@ class SipaCliGenerate {
         fs.mkdirSync(final_page_dir, {recursive: true});
         SipaCliTools.printLine(`Generate new ${chalk.green(singular_type)} by default ${singular_type} template ...`);
         SipaCliTools.printLine();
-        const template_src = SipaCliTools.sipaRootPath() + `/lib/templates/${singular_type}/default`;
+        const template_src = SipaCliTools.sipaRootPath() + `/lib/templates/${singular_type}/${sipa_project_type}`;
         fs.copySync(template_src, final_page_dir);
         const view_files = glob.sync(final_page_dir + '/*.*', {});
         const view_id_last_segment = view_id.substr(view_id.lastIndexOf('/') + 1);

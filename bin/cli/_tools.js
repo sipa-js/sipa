@@ -7,6 +7,7 @@ const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
 const SipaCliVersion = require('./tasks/_version');
+const File = require("ruby-nice/file");
 const execSync = require("child_process").execSync;
 
 class SipaCliTools {
@@ -359,10 +360,12 @@ SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package
 SipaCliTools.PROJECT_INDEX_FILE_PATH = SipaCliTools.projectRootPath() + '/app/index.html';
 
 SipaCliTools.SIPA_CONFIG_DEFAULTS = {
+    type: 'desktop',
     development_server: {
         host: '0.0.0.0',
         port: '7000',
         sass_watch_paths: [
+            "assets/components",
             "assets/style",
             "views"
         ]
