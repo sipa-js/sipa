@@ -42,6 +42,11 @@
   }
 ```
 * Add `"type": "desktop",` at the first line after the opening brackets `{}` in your `sipa.json`.
+* Run `sipa i` in your project root to add the new assets
+
+
+
+
 
 # 0.9.0
 ## And again we go back to Sipa from Simpartic
