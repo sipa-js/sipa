@@ -3,7 +3,7 @@
 ## SipaOnsenHooks
 SipaOnsenHooks
 
-App hook manager
+App hook manager extending SipaHooks with additional hooks for OnsenUI.
 
 * [SipaOnsenHooks](#SipaOnsenHooks)
     * [.beforeShowPage(type, func, page_id)](#SipaOnsenHooks.beforeShowPage)

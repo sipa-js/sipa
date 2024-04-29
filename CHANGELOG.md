@@ -1,6 +1,6 @@
 # 0.9.26
 * Added basic sipa compontents
-## Migration steps from 0.9.x to 0.9.26
+## Migration steps from 0.9.x to 0.9.26+
 * Replace `app/assets/lib` with the latest version from repo at `lib/templates/project/desktop/app/assets/lib`.
   * Check if you had already included one of these libs in `lib/<lib-folder>` in another folder and if, then remove them
 * Copy folder `lib/templates/project/desktop/app/assets/components` from repo to `app/assets`.
