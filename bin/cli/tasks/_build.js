@@ -52,14 +52,20 @@ class SipaCliBuild {
         if(!sipa_js_path) {
             console.error(`Could not update project version. Could not find file 'sipa.js' in your projects app directory.`);
         }
-        const package_json_path = SipaCliTools.projectRootPath() + '/package.json';
-        const package_json = JSON.parse(File.read(package_json_path));
+        const package_json = self.getProjectPackageJson();
         // SipaEnv class
         let sipa_js = fs.readFileSync(sipa_js_path,'utf8');
         sipa_js = sipa_js.replace(/\"version\"\: \"[0-9]+.[0-9]+.[0-9]+\",/, `"version": "${package_json.version}",`);
         sipa_js = sipa_js.replace(/\"name\"\: \"[^\"]+\",/, `"name": "${package_json.name}",`);
         sipa_js = sipa_js.replace(/\"description\"\: \"[^\"]+\",/, `"description": "${package_json.description}",`);
         fs.writeFileSync(sipa_js_path, sipa_js, 'utf8');
+    }
+
+    static getProjectPackageJson() {
+        const self = SipaCliBuild;
+        const package_json_path = SipaCliTools.projectRootPath() + '/package.json';
+        const package_json = JSON.parse(File.read(package_json_path));
+        return package_json;
     }
 
     static createMinifiedJsFile() {
@@ -228,7 +234,7 @@ class SipaCliBuild {
         if (!doc_beginning || !doc_header || !doc_body_open_tag) {
             throw `Original index.html is malformed and cannot be parsed anymore!`;
         }
-        const version = SipaCliVersion.getVersion();
+        const version = self.getProjectPackageJson().version;
         return `${self._removeWhiteSpacesBetweenLines(doc_beginning)}
 ${self._removeWhiteSpacesBetweenLines(doc_header)}
 <script type="text/javascript" src="${self.paths.dist_index_minified_js}?v=${version}"></script>
