@@ -12,6 +12,7 @@ class SipaOnsenPage {
      * @param {boolean} options.reset=false reset page to given page
      * @param {boolean} options.replace=false replace current page with given page. If reset=true is set, this option will be ignored
      * @param {boolean} options.push=false stack given page over current page, independent if it exists already. If reset=true or replace=true is set, this option will be ignored
+     * @param {SipaOnsenPage.OnsenOptions} options.onsen options passed to original OnsenUI bringPageTop / pushPage / replacePage / resetPage
      * @param {boolean} options.init_history_tree=false force to load history tree, default false
      * @param {Object} options.params parameters to be set at the new page
      * @param {boolean} options.keep_params=true keep parameters when loading other page
@@ -84,17 +85,17 @@ class SipaOnsenPage {
                             };
                             if (options && options.reset) {
                                 self._page_stack_history = [current_page_history];
-                                navi.resetToPage(self._makeFullPath(page_id)).then(() => {
+                                navi.resetToPage(self._makeFullPath(page_id), options.onsen).then(() => {
                                     afterFunction();
                                 });
                             } else if (options && options.replace) {
                                 self._page_stack_history[self._page_stack_history.length - 1] = current_page_history;
-                                navi.replacePage(self._makeFullPath(page_id)).then(() => {
+                                navi.replacePage(self._makeFullPath(page_id), options.onsen).then(() => {
                                     afterFunction();
                                 });
                             } else if (options && options.push) {
                                 self._page_stack_history.push(current_page_history);
-                                navi.pushPage(self._makeFullPath(page_id)).then(() => {
+                                navi.pushPage(self._makeFullPath(page_id), options.onsen).then(() => {
                                     afterFunction();
                                 });
                             } else {
@@ -102,7 +103,7 @@ class SipaOnsenPage {
                                     self._page_stack_history.push(current_page_history);
                                 }
                                 SipaUrl.setParams(current_page_history.params); // if page is already loaded, we need to restore params
-                                navi.bringPageTop(self._makeFullPath(page_id)).then(() => {
+                                navi.bringPageTop(self._makeFullPath(page_id), options.onsen).then(() => {
                                     afterFunction();
                                 });
                             }
@@ -327,10 +328,13 @@ class SipaOnsenPage {
     }
 
     /**
+     * @param {Object} options
+     * @param {SipaOnsenPage.OnsenOptions} options.onsen options passed to original OnsenUI popPage
      * @returns {Promise}
      */
     static popPage(options = {}) {
         const self = SipaOnsenPage;
+        options ??= {};
         if (self._page_stack_history.length > 1) {
             const last_page_history = self._page_stack_history.pop();
         }
@@ -346,7 +350,7 @@ class SipaOnsenPage {
                 SipaUrl.removeAnchor();
             }
         }
-        return self.getOnsenNavigator().popPage();
+        return self.getOnsenNavigator().popPage(options.onsen);
     }
 
     /**
@@ -606,11 +610,27 @@ SipaOnsenPage._page_stack_history = [];
  * @typedef {Object} TypeOptionsType
  * @property {string} prefix
  * @property {string} file_ext
- *
- *
+ */
+
+/**
  * @typedef {Object} SipaOnsenPageConfig
  * @param {string} default_layout
  * @param {Object} default_layouts
+ *
+ */
+
+/**
+ * @typedef {Object} SipaOnsenPage.OnsenOptions
+ * @param {'slide','lift','fade','none','slide-ios','lift-ios','fade-ios','slide-md','lift-md','fade-md'} animation Animation name. Available animations are "slide", "lift", "fade" and "none". These are platform based animations. For fixed animations, add "-ios" or "-md" suffix to the animation name. E.g. "lift-ios", "lift-md". Defaults values are "slide-ios" and "fade-md".
+ * @param {Object} animationOptions Specify the animation’s duration, delay and timing. E.g. {duration: 0.2, delay: 0.4, timing: 'ease-in'}.
+ * @param {number} animationOptions.duration
+ * @param {number} animationOptions.delay
+ * @param {string} animationOptions.timing
+ * @param {function} callback Function that is called when the transition has ended.
+ * @param {Object} data Custom data that will be stored in the new page element.
+ * @param {number} times Number of pages to be popped. Only one animation will be shown. Works only on popPage
+ * @param {string} page Only necessary if no page is given.
+ * @param {string} pageHTML HTML code that will be computed as a new page. Overwrites page parameter.
  */
 
 // wrap original mock status bar method
