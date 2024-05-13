@@ -10,7 +10,7 @@ Tool class with page loader with included router for OnsenUI
     * [.load(page_id, options)](#SipaOnsenPage.load)
     * [.extractIdOfTemplate(template, options)](#SipaOnsenPage.extractIdOfTemplate) &rarr; <code>string</code>
     * [.getClassNameOfTemplate(template, options)](#SipaOnsenPage.getClassNameOfTemplate) &rarr; <code>string</code>
-    * [.typeOptions(type)](#SipaOnsenPage.typeOptions) &rarr; <code>TypeOptionsType</code>
+    * [.typeOptions(type)](#SipaOnsenPage.typeOptions) &rarr; [<code>TypeOptionsType</code>](#TypeOptionsType)
     * [.currentPageId()](#SipaOnsenPage.currentPageId) &rarr; <code>string</code>
     * [.currentPageClass()](#SipaOnsenPage.currentPageClass) &rarr; <code>SipaBasicView</code>
     * [.currentLayoutId()](#SipaOnsenPage.currentLayoutId) &rarr; <code>string</code>
@@ -18,10 +18,11 @@ Tool class with page loader with included router for OnsenUI
     * [.callMethodOfPage(page_id, method_name, parameters)](#SipaOnsenPage.callMethodOfPage)
     * [.callMethodOfLayout(layout_id, method_name, parameters)](#SipaOnsenPage.callMethodOfLayout)
     * [.setConfig(config)](#SipaOnsenPage.setConfig)
-    * [.popPage()](#SipaOnsenPage.popPage) &rarr; <code>Promise</code>
+    * [.popPage(options)](#SipaOnsenPage.popPage) &rarr; <code>Promise</code>
     * [.addStatusBarMock()](#SipaOnsenPage.addStatusBarMock)
     * [.removeStatusBarMock()](#SipaOnsenPage.removeStatusBarMock)
     * [._initStatusBarMock()](#SipaOnsenPage._initStatusBarMock)
+    * [.OnsenOptions](#SipaOnsenPage.OnsenOptions) : <code>Object</code>
 
 <a name="SipaOnsenPage.config"></a>
 
@@ -39,6 +40,7 @@ Load given page by page_id
 | options.reset | <code>boolean</code> | <code>false</code> | reset page to given page |
 | options.replace | <code>boolean</code> | <code>false</code> | replace current page with given page. If reset=true is set, this option will be ignored |
 | options.push | <code>boolean</code> | <code>false</code> | stack given page over current page, independent if it exists already. If reset=true or replace=true is set, this option will be ignored |
+| options.onsen | [<code>OnsenOptions</code>](#SipaOnsenPage.OnsenOptions) |  | options passed to original OnsenUI bringPageTop / pushPage / replacePage / resetPage |
 | options.init_history_tree | <code>boolean</code> | <code>false</code> | force to load history tree, default false |
 | options.params | <code>Object</code> |  | parameters to be set at the new page |
 | options.keep_params | <code>boolean</code> | <code>true</code> | keep parameters when loading other page |
@@ -77,10 +79,10 @@ Get the class name of the given template
 
 <a name="SipaOnsenPage.typeOptions"></a>
 
-### SipaOnsenPage.typeOptions(type) &rarr; <code>TypeOptionsType</code>
+### SipaOnsenPage.typeOptions(type) &rarr; [<code>TypeOptionsType</code>](#TypeOptionsType)
 Get the options of the given type
 
-**Returns**: <code>TypeOptionsType</code> - type options  
+**Returns**: [<code>TypeOptionsType</code>](#TypeOptionsType) - type options  
 
 | Param | Type |
 | --- | --- |
@@ -160,8 +162,14 @@ SipaOnsenPage.setConfig({
 ```
 <a name="SipaOnsenPage.popPage"></a>
 
-### SipaOnsenPage.popPage() &rarr; <code>Promise</code>
+### SipaOnsenPage.popPage(options) &rarr; <code>Promise</code>
 **Kind**: static method of [<code>SipaOnsenPage</code>](#SipaOnsenPage)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| options | <code>Object</code> |  |
+| options.onsen | [<code>OnsenOptions</code>](#SipaOnsenPage.OnsenOptions) | options passed to original OnsenUI popPage |
+
 <a name="SipaOnsenPage.addStatusBarMock"></a>
 
 ### SipaOnsenPage.addStatusBarMock()
@@ -174,20 +182,42 @@ Remove status bar mock of the app
 
 ### SipaOnsenPage.\_initStatusBarMock()
 Initialize status bar mock - do not run before first page is loaded!
-<a name="SipaOnsenPageConfig"></a>
+<a name="SipaOnsenPage.OnsenOptions"></a>
 
-## SipaOnsenPageConfig : <code>Object</code>
+### SipaOnsenPage.OnsenOptions : <code>Object</code>
+**Kind**: static typedef of [<code>SipaOnsenPage</code>](#SipaOnsenPage)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| animation | <code>&#x27;slide&#x27;</code> \| <code>&#x27;lift&#x27;</code> \| <code>&#x27;fade&#x27;</code> \| <code>&#x27;none&#x27;</code> \| <code>&#x27;slide-ios&#x27;</code> \| <code>&#x27;lift-ios&#x27;</code> \| <code>&#x27;fade-ios&#x27;</code> \| <code>&#x27;slide-md&#x27;</code> \| <code>&#x27;lift-md&#x27;</code> \| <code>&#x27;fade-md&#x27;</code> | Animation name. Available animations are "slide", "lift", "fade" and "none". These are platform based animations. For fixed animations, add "-ios" or "-md" suffix to the animation name. E.g. "lift-ios", "lift-md". Defaults values are "slide-ios" and "fade-md". |
+| animationOptions | <code>Object</code> | Specify the animation’s duration, delay and timing. E.g. {duration: 0.2, delay: 0.4, timing: 'ease-in'}. |
+| animationOptions.duration | <code>number</code> |  |
+| animationOptions.delay | <code>number</code> |  |
+| animationOptions.timing | <code>string</code> |  |
+| callback | <code>function</code> | Function that is called when the transition has ended. |
+| data | <code>Object</code> | Custom data that will be stored in the new page element. |
+| times | <code>number</code> | Number of pages to be popped. Only one animation will be shown. Works only on popPage |
+| page | <code>string</code> | Only necessary if no page is given. |
+| pageHTML | <code>string</code> | HTML code that will be computed as a new page. Overwrites page parameter. |
+
+<a name="TypeOptionsType"></a>
+
+## TypeOptionsType : <code>Object</code>
 Custom type definitions for excellent IDE auto complete support
-
-| Param | Type |
-| --- | --- |
-| default_layout | <code>string</code> | 
-| default_layouts | <code>Object</code> | 
-
 **Properties**
 
 | Name | Type |
 | --- | --- |
 | prefix | <code>string</code> | 
 | file_ext | <code>string</code> | 
+
+<a name="SipaOnsenPageConfig"></a>
+
+## SipaOnsenPageConfig : <code>Object</code>
+**Kind**: global typedef  
+
+| Param | Type |
+| --- | --- |
+| default_layout | <code>string</code> | 
+| default_layouts | <code>Object</code> | 
 

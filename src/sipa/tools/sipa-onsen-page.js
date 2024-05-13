@@ -646,7 +646,7 @@ SipaOnsenPage._page_stack_history = [];
 
 /**
  * @typedef {Object} SipaOnsenPage.OnsenOptions
- * @param {'slide','lift','fade','none','slide-ios','lift-ios','fade-ios','slide-md','lift-md','fade-md'} animation Animation name. Available animations are "slide", "lift", "fade" and "none". These are platform based animations. For fixed animations, add "-ios" or "-md" suffix to the animation name. E.g. "lift-ios", "lift-md". Defaults values are "slide-ios" and "fade-md".
+ * @param {'slide'|'lift'|'fade'|'none'|'slide-ios'|'lift-ios'|'fade-ios'|'slide-md'|'lift-md'|'fade-md'} animation Animation name. Available animations are "slide", "lift", "fade" and "none". These are platform based animations. For fixed animations, add "-ios" or "-md" suffix to the animation name. E.g. "lift-ios", "lift-md". Defaults values are "slide-ios" and "fade-md".
  * @param {Object} animationOptions Specify the animation’s duration, delay and timing. E.g. {duration: 0.2, delay: 0.4, timing: 'ease-in'}.
  * @param {number} animationOptions.duration
  * @param {number} animationOptions.delay
