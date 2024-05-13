@@ -178,9 +178,9 @@ class SipaOnsenPage {
      */
     static currentPageId() {
         const self = SipaOnsenPage;
-        const last_page = self._getPageStack().getLast();
-        if (last_page) {
-            return self._getPageStack().getLast().getAttribute('data-page-id');
+        const path = self.getOnsenNavigator()?.topPage?._meta?.PageLoader?.page;
+        if (path) {
+            return self.extractIdOfTemplate(path);
         }
     }
 
@@ -438,7 +438,7 @@ class SipaOnsenPage {
                 if (options.remove_params) {
                     SipaUrl.removeParams(options.remove_params);
                 }
-                self._initPage(page_id, last_page_id);
+                self._initPage(page_id, last_page_id, undefined, undefined, event.target);
                 if (Typifier.isFunction(options.success)) {
                     options.success(data, text, response);
                 }
@@ -477,7 +477,12 @@ class SipaOnsenPage {
             document.addEventListener('show', function (event) {
                 const page_id = event.target.getAttribute('data-page-id');
                 const j_body = $('body');
-                j_body.attr('data-page-id', page_id);
+                // check if it is NOT a tabbar child
+                if($(event.target).parents("ons-tabbar").length === 0) {
+                    j_body.attr('data-page-id', page_id);
+                } else {
+                    SipaUrl.setParam('page_tab', page_id);
+                }
                 if (self._getPageStack().length > 0) {
                     self._initHistoryTree();
                 } else {
@@ -575,7 +580,7 @@ class SipaOnsenPage {
                 new_page_anchor = undefined;
             }
             new_page.removeAttribute('data-history-tree');
-            self._initPage(new_page_id, last_page_id, new_page_parameters, new_page_anchor);
+            self._initPage(new_page_id, last_page_id, new_page_parameters, new_page_anchor, new_page);
             return true;
         }
         return false;
@@ -588,12 +593,15 @@ class SipaOnsenPage {
         return new_page && new_page.getAttribute('data-history-tree');
     }
 
-    static _initPage(page_id, last_page_id, params = {}, anchor) {
+    static _initPage(page_id, last_page_id, params = {}, anchor, element) {
         const self = SipaOnsenPage;
         if (!params) {
             params = {};
         }
-        SipaUrl.setParams(SipaHelper.mergeOptions(params, {page: page_id}));
+        // change page attribute only if not a tab element
+        if($(element).parents("ons-tabbar").length === 0) {
+            SipaUrl.setParams(SipaHelper.mergeOptions(params, {page: page_id}));
+        }
         if (typeof anchor !== "undefined") {
             SipaUrl.setAnchor(anchor);
         }
