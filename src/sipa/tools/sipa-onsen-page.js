@@ -76,7 +76,13 @@ class SipaOnsenPage {
                                 current_page_history.params = _.merge(current_page_history.params, options.params);
                             }
                             const afterFunction = () => {
-                                self._getPageStack().getLast().setAttribute('data-page-id', page_id);
+                                // get first without data-page-id
+                                self._getPageStack().eachWithIndex((page, i) => {
+                                    if(!page.getAttribute('data-page-id')) {
+                                        page.setAttribute('data-page-id', page_id);
+                                        return false;
+                                    }
+                                });
                                 if (options && options.init_history_tree) {
                                     self._history_tree_loaded = false;
                                 }
@@ -418,8 +424,13 @@ class SipaOnsenPage {
                 if (self._is_loading_history_tree || self._getPageStack().length === 0) {
                     return;
                 }
-                const page_id = self._current_page.page_id;
-                const last_page_id = self._current_page.page_id;
+                const page_id = self.extractIdOfTemplate(event.target._meta.PageLoader.page);
+                let last_page_id = null;
+                if(event.target._meta.PageLoader.parent.pages?.length > 1) {
+                    last_page_id = self.extractIdOfTemplate(event.target._meta.PageLoader.parent.pages[event.target._meta.PageLoader.parent.pages.length-2]._meta.PageLoader.page);
+                } else if (self._current_page.last_page_id) {
+                    last_page_id = self._current_page.last_page_id;
+                }
                 const options = self._current_page.options;
                 if (options.params) {
                     SipaUrl.setParams(options.params);
@@ -586,7 +597,13 @@ class SipaOnsenPage {
         if (typeof anchor !== "undefined") {
             SipaUrl.setAnchor(anchor);
         }
-        self._getPageStack().getLast().setAttribute('data-page-id', page_id);
+        // get first without data-page-id
+        self._getPageStack().eachWithIndex((page, i) => {
+            if(!page.getAttribute('data-page-id')) {
+                page.setAttribute('data-page-id', page_id);
+                return false;
+            }
+        });
         SipaOnsenHooks.beforeInitPage("trigger", null, page_id);
         self.callMethodOfPage(page_id, 'onInit', [{last_page_id: last_page_id}]);
         self._initializeBackButton();
