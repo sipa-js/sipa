@@ -458,15 +458,15 @@ class SipaOnsenPage {
             }, false);
 
             document.addEventListener('postpop', function (event) {
-                const page_id = self.currentPageId();
+                const page_id = event.target.getAttribute('data-page-id');
             }, false);
 
             document.addEventListener('prepop', function (event) {
-                const page_id = self.currentPageId();
+                const page_id = event.target.getAttribute('data-page-id');
             }, false);
 
             document.addEventListener('destroy', function (event) {
-                const last_page_id = self.currentPageId();
+                const last_page_id = event.target.getAttribute('data-page-id');
                 const next_page_id = self._getPageStack()[self._getPageStack().length - 2];
                 if (last_page_id) {
                     SipaOnsenHooks.beforeDestroyPage('trigger', null, last_page_id);
@@ -475,7 +475,7 @@ class SipaOnsenPage {
             }, false);
 
             document.addEventListener('show', function (event) {
-                const page_id = self.currentPageId();
+                const page_id = event.target.getAttribute('data-page-id');
                 const j_body = $('body');
                 j_body.attr('data-page-id', page_id);
                 if (self._getPageStack().length > 0) {
