@@ -37,6 +37,7 @@ class SipaComponent {
      * @param {Object<String, *>} data object of properties
      * @param {Object} options
      * @param {boolean} options.sipa_hidden=false initial visibility state
+     * @param {boolean} options.sipa_cache=true use node caching for templates
      * @param {string} options.sipa_classes additional classes for component tag
      * @param {Object<string, string>} options.sipa_custom_attributes additional custom attributes on the component tag
      *
@@ -66,6 +67,7 @@ class SipaComponent {
         const default_options = {
             sipa_hidden: false,
             sipa_classes: "",
+            sipa_cache: true,
         };
         options = SipaHelper.mergeOptions(default_options, options);
 
@@ -81,6 +83,7 @@ class SipaComponent {
         this._meta.sipa_original_display = parsed.style ? parsed.style.display : '';
         this._meta.sipa_custom_attributes = options.sipa_custom_attributes || {};
         this._meta.sipa_hidden = options.sipa_hidden;
+        this._meta.sipa_cache = options.sipa_cache;
         self.#component_instances.push(this);
     }
 
@@ -128,7 +131,7 @@ class SipaComponent {
         options ??= {};
         options.cache ??= true;
         let parsed;
-        if(data_changed || !this.#cached_node || !options.cache) {
+        if(data_changed || !this.#cached_node || !options.cache || !this._meta.sipa_cache) {
             parsed = self.#parseHtml(this.html({ init: options.init, cache: options.cache }));
             this.#cached_node = parsed.cloneNode(true);
         } else {
@@ -283,7 +286,7 @@ class SipaComponent {
         if (this.hasParent()) {
             const parent_index = this.parent()._meta.sipa_children.indexOf(this);
             delete this.parent()._meta.sipa_children[parent_index];
-            this.parent()._meta.sipa_children.filter(x => x); // remove empty entries
+            this.parent()._meta.sipa_children = this.parent()._meta.sipa_children.filter(x => x); // remove empty entries
         }
         const index = self.#component_instances.indexOf(this);
         this.remove();
@@ -332,7 +335,7 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.render=true rerender DOM elements after data update
      * @param {boolean} options.reset=false if false, merge given data with existing, otherwise reset component data to given data
-     * @param {boolean} options.cache=true use node cache
+     * @param {boolean} options.cache=true use node cache or not on component and all(!) children and their children
      * @returns {SipaComponent}
      *
      * @example
@@ -713,6 +716,12 @@ class SipaComponent {
                             new_component_obj._meta.sipa_hidden = true;
                         } else {
                             new_component_obj._meta.sipa_hidden = false;
+                        }
+                    } else if (d_key === "cache") {
+                        if (d_value === "true") {
+                            new_component_obj._meta.sipa_cache = true;
+                        } else {
+                            new_component_obj._meta.sipa_cache = false;
                         }
                     } else if (d_key === "alias") {
                         new_component_obj._meta.sipa_alias = d_value;
@@ -1098,6 +1107,7 @@ class SipaComponent {
  * @property {number} sipa_id auto increment
  * @property {string} sipa_classes internal state representation for classes managed by components methods addClass() and removeClass()
  * @property {boolean} sipa_hidden=false state representation of hide() and show() methods
+ * @property {boolean} sipa_cache=true use node caching for templates
  * @property {string} sipa_alias alias to access children by uniq accessor name
  * @property {Array<SipaComponent>} sipa_children array of children sipa components
  * @property {SipaComponent} sipa_parent parent sipa component when using nested components
