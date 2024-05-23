@@ -995,6 +995,7 @@ class SipaComponent {
         const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
         uninitialized_children = parsed.querySelectorAll(children_selector);
         const are_children_initialized = typeof this._meta.sipa_children !== 'undefined';
+        let alias_list = []; // check for duplicates
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
                 this._meta.sipa_children ??= []; // if not set yet, they will be initialized at the first time
@@ -1002,7 +1003,10 @@ class SipaComponent {
                 const alias = el.getAttribute('sipa-alias');
                 if (!alias) {
                     throw new Error(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                } else if(alias_list.includes(alias)) {
+                    throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 }
+                alias_list.push(alias);
                 let child_component = this._meta.sipa_children.find(x => x._meta.sipa_alias === alias);
                 const child = self.initElement(el, {sipa_component: child_component, parent_data: this._data});
                 if (!this.childrenAliases().includes(alias)) {
