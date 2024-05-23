@@ -77,10 +77,13 @@ class SipaComponent {
     }
 
     /**
+     * @param {Object} options
+     * @param {boolean} options.init is init event
      * @returns {string} rendered HTML template() with current values of data
      */
-    html() {
+    html(options) {
         const self = SipaComponent;
+        options ??= {};
         let html = this.#inheritedClass().template();
         html = this.#applyTemplateId(html);
         const _this = this;
@@ -98,16 +101,19 @@ class SipaComponent {
         html = this.#applyTemplateCustomAttributes(html);
         html = this.#applyTemplateClasses(html);
         html = this.#applyTemplateHiddenState(html);
-        html = this.#applyTemplateChildrenComponents(html);
+        html = this.#applyTemplateChildrenComponents(html, { init: options.init });
         return html;
     }
 
     /**
+     * @param {Object} options
+     * @param {boolean} options.init is init event
      * @returns {Element} element representation of html()
      */
-    node() {
+    node(options) {
         const self = SipaComponent;
-        return self.#parseHtml(this.html());
+        options ??= {};
+        return self.#parseHtml(this.html({ init: options.init }));
     }
 
     /**
@@ -134,10 +140,34 @@ class SipaComponent {
     prepend(query_selector) {
         const self = SipaComponent;
         document.querySelectorAll(query_selector).forEach((el) => {
-            el.prepend(this.node());
+            el.prepend(this.node({ init: true }));
             this.#triggerEvent('onInit', el);
         });
         return this;
+    }
+
+    /**
+     * Create a DOM node of the instance and replace it to the given css query selector
+     *
+     * @param {string} query_selector
+     * @return {SipaComponent}
+     */
+    replaceWith(query_selector) {
+        const self = SipaComponent;
+        document.querySelectorAll(query_selector).forEach((el) => {
+            el.replaceWith(this.node());
+            this.#triggerEvent('onInit', el);
+        });
+        return this;
+    }
+
+    /**
+     * Get the sipa alias of the current instance
+     *
+     * @returns {string}
+     */
+    alias(){
+        return this._meta.sipa_alias;
     }
 
     /**
@@ -696,6 +726,7 @@ class SipaComponent {
             });
             const new_element_node = self.initChildComponents(new_component);
             element.replaceWith(new_element_node);
+            new_component.#triggerEvent('onInit', element);
             return new_component;
         } else if (typeof options.sipa_component !== 'undefined') {
             return options.sipa_component;
@@ -721,7 +752,9 @@ class SipaComponent {
                 const child = self.initElement(el);
                 child._meta.sipa_parent = component;
                 component.#addChild(child);
-                el.replaceWith(child.node());
+                const child_node = child.node();
+                el.replaceWith(child_node);
+                child.#triggerEvent('onInit', child_node);
             });
         }
         return new_element_node;
@@ -916,10 +949,13 @@ class SipaComponent {
      * Replace children components to given template html
      *
      * @param {string} html
+     * @param {Object} options
+     * @param {boolean} options.init is init event
      * @returns {string}
      */
-    #applyTemplateChildrenComponents(html) {
+    #applyTemplateChildrenComponents(html, options) {
         const self = SipaComponent;
+        options ??= {};
         const parsed = self.#parseHtml(html);
         let uninitialized_children = [];
         const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
@@ -939,7 +975,11 @@ class SipaComponent {
                     child._meta.sipa_parent = this;
                     this.#addChild(child);
                 }
-                el.replaceWith(child.node());
+                const child_node = child.node({ init: options.init });
+                el.replaceWith(child_node);
+                if(options.init) {
+                    child.#triggerEvent('onInit', child_node);
+                }
             });
         }
         return parsed.outerHTML;
