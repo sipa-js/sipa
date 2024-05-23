@@ -1,22 +1,39 @@
 <!DOCTYPE HTML>
 <html>
     <head>
-        <script type="text/javascript" src="sipa/core/sipa-basic-view.js"></script>
-        <script type="text/javascript" src="sipa/core/sipa-component.js"></script>
-        <script type="text/javascript" src="sipa/core/sipa-serializer.js"></script>
-        <script type="text/javascript" src="sipa/core/sipa-state.js"></script>
-        <script type="text/javascript" src="sipa/tools/sipa-env.js"></script>
-        <script type="text/javascript" src="sipa/tools/sipa-helper.js"></script>
-        <script type="text/javascript" src="sipa/tools/sipa-hooks.js"></script>
-        <script type="text/javascript" src="sipa/tools/sipa-page.js"></script>
-        <script type="text/javascript" src="sipa/tools/sipa-url.js"></script>
-        <script type="text/javascript" src="sipa/sipa.js"></script>
-        <script type="text/javascript">
-            //Sipa.init(() => { });
+        <script src="playground/assets/lib/curly-bracket-parser/curly-bracket-parser.js"></script>
+        <script src="playground/assets/lib/ejs/ejs.js"></script>
+        <script src="playground/assets/lib/jquery/jquery-3.5.1.js"></script>
+        <script src="playground/assets/lib/lodash/lodash.js"></script>
+        <script src="playground/assets/lib/lucky-case/lucky-case.js"></script>
+        <script src="playground/assets/lib/ruby-nice/ruby-nice.js"></script>
+        <script src="playground/assets/lib/typifier/typifier.js"></script>
+        <script src="sipa/core/sipa-basic-view.js"></script>
+        <script src="sipa/core/sipa-component.js"></script>
+        <script src="sipa/core/sipa-serializer.js"></script>
+        <script src="sipa/core/sipa-state.js"></script>
+        <script src="sipa/tools/sipa-env.js"></script>
+        <script src="sipa/tools/sipa-helper.js"></script>
+        <script src="sipa/tools/sipa-hooks.js"></script>
+        <script src="sipa/tools/sipa-page.js"></script>
+        <script src="sipa/tools/sipa-url.js"></script>
+        <script src="sipa/sipa.js"></script>
+        <script src="playground/assets/components/list-component/list-component.js"></script>
+        <link rel="stylesheet" href="playground/assets/components/list-component/list-component.css">
+        <script src="playground/assets/components/list-component/list-item-component/list-item-component.js"></script>
+        <link rel="stylesheet" href="playground/assets/components/list-component/list-item-component/list-item-component.css">
+        <script src="playground/assets/components/list-component/list-item-component/list-item-atom-component/list-item-atom-component.js"></script>
+        <link rel="stylesheet" href="playground/assets/components/list-component/list-item-component/list-item-atom-component/list-item-atom-component.css">
+        <script>
+            Sipa.init(() => {
+                SipaComponent.init();
+            });
         </script>
     </head>
 <body>
     <h1>Playground</h1>
     Test HTML file, including Sipa for testing and debugging purpose only.
+    <h2>Case</h2>
+    <list-component></list-component>
 </body>
 </html>

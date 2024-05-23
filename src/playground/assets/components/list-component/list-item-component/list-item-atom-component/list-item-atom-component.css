@@ -1,0 +1,7 @@
+list-item-atom-component {
+    padding: 4px;
+    border-radius: 4px;
+    background: gray;
+    border: 1px solid green;
+    display: inline-block;
+}
