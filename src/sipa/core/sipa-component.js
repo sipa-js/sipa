@@ -10,6 +10,14 @@ class SipaComponent {
      */
     _meta = {};
     #destroyed = false;
+    /**
+     * @type {Object}
+     */
+    #previous_data = null;
+    /**
+     * @type {Element}
+     */
+    #cached_node = null;
 
     /**
      * @type {number}
@@ -79,11 +87,13 @@ class SipaComponent {
     /**
      * @param {Object} options
      * @param {boolean} options.init is init event
+     * @param {boolean} options.cache=true use node cache
      * @returns {string} rendered HTML template() with current values of data
      */
     html(options) {
         const self = SipaComponent;
         options ??= {};
+        options.cache ??= true;
         let html = this.#inheritedClass().template();
         html = this.#applyTemplateId(html);
         const _this = this;
@@ -101,19 +111,30 @@ class SipaComponent {
         html = this.#applyTemplateCustomAttributes(html);
         html = this.#applyTemplateClasses(html);
         html = this.#applyTemplateHiddenState(html);
-        html = this.#applyTemplateChildrenComponents(html, { init: options.init });
+        html = this.#applyTemplateChildrenComponents(html, { init: options.init, cache: options.cache });
         return html;
     }
 
     /**
      * @param {Object} options
      * @param {boolean} options.init is init event
+     * @param {boolean} options.cache=true use node cache
      * @returns {Element} element representation of html()
      */
     node(options) {
         const self = SipaComponent;
+        const data_changed = !(_.isEqual(this.#previous_data, this._data));
+        this.#previous_data = _.cloneDeep(this._data);
         options ??= {};
-        return self.#parseHtml(this.html({ init: options.init }));
+        options.cache ??= true;
+        let parsed;
+        if(data_changed || !this.#cached_node || !options.cache) {
+            parsed = self.#parseHtml(this.html({ init: options.init, cache: options.cache }));
+            this.#cached_node = parsed.cloneNode(true);
+        } else {
+            parsed = this.#cached_node.cloneNode(true);
+        }
+        return parsed;
     }
 
     /**
@@ -311,6 +332,7 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.render=true rerender DOM elements after data update
      * @param {boolean} options.reset=false if false, merge given data with existing, otherwise reset component data to given data
+     * @param {boolean} options.cache=true use node cache
      * @returns {SipaComponent}
      *
      * @example
@@ -338,12 +360,13 @@ class SipaComponent {
         const default_options = {
             render: true,
             reset: false,
+            cache: true,
         };
         options = SipaHelper.mergeOptions(default_options, options);
         this.#updateData(data, {reset: options.reset});
         if (options.render) {
             this.elements().forEach((el) => {
-                el.replaceWith(this.node());
+                el.replaceWith(this.node({ cache: options.cache }));
             });
         }
         return this;
@@ -960,11 +983,13 @@ class SipaComponent {
      * @param {string} html
      * @param {Object} options
      * @param {boolean} options.init is init event
+     * @param {boolean} options.cache=true use node cache
      * @returns {string}
      */
     #applyTemplateChildrenComponents(html, options) {
         const self = SipaComponent;
         options ??= {};
+        options.cache ??= true;
         const parsed = self.#parseHtml(html);
         let uninitialized_children = [];
         const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
@@ -984,7 +1009,7 @@ class SipaComponent {
                     child._meta.sipa_parent = this;
                     this.#addChild(child);
                 }
-                const child_node = child.node({ init: options.init });
+                const child_node = child.node({ init: options.init, cache: options.cache });
                 el.replaceWith(child_node);
                 if(options.init) {
                     child.#triggerEvent('onInit', child_node);
