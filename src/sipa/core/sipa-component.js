@@ -527,6 +527,15 @@ class SipaComponent {
     }
 
     /**
+     * Return all values of children
+     *
+     * @return {Array<SipaComponent>}
+     */
+    childrenValues() {
+        return Object.values(this.children());
+    }
+
+    /**
      * Check if the component has any children or not
      *
      * @return {boolean}
