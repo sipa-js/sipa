@@ -210,7 +210,7 @@ class SipaComponent {
      * @param {Object} data
      * @return {SipaComponent}
      */
-    resetData(data) {
+    resetToData(data) {
         const self = SipaComponent;
         this._data = _.cloneDeep(data);
         return this;
@@ -368,10 +368,24 @@ class SipaComponent {
         options = SipaHelper.mergeOptions(default_options, options);
         this.#updateData(data, {reset: options.reset});
         if (options.render) {
-            this.elements().forEach((el) => {
-                el.replaceWith(this.node({ cache: options.cache }));
-            });
+            this.render(options);
         }
+        return this;
+    }
+
+    /**
+     * Render component again
+     *
+     * @param {Object} options
+     * @param {boolean} options.cache=true use node cache or not on component and all(!) children and their children
+     * @returns {SipaComponent}
+     */
+    render(options ={}) {
+        options ??= {};
+        options.cache ??= true;
+        this.elements().forEach((el) => {
+            el.replaceWith(this.node({ cache: options.cache }));
+        });
         return this;
     }
 
