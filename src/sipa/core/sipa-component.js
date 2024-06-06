@@ -214,11 +214,21 @@ class SipaComponent {
      * Set cloned data of the current instance
      *
      * @param {Object} data
+     * @param {Object} options
+     * @param {boolean} options.render=true render component after data update
      * @return {SipaComponent}
      */
-    resetToData(data) {
+    resetToData(data, options = {}) {
         const self = SipaComponent;
+        options ??= {};
+        options.render ??= true;
         this._data = _.cloneDeep(data);
+        if (options.render) {
+            this.render(options);
+        } // if no render, then sync at least
+        else if(this.sync_nested_references) {
+            this.syncNestedReferences();
+        }
         return this;
     }
 
