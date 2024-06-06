@@ -18,6 +18,12 @@ class SipaComponent {
      * @type {Element}
      */
     #cached_node = null;
+    /**
+     * Sync nested references automatically after every render update
+     * May be disabled on performance cases. Then overwrite to 'false' at the inherited class.
+     * @type {boolean}
+     */
+    sync_nested_references = true;
 
     /**
      * @type {number}
@@ -369,6 +375,9 @@ class SipaComponent {
         this.#updateData(data, {reset: options.reset});
         if (options.render) {
             this.render(options);
+        } // if no render, then sync at least
+        else if(this.sync_nested_references) {
+            this.syncNestedReferences();
         }
         return this;
     }
@@ -386,6 +395,9 @@ class SipaComponent {
         this.elements().forEach((el) => {
             el.replaceWith(this.node({ cache: options.cache }));
         });
+        if(this.sync_nested_references) {
+            this.syncNestedReferences();
+        }
         return this;
     }
 
@@ -625,6 +637,19 @@ class SipaComponent {
         return this._meta.sipa_parent ? this._meta.sipa_parent.parentTop() : this;
     }
 
+    /**
+     * Refresh all data references from top parent to all nested children and children below.
+     * This is used after the first rendering of the component for example.
+     *
+     * After that, the update() will manage refreshing to direct children and parent components.
+     *
+     * You may want to call this method, if you have a special case and modify the _data attribute manually.
+     */
+    syncNestedReferences() {
+        this.#synchronizeDataToParent();
+        this.#synchronizeDataToChildren({ recursive: true });
+    }
+
 
     /**
      * Return all instances of the component
@@ -781,6 +806,9 @@ class SipaComponent {
             });
             const new_element_node = self.initChildComponents(new_component);
             element.replaceWith(new_element_node);
+            if(new_component.sync_nested_references) {
+                new_component.syncNestedReferences();
+            }
             new_component.#triggerEvent('onInit', element);
             return new_component;
         } else if (typeof options.sipa_component !== 'undefined') {
@@ -809,6 +837,9 @@ class SipaComponent {
                 component.#addChild(child);
                 const child_node = child.node();
                 el.replaceWith(child_node);
+                if(child.sync_nested_references) {
+                    child.syncNestedReferences();
+                }
                 child.#triggerEvent('onInit', child_node);
             });
         }
@@ -901,13 +932,13 @@ class SipaComponent {
         }
     }
 
-
     /**
      * Update the data of the component and its children by alias if available
      *
      * @param {Object} data
      * @param {Object} options
      * @param {boolean} options.reset=false
+     * @param {boolean} options.clone=true
      * @private
      */
     #updateData(data, options = {}) {
@@ -915,19 +946,27 @@ class SipaComponent {
         options ??= {};
         const default_options = {
             reset: false,
+            clone: true,
+            parent_only: false,
         };
         options = SipaHelper.mergeOptions(default_options, options);
         if (typeof data !== 'object') {
             throw new Error(`Given 'data' must be of type object! Given: ${Typifier.getType(alias)}`);
         }
         if (data) {
-            let data_copy = _.cloneDeep(data);
+            let data_copy;
+            if(options.clone) {
+                data_copy = _.cloneDeep(data);
+            } else {
+                data_copy = data;
+            }
             if (options.reset) {
                 this._data = data_copy;
             } else {
                 this._data = _.merge(this._data, data_copy);
             }
             this.#synchronizeDataToChildren();
+            this.#synchronizeDataToParent();
         }
     }
 
@@ -1095,15 +1134,34 @@ class SipaComponent {
 
     /**
      * Synchronize children data from current instance to its children
+     *
+     * @param {Object} options
+     * @param {boolean} options.recursive=false synchronize through all children trees
      */
-    #synchronizeDataToChildren() {
+    #synchronizeDataToChildren(options = {}) {
+        options ??= {};
+        options.recursive ??= false;
         this.childrenAliases().eachWithIndex((alias, i) => {
             if (typeof this._data[alias] === "object") {
-                this.children()[alias].#updateData(this._data[alias]);
+                this.children()[alias].#updateData(this._data[alias], { clone: false });
             } else if (typeof this._data[alias] !== 'undefined') {
                 throw new Error(`Given alias 'data.${alias}' must be of type object! Given: ${Typifier.getType(alias)}`);
             }
+            if(options.recursive) {
+                this.children().eachWithIndex((alias, child) => {
+                    child.syncNestedReferences();
+                });
+            }
         });
+    }
+
+    /**
+     * Refresh data reference from current instance to its parent
+     */
+    #synchronizeDataToParent() {
+        if(this.hasParent()) {
+            this.parent()._data[this.alias()] = this._data;
+        }
     }
 
     /**
