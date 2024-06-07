@@ -15,6 +15,11 @@ class SipaComponent {
      */
     #previous_data = null;
     /**
+     * List of to check for alias duplicates
+     * @type {Array<string>}
+     */
+    #apply_alias_duplicate_list = [];
+    /**
      * @type {Element}
      */
     #cached_node = null;
@@ -45,6 +50,7 @@ class SipaComponent {
      * @param {boolean} options.sipa_hidden=false initial visibility state
      * @param {boolean} options.sipa_cache=true use node caching for templates
      * @param {string} options.sipa_classes additional classes for component tag
+     * @param {string} options.sipa_alias alias to access from parent by uniq accessor name
      * @param {Object<string, string>} options.sipa_custom_attributes additional custom attributes on the component tag
      *
      * @example
@@ -90,6 +96,7 @@ class SipaComponent {
         this._meta.sipa_custom_attributes = options.sipa_custom_attributes || {};
         this._meta.sipa_hidden = options.sipa_hidden;
         this._meta.sipa_cache = options.sipa_cache;
+        this._meta.sipa_alias = options.sipa_alias;
         self.#component_instances.push(this);
     }
 
@@ -117,11 +124,14 @@ class SipaComponent {
                 throw e;
             }
         }
-        html = this.#applyTemplateCustomAttributes(html);
-        html = this.#applyTemplateClasses(html);
-        html = this.#applyTemplateHiddenState(html);
-        html = this.#applyTemplateChildrenComponents(html, { init: options.init, cache: options.cache });
-        return html;
+        this.#apply_alias_duplicate_list = [];
+        let parsed = self.#parseHtml(html);
+        parsed = this.#applyTemplateCustomAttributes({ parsed });
+        parsed = this.#applyTemplateClasses({ parsed });
+        parsed = this.#applyTemplateHiddenState({ parsed });
+        parsed = this.#applyTemplateChildrenComponents({ parsed }, {init: options.init, cache: options.cache});
+        parsed = this.#applyTemplateSipaList({ parsed }, {init: options.init, cache: options.cache});
+        return parsed.outerHTML;
     }
 
     /**
@@ -137,8 +147,8 @@ class SipaComponent {
         options ??= {};
         options.cache ??= true;
         let parsed;
-        if(data_changed || !this.#cached_node || !options.cache || !this._meta.sipa_cache) {
-            parsed = self.#parseHtml(this.html({ init: options.init, cache: options.cache }));
+        if (data_changed || !this.#cached_node || !options.cache || !this._meta.sipa_cache) {
+            parsed = self.#parseHtml(this.html({init: options.init, cache: options.cache}));
             this.#cached_node = parsed.cloneNode(true);
         } else {
             parsed = this.#cached_node.cloneNode(true);
@@ -170,7 +180,7 @@ class SipaComponent {
     prepend(query_selector) {
         const self = SipaComponent;
         document.querySelectorAll(query_selector).forEach((el) => {
-            el.prepend(this.node({ init: true }));
+            el.prepend(this.node({init: true}));
             this.#triggerEvent('onInit', el);
         });
         return this;
@@ -196,7 +206,7 @@ class SipaComponent {
      *
      * @returns {string}
      */
-    alias(){
+    alias() {
         return this._meta.sipa_alias;
     }
 
@@ -226,7 +236,7 @@ class SipaComponent {
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
-        else if(this.sync_nested_references) {
+        else if (this.sync_nested_references) {
             this.syncNestedReferences();
         }
         return this;
@@ -285,18 +295,20 @@ class SipaComponent {
      *
      * @param {Object} options
      * @param {boolean} options.force=false
+     * @param {boolean} options.warn=true display a warning when the current instance is a declarative child of another
      * @returns {SipaComponent}
      */
     destroy(options = {}) {
         const self = SipaComponent;
         options ??= {};
-        if (this.hasParent() && !options.force) {
-            throw new Error(`You can not destroy a component, that is a child of another!`);
+        options.warn ??= true;
+        if (this.hasParent() && !this._meta.sipa_list && options.warn) {
+            console.warn(`You destroyed a declarative component <${this.constructor.tagName()}> that is a children of <${this.parent().constructor.tagName()}>! Be aware, that in that case it usually will get initiliazed again.`);
         }
         this.#triggerEvent('onDestroy', this.element());
         if (this.hasChildren()) {
             this.children().eachWithIndex((key, val) => {
-                val.destroy({ force: true });
+                val.destroy({force: true});
             });
         }
         if (this.hasParent()) {
@@ -309,6 +321,23 @@ class SipaComponent {
         if (index !== -1) {
             delete self.#component_instances[index];
             self.#component_instances = self.#component_instances.filter(x => x);
+        }
+        if(this.hasParent()) {
+            const parent = this.parent();
+            const sipa_list_ref = this._meta.sipa_list;
+            if(sipa_list_ref) {
+                delete parent._data[sipa_list_ref][parent._data[sipa_list_ref].indexOf(this)];
+                parent._data[sipa_list_ref] = parent._data[sipa_list_ref].filter(x => !!x);
+            }
+            delete parent._meta.sipa_children[parent._meta.sipa_children.indexOf(this)];
+            parent._meta.sipa_children = parent._meta.sipa_children.filter(x => !!x);
+            const alias = this._meta.sipa_alias;
+            if(alias) {
+                delete parent._data[alias];
+                parent._meta.sipa_children
+            } else {
+                throw new Error(`Missing alias for component.`);
+            }
         }
         this._data = undefined;
         this._meta = undefined;
@@ -386,7 +415,7 @@ class SipaComponent {
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
-        else if(this.sync_nested_references) {
+        else if (this.sync_nested_references) {
             this.syncNestedReferences();
         }
         return this;
@@ -399,13 +428,13 @@ class SipaComponent {
      * @param {boolean} options.cache=true use node cache or not on component and all(!) children and their children
      * @returns {SipaComponent}
      */
-    render(options ={}) {
+    render(options = {}) {
         options ??= {};
         options.cache ??= true;
         this.elements().forEach((el) => {
-            el.replaceWith(this.node({ cache: options.cache }));
+            el.replaceWith(this.node({cache: options.cache}));
         });
-        if(this.sync_nested_references) {
+        if (this.sync_nested_references) {
             this.syncNestedReferences();
         }
         return this;
@@ -459,7 +488,7 @@ class SipaComponent {
     hasClass(class_name) {
         let result = true;
         class_name.split(' ').eachWithIndex((current_class) => {
-            if(!this._meta.sipa_classes.split(" ").includes(current_class)) {
+            if (!this._meta.sipa_classes.split(" ").includes(current_class)) {
                 result = false;
                 return false;
             }
@@ -657,7 +686,7 @@ class SipaComponent {
      */
     syncNestedReferences() {
         this.#synchronizeDataToParent();
-        this.#synchronizeDataToChildren({ recursive: true });
+        this.#synchronizeDataToChildren({recursive: true});
     }
 
 
@@ -696,7 +725,7 @@ class SipaComponent {
     static bySipaId(sipa_id) {
         const self = SipaComponent;
         const component_class_name = `${this.name}`;
-        if(component_class_name === 'SipaComponent') {
+        if (component_class_name === 'SipaComponent') {
             return SipaComponent.#component_instances.find(x => x._meta.sipa_id === sipa_id);
         } else {
             return SipaComponent.#component_instances.find(x => x.constructor.name === component_class_name && x._meta.sipa_id === sipa_id);
@@ -753,7 +782,7 @@ class SipaComponent {
         options ??= {};
         if (!element.getAttribute('sipa-id') && typeof options.sipa_component === 'undefined') {
             const element_class = SipaHelper.constantizeString(LuckyCase.toPascalCase(element.tagName));
-            const new_component_obj = { _meta: { sipa_custom_attributes: {} } };
+            const new_component_obj = {_meta: {sipa_custom_attributes: {}}};
             const attr_keys = [...element.attributes].map(e => e.name);
             let data = {};
             attr_keys.eachWithIndex((key, i) => {
@@ -786,7 +815,7 @@ class SipaComponent {
                     try {
                         let value = null;
                         const raw_value = element.attributes[key].value;
-                        if(raw_value.trim() === '') {
+                        if (raw_value.trim() === '') {
                             value = undefined;
                         } else {
                             value = eval(`(${element.attributes[key].value})`);
@@ -816,7 +845,7 @@ class SipaComponent {
             });
             const new_element_node = self.initChildComponents(new_component);
             element.replaceWith(new_element_node);
-            if(new_component.sync_nested_references) {
+            if (new_component.sync_nested_references) {
                 new_component.syncNestedReferences();
             }
             new_component.#triggerEvent('onInit', element);
@@ -847,7 +876,7 @@ class SipaComponent {
                 component.#addChild(child);
                 const child_node = child.node();
                 el.replaceWith(child_node);
-                if(child.sync_nested_references) {
+                if (child.sync_nested_references) {
                     child.syncNestedReferences();
                 }
                 child.#triggerEvent('onInit', child_node);
@@ -965,7 +994,7 @@ class SipaComponent {
         }
         if (data) {
             let data_copy;
-            if(options.clone) {
+            if (options.clone) {
                 data_copy = _.cloneDeep(data);
             } else {
                 data_copy = data;
@@ -1013,29 +1042,34 @@ class SipaComponent {
     }
 
     /**
-     * Add class attribute to given template html
+     * Add class attribute to given template html.
+     * If html string given, return html. If ChildNode given, return ChildNode. (for performance reasons)
      *
-     * @param {string} html
-     * @returns {string}
+     * @param {Object} args
+     * @param {string} args.html
+     * @param {ChildNode} args.parsed
+     * @returns {string|ChildNode}
      */
-    #applyTemplateClasses(html) {
+    #applyTemplateClasses(args) {
         const self = SipaComponent;
-        const parsed = self.#parseHtml(html);
+        const parsed = args.parsed || self.#parseHtml(args.html);
         if (parsed && this._meta.sipa_classes) {
             parsed.className = this._meta.sipa_classes;
         }
-        return parsed.outerHTML;
+        return args.parsed ? parsed : parsed.outerHTML;
     }
 
     /**
      * Check and set display style to given template html
      *
-     * @param {string} html
-     * @returns {string}
+     * @param {Object} args
+     * @param {string} args.html
+     * @param {ChildNode} args.parsed
+     * @returns {string|ChildNode}
      */
-    #applyTemplateHiddenState(html) {
+    #applyTemplateHiddenState(args) {
         const self = SipaComponent;
-        const parsed = self.#parseHtml(html);
+        const parsed = args.parsed || self.#parseHtml(args.html);
         if (parsed && parsed.style) {
             if (this.isHidden()) {
                 parsed.style.display = 'none';
@@ -1046,28 +1080,29 @@ class SipaComponent {
                 parsed.style.display = '';
             }
         }
-        return parsed.outerHTML;
+        return args.parsed ? parsed : parsed.outerHTML;
     }
 
     /**
      * Replace children components to given template html
      *
-     * @param {string} html
+     * @param {Object} args
+     * @param {string} args.html
+     * @param {ChildNode} args.parsed
      * @param {Object} options
      * @param {boolean} options.init is init event
      * @param {boolean} options.cache=true use node cache
-     * @returns {string}
+     * @returns {string|ChildNode}
      */
-    #applyTemplateChildrenComponents(html, options) {
+    #applyTemplateChildrenComponents(args, options) {
         const self = SipaComponent;
         options ??= {};
         options.cache ??= true;
-        const parsed = self.#parseHtml(html);
+        const parsed = args.parsed || self.#parseHtml(args.html);
         let uninitialized_children = [];
         const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
         uninitialized_children = parsed.querySelectorAll(children_selector);
         const are_children_initialized = typeof this._meta.sipa_children !== 'undefined';
-        let alias_list = []; // check for duplicates
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
                 this._meta.sipa_children ??= []; // if not set yet, they will be initialized at the first time
@@ -1075,36 +1110,92 @@ class SipaComponent {
                 const alias = el.getAttribute('sipa-alias');
                 if (!alias) {
                     throw new Error(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
-                } else if(alias_list.includes(alias)) {
+                } else if (this.#apply_alias_duplicate_list.includes(alias)) {
                     throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 }
-                alias_list.push(alias);
+                this.#apply_alias_duplicate_list.push(alias);
                 let child_component = this._meta.sipa_children.find(x => x._meta.sipa_alias === alias);
                 const child = self.initElement(el, {sipa_component: child_component, parent_data: this._data});
                 if (!this.childrenAliases().includes(alias)) {
                     child._meta.sipa_parent = this;
                     this.#addChild(child);
                 }
-                const child_node = child.node({ init: options.init, cache: options.cache });
+                const child_node = child.node({init: options.init, cache: options.cache});
                 el.replaceWith(child_node);
-                if(options.init) {
+                if (options.init) {
                     child.#triggerEvent('onInit', child_node);
                 }
             });
         }
-        return parsed.outerHTML;
+        return args.parsed ? parsed : parsed.outerHTML;
+    }
+
+    /**
+     * Replace children components to given template html
+     *
+     * @param {Object} args
+     * @param {string} args.html
+     * @param {ChildNode} args.parsed
+     * @param {Object} options
+     * @param {boolean} options.init is init event
+     * @param {boolean} options.cache=true use node cache
+     * @returns {string|ChildNode}
+     */
+    #applyTemplateSipaList(args, options) {
+        const self = SipaComponent;
+        options ??= {};
+        options.cache ??= true;
+        const parsed = args.parsed || self.#parseHtml(args.html);
+        if (parsed) {
+            const sipa_list_elements = [...parsed.querySelectorAll("[sipa-list]")];
+            sipa_list_elements.eachWithIndex((el) => {
+                const reference = el.getAttribute("sipa-list");
+                if (this._data[reference]) {
+                    if (Typifier.isArray(this._data[reference])) {
+                        this._data[reference].eachWithIndex((item) => {
+                            this._meta.sipa_children ??= []; // if not set yet, they will be initialized at the first time
+                            // check for alias
+                            const alias = item.alias();
+                            if (!alias) {
+                                throw new Error(`Missing sipa-alias for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                            } else if(this.#apply_alias_duplicate_list.includes(alias)) {
+                                throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                            }
+                            this.#apply_alias_duplicate_list.push(alias);
+                            if (!this.childrenAliases().includes(alias)) {
+                                item._meta.sipa_parent = this;
+                                item._meta.sipa_list = reference;
+                                this.#addChild(item);
+                            }
+                            const child_node = item.node({init: options.init, cache: options.cache});
+                            el.append(child_node);
+                            if (options.init) {
+                                item.#triggerEvent('onInit', child_node);
+                            }
+                        });
+                    } else {
+                        throw new Error(`The given reference '${reference}' for sipa-list in <${LuckyCase.toDashCase(_this.constructor.name)}> must be of type 'Array', but got type '${Typifier.getType(reference)}'.`);
+                    }
+                } else {
+                    throw new Error(`The given reference '${reference}' for sipa-list in <${LuckyCase.toDashCase(_this.constructor.name)}> does not exist!`);
+                }
+            });
+        }
+        return args.parsed ? parsed : parsed.outerHTML;
     }
 
     /**
      * Apply custom attributes to given html template
      *
-     * @param {string} html
-     * @return {string}
+     * @param {Object} args
+     * @param {string} args.html
+     * @param {ChildNode} args.parsed
+     * @returns {string|ChildNode}
      */
-    #applyTemplateCustomAttributes(html) {
+    #applyTemplateCustomAttributes(args) {
         const self = SipaComponent;
+        const parsed = args.parsed || self.#parseHtml(args.html);
         if (Object.keys(this._meta.sipa_custom_attributes).length > 0) {
-            const parsed = self.#parseHtml(html);
             if (parsed) {
                 this._meta.sipa_custom_attributes.eachWithIndex((key, value) => {
                     // special case, we merge classes from template class and declarative attr-class
@@ -1114,12 +1205,12 @@ class SipaComponent {
                         parsed.setAttribute(key, value);
                     }
                 });
-                return parsed.outerHTML;
+                return args.parsed ? parsed : parsed.outerHTML;
             } else {
-                return html;
+                return args.parsed ? parsed : html;
             }
         }
-        return html;
+        return args.parsed ? parsed : html;
     }
 
     /**
@@ -1153,11 +1244,11 @@ class SipaComponent {
         options.recursive ??= false;
         this.childrenAliases().eachWithIndex((alias, i) => {
             if (typeof this._data[alias] === "object") {
-                this.children()[alias].#updateData(this._data[alias], { clone: false });
+                this.children()[alias].#updateData(this._data[alias], {clone: false});
             } else if (typeof this._data[alias] !== 'undefined') {
                 throw new Error(`Given alias 'data.${alias}' must be of type object! Given: ${Typifier.getType(alias)}`);
             }
-            if(options.recursive) {
+            if (options.recursive) {
                 this.children().eachWithIndex((alias, child) => {
                     child.syncNestedReferences();
                 });
@@ -1169,7 +1260,7 @@ class SipaComponent {
      * Refresh data reference from current instance to its parent
      */
     #synchronizeDataToParent() {
-        if(this.hasParent()) {
+        if (this.hasParent()) {
             this.parent()._data[this.alias()] = this._data;
         }
     }
@@ -1193,6 +1284,7 @@ class SipaComponent {
  * @property {string} sipa_alias alias to access children by uniq accessor name
  * @property {Array<SipaComponent>} sipa_children array of children sipa components
  * @property {SipaComponent} sipa_parent parent sipa component when using nested components
+ * @property {string} sipa_list parent sipa components _data reference, if the component has been initialized by using sipa-list
  * @property {string} sipa_original_display store original display style when using hide() to restore on show()
  * @property {boolean} sipa_changed_visibility info if visibility has been changed at least once
  * @property {Object<string, string>} sipa_custom_attributes state representation of declarative custom attributes defined with attr- prefix
