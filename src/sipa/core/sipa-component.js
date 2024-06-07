@@ -102,7 +102,6 @@ class SipaComponent {
 
     /**
      * @param {Object} options
-     * @param {boolean} options.init is init event
      * @param {boolean} options.cache=true use node cache
      * @returns {string} rendered HTML template() with current values of data
      */
@@ -129,14 +128,13 @@ class SipaComponent {
         parsed = this.#applyTemplateCustomAttributes({ parsed });
         parsed = this.#applyTemplateClasses({ parsed });
         parsed = this.#applyTemplateHiddenState({ parsed });
-        parsed = this.#applyTemplateChildrenComponents({ parsed }, {init: options.init, cache: options.cache});
-        parsed = this.#applyTemplateSipaList({ parsed }, {init: options.init, cache: options.cache});
+        parsed = this.#applyTemplateChildrenComponents({ parsed }, { cache: options.cache});
+        parsed = this.#applyTemplateSipaList({ parsed }, { cache: options.cache});
         return parsed.outerHTML;
     }
 
     /**
      * @param {Object} options
-     * @param {boolean} options.init is init event
      * @param {boolean} options.cache=true use node cache
      * @returns {Element} element representation of html()
      */
@@ -148,7 +146,7 @@ class SipaComponent {
         options.cache ??= true;
         let parsed;
         if (data_changed || !this.#cached_node || !options.cache || !this._meta.sipa_cache) {
-            parsed = self.#parseHtml(this.html({init: options.init, cache: options.cache}));
+            parsed = self.#parseHtml(this.html({ cache: options.cache}));
             this.#cached_node = parsed.cloneNode(true);
         } else {
             parsed = this.#cached_node.cloneNode(true);
@@ -166,7 +164,6 @@ class SipaComponent {
         const self = SipaComponent;
         document.querySelectorAll(query_selector).forEach((el) => {
             el.appendChild(this.node());
-            this.#triggerEvent('onInit', el);
         });
         return this;
     }
@@ -180,8 +177,7 @@ class SipaComponent {
     prepend(query_selector) {
         const self = SipaComponent;
         document.querySelectorAll(query_selector).forEach((el) => {
-            el.prepend(this.node({init: true}));
-            this.#triggerEvent('onInit', el);
+            el.prepend(this.node());
         });
         return this;
     }
@@ -196,7 +192,6 @@ class SipaComponent {
         const self = SipaComponent;
         document.querySelectorAll(query_selector).forEach((el) => {
             el.replaceWith(this.node());
-            this.#triggerEvent('onInit', el);
         });
         return this;
     }
@@ -293,22 +288,15 @@ class SipaComponent {
     /**
      * Destroy the components DOM representation and class data representation
      *
-     * @param {Object} options
-     * @param {boolean} options.force=false
-     * @param {boolean} options.warn=true display a warning when the current instance is a declarative child of another
      * @returns {SipaComponent}
      */
-    destroy(options = {}) {
+    destroy() {
         const self = SipaComponent;
-        options ??= {};
-        options.warn ??= true;
-        if (this.hasParent() && !this._meta.sipa_list && options.warn) {
-            console.warn(`You destroyed a declarative component <${this.constructor.tagName()}> that is a children of <${this.parent().constructor.tagName()}>! Be aware, that in that case it usually will get initiliazed again.`);
-        }
         this.#triggerEvent('onDestroy', this.element());
+        const parent = this.parent();
         if (this.hasChildren()) {
             this.children().eachWithIndex((key, val) => {
-                val.destroy({force: true});
+                val.destroy();
             });
         }
         if (this.hasParent()) {
@@ -737,8 +725,11 @@ class SipaComponent {
      */
     static destroyAll() {
         const self = SipaComponent;
+        const component_class_name = `${this.name}`;
         self.all().eachWithIndex((el, i) => {
-            el.destroy();
+            if(component_class_name === "SipaComponent" || component_class_name === el.constructor.name) {
+                el.destroy();
+            }
         });
     }
 
@@ -848,7 +839,6 @@ class SipaComponent {
             if (new_component.sync_nested_references) {
                 new_component.syncNestedReferences();
             }
-            new_component.#triggerEvent('onInit', element);
             return new_component;
         } else if (typeof options.sipa_component !== 'undefined') {
             return options.sipa_component;
@@ -879,7 +869,6 @@ class SipaComponent {
                 if (child.sync_nested_references) {
                     child.syncNestedReferences();
                 }
-                child.#triggerEvent('onInit', child_node);
             });
         }
         return new_element_node;
@@ -1090,7 +1079,6 @@ class SipaComponent {
      * @param {string} args.html
      * @param {ChildNode} args.parsed
      * @param {Object} options
-     * @param {boolean} options.init is init event
      * @param {boolean} options.cache=true use node cache
      * @returns {string|ChildNode}
      */
@@ -1120,11 +1108,8 @@ class SipaComponent {
                     child._meta.sipa_parent = this;
                     this.#addChild(child);
                 }
-                const child_node = child.node({init: options.init, cache: options.cache});
+                const child_node = child.node({ cache: options.cache});
                 el.replaceWith(child_node);
-                if (options.init) {
-                    child.#triggerEvent('onInit', child_node);
-                }
             });
         }
         return args.parsed ? parsed : parsed.outerHTML;
@@ -1137,7 +1122,6 @@ class SipaComponent {
      * @param {string} args.html
      * @param {ChildNode} args.parsed
      * @param {Object} options
-     * @param {boolean} options.init is init event
      * @param {boolean} options.cache=true use node cache
      * @returns {string|ChildNode}
      */
@@ -1167,11 +1151,8 @@ class SipaComponent {
                                 item._meta.sipa_list = reference;
                                 this.#addChild(item);
                             }
-                            const child_node = item.node({init: options.init, cache: options.cache});
+                            const child_node = item.node({cache: options.cache});
                             el.append(child_node);
-                            if (options.init) {
-                                item.#triggerEvent('onInit', child_node);
-                            }
                         });
                     } else {
                         throw new Error(`The given reference '${reference}' for sipa-list in <${LuckyCase.toDashCase(_this.constructor.name)}> must be of type 'Array', but got type '${Typifier.getType(reference)}'.`);
