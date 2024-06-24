@@ -22,10 +22,8 @@ To get started or just to read the docs, you are welcome to visit the official S
 <a name="contributing"></a>
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/magynhard/sipa. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/sipa-js/sipa. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 More technical information to setup, you can find in the [contributors dcoumentation](doc/contributors.md).
-
-
 
 

@@ -21,7 +21,7 @@
     - [ ] add task `d` and `dist` and `distribution`(?) to start a live server on the distribution directory
 
 ### common
-- [ ] developer documentation (github page?) ![State](https://img.shields.io/badge/-todo-blue)
+- [ ] developer documentation (docusaurus) ![State](https://img.shields.io/badge/-progress-yellow)
 - [ ] built-in ejs rendering for pages and layouts ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] built-in translation service ![State](https://img.shields.io/badge/-todo-blue)
 
@@ -30,7 +30,3 @@
 - [ ] test on windows platform ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] test on naked linux platform (VM) ![State](https://img.shields.io/badge/-todo-blue)
 - [ ] add unit tests ![State](https://img.shields.io/badge/-progress-yellow)
-- make EJS and jQuery optional at interactive setup
-    - [ ] remove/rewrite jQuery dependencies ![State](https://img.shields.io/badge/-todo-blue)
-    - [ ] auto recognize EJS if available ![State](https://img.shields.io/badge/-todo-blue)
-    - [ ] add option to choose at interactive setup (?) ![State](https://img.shields.io/badge/-todo-blue)
