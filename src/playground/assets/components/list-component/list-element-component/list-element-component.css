@@ -1,0 +1,7 @@
+list-element-component {
+    padding: 16px;
+    border-radius: 16px;
+    background: silver;
+    border: 2px dotted green;
+    display: block;
+}

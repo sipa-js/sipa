@@ -1,8 +1,8 @@
-class ListItemComponent extends SipaComponent {
+class ListElementComponent extends SipaComponent {
     constructor(data = {}, opts = {}) {
         // define your defaults here
-        data.name ??= "Item";
-        data.example ??= "world";
+        data.name ??= "Element";
+        data.example ??= "elo";
         super(data, opts);
     }
 
@@ -26,17 +26,15 @@ class ListItemComponent extends SipaComponent {
 
 //--- TEMPLATE ---------------------------------------------------------------------------------------------------------
 
-ListItemComponent.template = () => {
+ListElementComponent.template = () => {
     return `
-<list-item-component class="template-class">
+<list-element-component class="template-class">
     <span><%= name %> <%= _meta.sipa_id %>! <%= (new Date()).toLocaleTimeString() %></span>
     <list-item-atom-component sipa-alias="atom1"></list-item-atom-component>
     <list-item-atom-component sipa-alias="atom2"></list-item-atom-component>
-    <list-item-atom-component sipa-alias="atom3"></list-item-atom-component>
     <button onclick="instance(this).destroy();">Del</button>
-    <button onclick="instance(this).change();">Change</button>
-</list-item-component>
+</list-element-component>
     `.trim();
 }
 
-SipaComponent.registerComponent(ListItemComponent);
+SipaComponent.registerComponent(ListElementComponent);

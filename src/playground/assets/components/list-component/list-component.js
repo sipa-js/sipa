@@ -2,32 +2,37 @@ class ListComponent extends SipaComponent {
     constructor(data = {}, opts = {}) {
         // define your defaults here
         data.example ??= "world";
+        data._clist = [];
         super(data, opts);
     }
 
-    updates(data = {}, options = {}) {
-        const result = super.update(data, options);
-        this._list.eachWithIndex((el, i) => {
-            el.append(`${this.selector()} > .container`);
-        });
-        return result;
+    onInit() {
+        console.log("LIST INIT");
     }
 
-    onInit() {
-        console.log("INIT");
-        return;
-        if(!this._list) {
-            this._list = [];
-            for(let i = 0; i < 20; ++i) {
-                const c = new ListItemComponent({ example: i });
-                this._list.push(c);
-                c.append(`${this.selector()} > .container`);
-            }
-        }
+    delete(component) {
+        component.destroy({ force: true });
+        this.update();
     }
 
     onDestroy() {
         // this is called, before the component is destroyed by destroy()
+    }
+
+    addItem(options) {
+        options ??= {};
+        options.render ??= true;
+        this._counter ??= 1000;
+        let component_type;
+        if([0,1].getSample() === 1) {
+            component_type = ListItemComponent;
+        } else {
+            component_type = ListElementComponent;
+        }
+        this._data._clist.push(new component_type({ example: this._counter++ }, { sipa_alias: "kok_" + this._counter }));
+        if(options.render) {
+            this.render();
+        }
     }
 
     showAlert() {
@@ -39,17 +44,13 @@ class ListComponent extends SipaComponent {
 
 ListComponent.template = () => {
     return `
-<list-component onclick="instance(this).showAlert();" class="template-class">
-    <span>Hello <%= example %>!</span>
-    <div class="containers">
-        <list-item-component sipa-alias="first"></list-item-component>
-        <list-item-component sipa-alias="next"></list-item-component>
+<list-component class="template-class">
+    <span>Hello <%= example %>! <%= (new Date()).toLocaleTimeString() %></span>
+    <div class="top-bar">
+        <button onclick="instance(this).addItem();">Add</button>
     </div>
-    <div class="container2" style="dsisplay: none">
-        <% for(let i=1; i < 20; ++i) { %>
-            <list-item-component sipa-alias="s<%= i %>" example="<%= i %>"></list-item-component>
-        <% } %>
-    </div>
+    <div sipa-list="_clist"></div>
+    <list-item-component sipa-alias="abc" name="'Supra'"></list-item-component>
 </list-component>
     `.trim();
 }
