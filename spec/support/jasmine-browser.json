@@ -1,8 +1,16 @@
 {
   "srcDir": ".",
   "srcFiles": [
+    "lib/templates/project/desktop/app/assets/lib/curly-bracket-parser/curly-bracket-parser.js",
+    "lib/templates/project/desktop/app/assets/lib/ejs/ejs.js",
+    "lib/templates/project/desktop/app/assets/lib/jquery/jquery-*.js",
+    "lib/templates/project/desktop/app/assets/lib/lucky-case/lucky-case.js",
+    "lib/templates/project/desktop/app/assets/lib/typifier/typifier.js",
+    "lib/templates/project/desktop/app/assets/lib/ruby-nice/ruby-nice.js",
+    "lib/templates/project/desktop/app/assets/lib/lodash/lodash.js",
     "src/sipa/core/sipa-basic-view.js",
     "src/sipa/core/sipa-component.js",
+    "src/sipa/core/sipa-events.js",
     "src/sipa/core/sipa-serializer.js",
     "src/sipa/core/sipa-state.js",
     "src/sipa/tools/sipa-env.js",
@@ -13,12 +21,7 @@
     "src/sipa/tools/sipa-onsen-page.js",
     "src/sipa/tools/sipa-url.js",
     "src/sipa/sipa.js",
-    "src/sipa/sipa-onsen.js",
-    "lib/templates/project/desktop/app/assets/lib/curly-bracket-parser/curly-bracket-parser.js",
-    "lib/templates/project/desktop/app/assets/lib/ejs/ejs.js",
-    "lib/templates/project/desktop/app/assets/lib/jquery/jquery-*.js",
-    "lib/templates/project/desktop/app/assets/lib/lucky-case/lucky-case.js",
-    "lib/templates/project/desktop/app/assets/lib/typifier/typifier.js"
+    "src/sipa/sipa-onsen.js"
   ],
   "specDir": "spec",
   "specFiles": [
