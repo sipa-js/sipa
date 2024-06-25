@@ -52,7 +52,7 @@ describe('SipaEvents', () => {
                 expect(param2).toEqual("Gorki");
                 done();
             });
-            event.trigger('clicky', [5, 4, 3], "Gorki");
+            event.trigger('clicky', [[5, 4, 3], "Gorki"]);
         });
         it('subscribes and triggers an event several times with different functions', function () {
             const event = new SipaEvents('several');
@@ -105,6 +105,47 @@ describe('SipaEvents', () => {
         it('triggers an event that is not subscribed', function () {
             const event = new SipaEvents('trigger3');
             expect(() => { event.trigger("trigger3"); }).not.toThrowError();
+        });
+    });
+    describe('.unsubscribe', () => {
+        it('unsubscribes an subscribed event that is valid', function () {
+            const event = new SipaEvents('sub1');
+            let result = null;
+            const fun = () => { result = 1; };
+            event.subscribe("sub1", fun);
+            event.trigger("sub1");
+            expect(result).toEqual(1);
+            result = null;
+            event.unsubscribe("sub1", fun);
+            event.trigger("sub1");
+            expect(result).toEqual(null);
+
+        });
+        it('unsubscribes an event that is invalid', function () {
+            const event = new SipaEvents("sub2");
+            spyOn(console, "warn");
+            event.unsubscribe("sub2", () => {});
+            expect(console.warn).toHaveBeenCalled();
+        });
+        it('unsubscribes an event with invalid callback', function () {
+            const event = new SipaEvents("sub3");
+            spyOn(console, "warn");
+            event.subscribe("sub3", () => { console.log("some callback"); });
+            event.unsubscribe("sub3", () => {});
+            expect(console.warn).toHaveBeenCalled();
+        });
+        it('unsubscribes several events', function () {
+            const event = new SipaEvents("sub4");
+            let result = null;
+            event.subscribe("sub4", () => { result = 1; });
+            event.subscribe("sub4", () => { result = 2; });
+            event.subscribe("sub4", () => { result = 3; });
+            event.trigger("sub4");
+            expect(result).toEqual(3);
+            result = null;
+            event.unsubscribeAll("sub4");
+            event.trigger("sub4");
+            expect(result).toEqual(null);
         });
     });
     describe('.reset', () => {

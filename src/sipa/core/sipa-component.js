@@ -3,8 +3,16 @@
  */
 class SipaComponent {
 
+    /**
+     * The components data representation
+     *
+     * @type {Object}
+     * @private
+     */
     _data = {};
     /**
+     * The components meta data for internal management
+     *
      * @type {SipaComponent.Meta}
      * @private
      */
@@ -28,7 +36,7 @@ class SipaComponent {
      * May be disabled on performance cases. Then overwrite to 'false' at the inherited class.
      * @type {boolean}
      */
-    sync_nested_references = true;
+    _sync_nested_references = true;
 
     /**
      * @type {number}
@@ -98,6 +106,19 @@ class SipaComponent {
         this._meta.sipa_cache = options.sipa_cache;
         this._meta.sipa_alias = options.sipa_alias;
         self.#component_instances.push(this);
+    }
+
+    /**
+     * Ensure that the template is initialized, so that all nested children are available.
+     *
+     * You may for example call this method, before subscribing to children events, to ensure that the children are available.
+     *
+     * If the component has already been appended or rendered to the DOM, the template is of course already initialized implicitly.
+     * But in some cases you don't know, if it already happened or you know, that it couldn't have happened. E.g. in the constructor of your component.
+     */
+    initTemplate() {
+        this.node();
+        this.syncNestedReferences();
     }
 
     /**
@@ -231,7 +252,7 @@ class SipaComponent {
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
-        else if (this.sync_nested_references) {
+        else if (this._sync_nested_references) {
             this.syncNestedReferences();
         }
         return this;
@@ -292,7 +313,7 @@ class SipaComponent {
      */
     destroy() {
         const self = SipaComponent;
-        this.#triggerEvent('onDestroy', this.element());
+        this.events().trigger("before_destroy", [this], { validate: false });
         const parent = this.parent();
         if (this.hasChildren()) {
             this.children().eachWithIndex((key, val) => {
@@ -331,6 +352,7 @@ class SipaComponent {
         this._meta = undefined;
         this.#destroyed = true;
         delete this;
+        this.events().trigger("after_destroy", [this], { validate: false });
         return this;
     }
 
@@ -393,19 +415,19 @@ class SipaComponent {
      */
     update(data = {}, options = {}) {
         options ??= {};
-        const default_options = {
-            render: true,
-            reset: false,
-            cache: true,
-        };
-        options = SipaHelper.mergeOptions(default_options, options);
+        data ??= {};
+        options.render ??= true;
+        options.reset ??= false;
+        options.cache ??= true;
+        this.events().trigger("before_update", [this, data, options], { validate: false });
         this.#updateData(data, {reset: options.reset});
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
-        else if (this.sync_nested_references) {
+        else if (this._sync_nested_references) {
             this.syncNestedReferences();
         }
+        this.events().trigger("after_update", [this, data, options], { validate: false });
         return this;
     }
 
@@ -422,7 +444,7 @@ class SipaComponent {
         this.elements().forEach((el) => {
             el.replaceWith(this.node({cache: options.cache}));
         });
-        if (this.sync_nested_references) {
+        if (this._sync_nested_references) {
             this.syncNestedReferences();
         }
         return this;
@@ -677,6 +699,15 @@ class SipaComponent {
         this.#synchronizeDataToChildren({recursive: true});
     }
 
+    /**
+     * Events of the component to subscribe, unsubscribe or trigger
+     *
+     * @return {SipaEvents}
+     */
+    events() {
+        return this._events ??= new SipaEvents(['before_update','after_update','before_destroy','after_destroy']);
+    }
+
 
     /**
      * Return all instances of the component
@@ -818,7 +849,7 @@ class SipaComponent {
                             data[key] = value;
                         }
                     } catch (e) {
-                        throw new Error(`Error parsing value for attribut '${key}' in component '<${LuckyCase.toDashCase(new_component_obj.constructor.name)}>'. Be aware that the attribute value is interpreted as pure javascript. So for example, strings must be put into quotes. E.g. "sample string" must be "'sample string'".\n${e.message}`);
+                        throw new Error(`Error parsing value for attribut '${key}' in component '<${LuckyCase.toDashCase(element_class.name)}>'. Be aware that the attribute value is interpreted as pure javascript. So for example, strings must be put into quotes. E.g. "sample string" must be "'sample string'".\n${e.message}`);
                     }
                 }
             });
@@ -836,7 +867,7 @@ class SipaComponent {
             });
             const new_element_node = self.initChildComponents(new_component);
             element.replaceWith(new_element_node);
-            if (new_component.sync_nested_references) {
+            if (new_component._sync_nested_references) {
                 new_component.syncNestedReferences();
             }
             return new_component;
@@ -866,7 +897,7 @@ class SipaComponent {
                 component.#addChild(child);
                 const child_node = child.node();
                 el.replaceWith(child_node);
-                if (child.sync_nested_references) {
+                if (child._sync_nested_references) {
                     child.syncNestedReferences();
                 }
             });
@@ -999,18 +1030,6 @@ class SipaComponent {
     }
 
     /**
-     * Call the given event_name method on the current instance and pass the given element
-     *
-     * @param {string} event_name
-     * @param {Element} element
-     */
-    #triggerEvent(event_name, element) {
-        if (typeof this[event_name] === 'function') {
-            this[event_name](this, element);
-        }
-    }
-
-    /**
      * Get inherited class
      *
      * @return {SipaComponent}
@@ -1089,6 +1108,9 @@ class SipaComponent {
         const parsed = args.parsed || self.#parseHtml(args.html);
         let uninitialized_children = [];
         const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
+        if(!children_selector) {
+            throw new Error(`No registered components found! Ensure, to register your component class after definition with SipaComponent.registerComponent(MyComponent);`);
+        }
         uninitialized_children = parsed.querySelectorAll(children_selector);
         const are_children_initialized = typeof this._meta.sipa_children !== 'undefined';
         if (uninitialized_children.length > 0) {

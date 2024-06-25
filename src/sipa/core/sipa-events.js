@@ -64,21 +64,42 @@ class SipaEvents {
      */
     unsubscribe(event_name, callback) {
         this._validateEventName(event_name);
-        let index = this._event_registry[event_name].indexOf(callback);
+        let index = this._event_registry[event_name]?.indexOf(callback) ?? -1;
         if(index !== -1) {
             delete this._event_registry[event_name][index];
+            this._event_registry[event_name] = this._event_registry[event_name].filter(x => !!x);
         } else {
-            console.warn(`Tried to unsubscribe event '${event.name}' of a call back that was not subscribed. Ignored.`);
+            console.warn(`Tried to unsubscribe event '${event_name}' of a call back that was not subscribed. Ignored.`);
+        }
+    }
+
+    /**
+     * Unsubscribe all subscriptions of the given event name.
+     *
+     * Usually you should only use the unsubscribe() method to unsubscribe. Use this method with care!
+     *
+     * @param event_name
+     */
+    unsubscribeAll(event_name) {
+        if(this._event_registry[event_name]) {
+            delete this._event_registry[event_name];
         }
     }
 
     /**
      * Calls all registered events of event_name
      * @param {String} event_name
-     * @param {Object} msg params to pass to the created event function
+     * @param {Array<any>} msg params to pass to the created event function
+     * @param {Object} options
+     * @param {boolean} options.validate=true validate the given event name to be valid
      */
-    trigger(event_name, ...msg) {
-        this._validateEventName(event_name);
+    trigger(event_name, msg, options) {
+        options ??= {};
+        options.validate ??= true;
+        if(options.validate) {
+            this._validateEventName(event_name);
+        }
+        msg ??= [];
         if(Typifier.isArray(this._event_registry[event_name])) {
             this._event_registry[event_name].eachWithIndex((callback) => {
                 callback(...msg);
@@ -93,8 +114,29 @@ class SipaEvents {
         this._event_registry = {};
     }
 
-    addValidEventNames(...event_names) {
+    /**
+     * Extend valid event names dynamically
+     *
+     * @param {...string} event_names
+     */
+    createEvents(...event_names) {
         this._valid_event_names = _.uniq(this._valid_event_names.concat(event_names.flatten()));
+    }
+
+    /**
+     * Delete valid event names dynamically
+     *
+     * @param {...string} event_names
+     */
+    deleteEvents(...event_names) {
+        event_names ??= [];
+        event_names.eachWithIndex((name) => {
+            const index = this._valid_event_names.indexOf(name);
+            if(index !== -1) {
+                delete this._valid_event_names[index];
+            }
+        });
+        this._valid_event_names = this._valid_event_names.filter(x => !!x);
     }
 
     /**
