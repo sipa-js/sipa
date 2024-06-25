@@ -21,8 +21,8 @@
     "doc": "node bin/doc.js",
     "link_dev": "sudo npm link",
     "release": "npm publish --access public",
-    "test": "npx jasmine-browser-runner runSpecs",
-    "test_browser": "npx jasmine-browser-runner serve",
+    "test": "node node_modules/jasmine-browser-runner/bin/jasmine-browser-runner runSpecs",
+    "test_browser": "node node_modules/jasmine-browser-runner/bin/jasmine-browser-runner serve",
     "unlink_dev": "sudo npm rm --global sipa"
   },
   "files": [
