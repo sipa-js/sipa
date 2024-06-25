@@ -106,28 +106,32 @@ SipaSerializerSpec.sample = [
 
 //----------------------------------------------------------------------------------------------------
 
-describe('serialize and deserialize ', () => {
+describe('SipaSerializer', () => {
     beforeEach(() => {
     });
-    it('serializes and deserializes a complex nested Array', function () {
-        // work with copy to ensure no references
-        const object = Object.assign([], SipaSerializerSpec.sample);
-        const original = SipaSerializerSpec.sample;
-        expect(object).toEqual(original);
-        const serialized = SipaSerializer.serialize(object);
-        expect(serialized).not.toEqual(JSON.stringify(original));
-        const deserialized = SipaSerializer.deserialize(serialized);
-        expect(deserialized).toEqual(original);
-    });
-    it('serializes and deserializes a complex nested Object', function () {
-        // work with copy to ensure no references
-        const object = Object.assign({}, SipaSerializerSpec.sample[0]);
-        const original = SipaSerializerSpec.sample[0];
-        expect(object).toEqual(original);
-        const serialized = SipaSerializer.serialize(object);
-        expect(serialized).not.toEqual(JSON.stringify(original));
-        const deserialized = SipaSerializer.deserialize(serialized);
-        expect(deserialized).toEqual(original);
+    describe('serialize and deserialize ', () => {
+        beforeEach(() => {
+        });
+        it('serializes and deserializes a complex nested Array', function () {
+            // work with copy to ensure no references
+            const object = Object.assign([], SipaSerializerSpec.sample);
+            const original = SipaSerializerSpec.sample;
+            expect(object).toEqual(original);
+            const serialized = SipaSerializer.serialize(object);
+            expect(serialized).not.toEqual(JSON.stringify(original));
+            const deserialized = SipaSerializer.deserialize(serialized);
+            expect(deserialized).toEqual(original);
+        });
+        it('serializes and deserializes a complex nested Object', function () {
+            // work with copy to ensure no references
+            const object = Object.assign({}, SipaSerializerSpec.sample[0]);
+            const original = SipaSerializerSpec.sample[0];
+            expect(object).toEqual(original);
+            const serialized = SipaSerializer.serialize(object);
+            expect(serialized).not.toEqual(JSON.stringify(original));
+            const deserialized = SipaSerializer.deserialize(serialized);
+            expect(deserialized).toEqual(original);
+        });
     });
 });
 
