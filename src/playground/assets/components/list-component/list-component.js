@@ -4,6 +4,10 @@ class ListComponent extends SipaComponent {
         data.example ??= "world";
         data._clist = [];
         super(data, opts);
+        this.initTemplate();
+        this.children().abc.events().subscribe("after_update", (child, data, options) => {
+           alert(JSON.stringify(data));
+        });
     }
 
     onInit() {
@@ -29,7 +33,9 @@ class ListComponent extends SipaComponent {
         } else {
             component_type = ListElementComponent;
         }
-        this._data._clist.push(new component_type({ example: this._counter++ }, { sipa_alias: "kok_" + this._counter }));
+        const new_component = new component_type({ example: this._counter++ }, { sipa_alias: "kok_" + this._counter });
+        this._data._clist.push(new_component);
+        new_component.events().subscribe("after_update", (child, data, options) => { alert(JSON.stringify(data)) });
         if(options.render) {
             this.render();
         }

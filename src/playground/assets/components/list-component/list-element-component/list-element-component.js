@@ -33,6 +33,7 @@ ListElementComponent.template = () => {
     <list-item-atom-component sipa-alias="atom1"></list-item-atom-component>
     <list-item-atom-component sipa-alias="atom2"></list-item-atom-component>
     <button onclick="instance(this).destroy();">Del</button>
+    <button onclick="instance(this).update({ name: 'Brain' });">Update</button>
 </list-element-component>
     `.trim();
 }
