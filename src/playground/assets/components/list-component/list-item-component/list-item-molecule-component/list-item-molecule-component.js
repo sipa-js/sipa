@@ -1,7 +1,7 @@
-class ListItemAtomComponent extends SipaComponent {
+class ListItemMoleculeComponent extends SipaComponent {
     constructor(data = {}, opts = {}) {
         // define your defaults here
-        data.example ??= "O";
+        data.example ??= "X";
         super(data, opts);
     }
 
@@ -21,12 +21,12 @@ class ListItemAtomComponent extends SipaComponent {
 
 //--- TEMPLATE ---------------------------------------------------------------------------------------------------------
 
-ListItemAtomComponent.template = () => {
+ListItemMoleculeComponent.template = () => {
     return `
-<list-item-atom-component onclick="instance(this).showAlert();" class="template-class">
+<list-item-molecule-component onclick="instance(this).showAlert();" class="template-class">
     <slot><%= example %>!</slot>
-</list-item-atom-component>
+</list-item-molecule-component>
     `.trim();
 }
 
-SipaComponent.registerComponent(ListItemAtomComponent);
+SipaComponent.registerComponent(ListItemMoleculeComponent);

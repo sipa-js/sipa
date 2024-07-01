@@ -1,6 +1,7 @@
 <!DOCTYPE HTML>
 <html>
     <head>
+        <meta charset="UTF-8">
         <script src="playground/assets/lib/curly-bracket-parser/curly-bracket-parser.js"></script>
         <script src="playground/assets/lib/ejs/ejs.js"></script>
         <script src="playground/assets/lib/jquery/jquery-3.5.1.js"></script>
@@ -27,6 +28,10 @@
         <link rel="stylesheet" href="playground/assets/components/list-component/list-element-component/list-element-component.css">
         <script src="playground/assets/components/list-component/list-item-component/list-item-atom-component/list-item-atom-component.js"></script>
         <link rel="stylesheet" href="playground/assets/components/list-component/list-item-component/list-item-atom-component/list-item-atom-component.css">
+        <script src="playground/assets/components/list-component/list-item-component/list-item-molecule-component/list-item-molecule-component.js"></script>
+        <link rel="stylesheet" href="playground/assets/components/list-component/list-item-component/list-item-molecule-component/list-item-molecule-component.css">
+        <script src="playground/assets/components/panel-component/panel-component.js"></script>
+        <link rel="stylesheet" href="playground/assets/components/panel-component/panel-component.css">
         <script>
             Sipa.init(() => {
                 SipaComponent.init();
@@ -36,6 +41,18 @@
 <body>
     <h1>Playground</h1>
     Test HTML file, including Sipa for testing and debugging purpose only.
+    <h1>Käse</h1>
+    <panel-component>
+        Some Content
+        <b>more</b>
+        test
+        <div slot="header">
+            PRiest
+            <list-component sipa-alias="gorast" sipa-hidden="false" sipa-cache="false"></list-component>
+        </div>
+        Kola
+        <h3>FOOTER</h3>
+    </panel-component>
     <h2>Case</h2>
     <list-component sipa-hidden="false" sipa-cache="false"></list-component>
 </body>
