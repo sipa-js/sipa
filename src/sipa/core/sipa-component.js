@@ -146,6 +146,7 @@ class SipaComponent {
         }
         this.#apply_alias_duplicate_list = [];
         let parsed = self.#parseHtml(html);
+        parsed = this.#applySlots(parsed, html);
         parsed = this.#applyTemplateCustomAttributes({ parsed });
         parsed = this.#applyTemplateClasses({ parsed });
         parsed = this.#applyTemplateHiddenState({ parsed });
@@ -777,10 +778,12 @@ class SipaComponent {
         const component_class_name = `${this.name}`;
         [...pre_selected].eachWithIndex((ps) => {
             // only components of current class
-            let component_selector = `${LuckyCase.toDashCase(component_class_name)}:not([sipa-id])`;
+            let component_selector;
             // if called by the base component, search for all components
             if (component_class_name === 'SipaComponent') {
                 component_selector = self.#registered_components.map(x => LuckyCase.toDashCase(x.name) + ':not([sipa-id])').join(`,`)
+            } else {
+                component_selector = `${LuckyCase.toDashCase(component_class_name)}:not([sipa-id])`;
             }
             const uninitialized_elements = ps.querySelectorAll(component_selector);
             [...uninitialized_elements].eachWithIndex((el, i) => {
@@ -806,6 +809,8 @@ class SipaComponent {
             const element_class = SipaHelper.constantizeString(LuckyCase.toPascalCase(element.tagName));
             const new_component_obj = {_meta: {sipa_custom_attributes: {}}};
             const attr_keys = [...element.attributes].map(e => e.name);
+            const body_nodes = element.childNodes;
+            new_component_obj._meta.sipa_body_nodes = body_nodes;
             let data = {};
             attr_keys.eachWithIndex((key, i) => {
                 if (key.startsWith("sipa-")) {
@@ -1050,6 +1055,40 @@ class SipaComponent {
     }
 
     /**
+     * Replace slots to given parsed template
+     *
+     * @param {ChildNode} parsed
+     * @param {string} html raw for performance reasons
+     * @returns {string}
+     */
+    #applySlots(parsed, html) {
+        const self = SipaComponent;
+        const has_slots = html.includes("<slot");
+        if(has_slots) {
+            if(this._meta.sipa_body_nodes.length > 0) {
+                // const parsed = self.#parseHtml(html);
+                const parsed_slots = parsed.querySelectorAll('slot:not(slot slot)');
+                [...parsed_slots].eachWithIndex((slot) => {
+                    const slot_name = slot.getAttribute("name") || "default";
+                    const child_nodes = this._meta.sipa_body_nodes;
+                    const final_slot_nodes = [];
+                    [...child_nodes].eachWithIndex((node) => {
+                        const current_slot_attr = node.getAttribute?.("slot");
+                        if((current_slot_attr && current_slot_attr === slot_name) || (!current_slot_attr && slot_name === "default")) {
+                            final_slot_nodes.push(node);
+                        }
+                    });
+                    if(final_slot_nodes.length > 0) {
+                        slot.replaceWith(...final_slot_nodes);
+                    }
+                });
+                return parsed;
+            }
+        }
+        return parsed;
+    }
+
+    /**
      * Add class attribute to given template html.
      * If html string given, return html. If ChildNode given, return ChildNode. (for performance reasons)
      *
@@ -1149,11 +1188,12 @@ class SipaComponent {
      */
     #applyTemplateSipaList(args, options) {
         const self = SipaComponent;
+        const _this = this;
         options ??= {};
         options.cache ??= true;
         const parsed = args.parsed || self.#parseHtml(args.html);
         if (parsed) {
-            const sipa_list_elements = [...parsed.querySelectorAll("[sipa-list]")];
+            const sipa_list_elements = [...parsed.querySelectorAll(`[sipa-list]:not(${self.#registered_components.map(x => LuckyCase.toDashCase(_this.constructor.name) + ' ' + x.tagName() + ' [sipa-list]').join(", ")})`)];
             sipa_list_elements.eachWithIndex((el) => {
                 const reference = el.getAttribute("sipa-list");
                 if (this._data[reference]) {
@@ -1291,6 +1331,7 @@ class SipaComponent {
  * @property {string} sipa_original_display store original display style when using hide() to restore on show()
  * @property {boolean} sipa_changed_visibility info if visibility has been changed at least once
  * @property {Object<string, string>} sipa_custom_attributes state representation of declarative custom attributes defined with attr- prefix
+ * @property {NodeList} sipa_body_nodes body as childNodes of original declarative element
  */
 
 /**
