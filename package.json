@@ -22,6 +22,7 @@
     "link_dev": "sudo npm link",
     "release": "npm publish --access public",
     "test": "node node_modules/jasmine-browser-runner/bin/jasmine-browser-runner runSpecs",
+    "karma": "node karma.conf.js",
     "test_browser": "node node_modules/jasmine-browser-runner/bin/jasmine-browser-runner serve",
     "unlink_dev": "sudo npm rm --global sipa"
   },
@@ -66,6 +67,9 @@
     "jsdoc": "^3.6.6",
     "jsdoc-to-markdown": "^6.0.1",
     "sipa-live-server": "^0.0.3",
+    "karma": "^6.4.2",
+    "karma-chrome-launcher": "^3.2.0",
+    "karma-jasmine": "^5.1.0",
     "lucky-case": "^1.1.8",
     "prompt-sync": "^4.2.0",
     "ruby-nice": "^0.2.8",
