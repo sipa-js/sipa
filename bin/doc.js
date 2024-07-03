@@ -10,6 +10,7 @@ require('lucky-case/string');
 
 const files_to_doc = [
     './src/sipa/core/sipa-basic-view.js',
+    './src/sipa/core/sipa-events.js',
     './src/sipa/core/sipa-component.js',
     './src/sipa/core/sipa-serializer.js',
     './src/sipa/core/sipa-state.js',

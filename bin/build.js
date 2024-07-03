@@ -45,6 +45,7 @@ const builds = {
         destination_file: sipa_build_destination_dir + 'sipa.js',
         source_files: [
             './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/core/sipa-events.js',
             './src/sipa/core/sipa-component.js',
             './src/sipa/core/sipa-serializer.js',
             './src/sipa/core/sipa-state.js',
@@ -62,6 +63,7 @@ const builds = {
         destination_file: sipa_onsen_build_destination_dir + 'sipa.js',
         source_files: [
             './src/sipa/core/sipa-basic-view.js',
+            './src/sipa/core/sipa-events.js',
             './src/sipa/core/sipa-component.js',
             './src/sipa/core/sipa-serializer.js',
             './src/sipa/core/sipa-state.js',
