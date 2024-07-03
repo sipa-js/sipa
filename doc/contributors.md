@@ -38,3 +38,8 @@ yarn test_browser
 and then open the given link, e.g. `http://localhost:8888` inside your favorite browser.
 
 There you are able to debug everything by using the development console.
+
+### IDE debugging (Jetbrains)
+Add a new run configuration, choose Karma and select
+* configuration file: `karma.conf.js`
+* karma package: `node_modules\karma`
