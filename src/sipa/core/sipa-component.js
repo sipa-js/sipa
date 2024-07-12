@@ -17,20 +17,20 @@ class SipaComponent {
      * @private
      */
     _meta = {};
-    #destroyed = false;
+    _destroyed = false;
     /**
      * @type {Object}
      */
-    #previous_data = null;
+    _previous_data = null;
     /**
      * List of to check for alias duplicates
      * @type {Array<string>}
      */
-    #apply_alias_duplicate_list = [];
+    _apply_alias_duplicate_list = [];
     /**
      * @type {Element}
      */
-    #cached_node = null;
+    _cached_node = null;
     /**
      * Sync nested references automatically after every render update
      * May be disabled on performance cases. Then overwrite to 'false' at the inherited class.
@@ -41,15 +41,15 @@ class SipaComponent {
     /**
      * @type {number}
      */
-    static #component_id_incrementer = 1;
+    static _component_id_incrementer = 1;
     /**
      * @type {function} class
      */
-    static #component_instances = [];
+    static _component_instances = [];
     /**
      * @type {Function} class
      */
-    static #registered_components = [];
+    static _registered_components = [];
 
 
     /**
@@ -60,6 +60,7 @@ class SipaComponent {
      * @param {string} options.sipa_classes additional classes for component tag
      * @param {string} options.sipa_alias alias to access from parent by uniq accessor name
      * @param {Object<string, string>} options.sipa_custom_attributes additional custom attributes on the component tag
+     * @param {string} options.content HTML content inside the component element, available for slots
      *
      * @example
      *
@@ -93,6 +94,10 @@ class SipaComponent {
 
         this._data = {};
         this._meta.sipa_children = undefined;
+        if(options.content) {
+            const el = self.#parseHtml(`<element>${options.content}</element>`);
+            this._meta.sipa_body_nodes = el.childNodes;
+        }
         // unique id
         this._meta.sipa_id = self.#generateUniqueId();
         this.#updateData(data);
@@ -105,7 +110,7 @@ class SipaComponent {
         this._meta.sipa_hidden = options.sipa_hidden;
         this._meta.sipa_cache = options.sipa_cache;
         this._meta.sipa_alias = options.sipa_alias;
-        self.#component_instances.push(this);
+        self._component_instances.push(this);
     }
 
     /**
@@ -144,7 +149,7 @@ class SipaComponent {
                 throw e;
             }
         }
-        this.#apply_alias_duplicate_list = [];
+        this._apply_alias_duplicate_list = [];
         let parsed = self.#parseHtml(html);
         parsed = this.#applySlots(parsed, html);
         parsed = this.#applyTemplateCustomAttributes({ parsed });
@@ -162,16 +167,16 @@ class SipaComponent {
      */
     node(options) {
         const self = SipaComponent;
-        const data_changed = !(_.isEqual(this.#previous_data, this._data));
-        this.#previous_data = _.cloneDeep(this._data);
+        const data_changed = !(_.isEqual(this._previous_data, this._data));
+        this._previous_data = _.cloneDeep(this._data);
         options ??= {};
         options.cache ??= true;
         let parsed;
-        if (data_changed || !this.#cached_node || !options.cache || !this._meta.sipa_cache) {
+        if (data_changed || !this._cached_node || !options.cache || !this._meta.sipa_cache) {
             parsed = self.#parseHtml(this.html({ cache: options.cache}));
-            this.#cached_node = parsed.cloneNode(true);
+            this._cached_node = parsed.cloneNode(true);
         } else {
-            parsed = this.#cached_node.cloneNode(true);
+            parsed = this._cached_node.cloneNode(true);
         }
         return parsed;
     }
@@ -228,11 +233,19 @@ class SipaComponent {
     }
 
     /**
-     * Get cloned data of the current instance
+     * Get cloned data of the current instance.
+     *
+     * Please note: Because the data is cloned, there are no longer any references to the original data.
+     * This means that this data can be changed without risk. However, it also means that the instance data of
+     * the component cannot be changed by modifying the cloned data.
+     *
+     * So you may use this, if you want to do some independent data processing while keeping the original data state of the component instance.
+     *
+     * If you want to modify the instance data, use the update() method!
      *
      * @returns {Object}
      */
-    data() {
+    cloneData() {
         return _.cloneDeep(this._data);
     }
 
@@ -300,7 +313,7 @@ class SipaComponent {
      * @returns {string} css selector
      */
     selector() {
-        if (this.#destroyed) {
+        if (this._destroyed) {
             throw new Error(`This instance of ${this.constructor.name} has already been destroyed and can not be accessed any more.`);
         } else {
             return `[sipa-id="${this._meta.sipa_id}"]`;
@@ -326,11 +339,11 @@ class SipaComponent {
             delete this.parent()._meta.sipa_children[parent_index];
             this.parent()._meta.sipa_children = this.parent()._meta.sipa_children.filter(x => x); // remove empty entries
         }
-        const index = self.#component_instances.indexOf(this);
+        const index = self._component_instances.indexOf(this);
         this.remove();
         if (index !== -1) {
-            delete self.#component_instances[index];
-            self.#component_instances = self.#component_instances.filter(x => x);
+            delete self._component_instances[index];
+            self._component_instances = self._component_instances.filter(x => x);
         }
         if(this.hasParent()) {
             const parent = this.parent();
@@ -351,7 +364,7 @@ class SipaComponent {
         }
         this._data = undefined;
         this._meta = undefined;
-        this.#destroyed = true;
+        this._destroyed = true;
         delete this;
         this.events().trigger("after_destroy", [this], { validate: false });
         return this;
@@ -363,7 +376,7 @@ class SipaComponent {
      * @return {boolean} true if destroyed
      */
     isDestroyed() {
-        return this.#destroyed;
+        return this._destroyed;
     }
 
     /**
@@ -375,7 +388,7 @@ class SipaComponent {
         const self = SipaComponent;
         const elements = this.elements();
         if (elements.length === 0) {
-            console.warn(`${this.constructor.name} with sipa-id '${this._meta.sipa_id}' does not exist in DOM.`);
+            console.warn(`Tried to remove() ${this.constructor.name} with sipa-id '${this._meta.sipa_id}', but it does not exist in DOM.`);
         } else {
             elements.eachWithIndex((el) => {
                 el.remove();
@@ -593,7 +606,9 @@ class SipaComponent {
     }
 
     /**
-     * Return children components of the current component with its sipa-aliases as their keys
+     * Return children components of the current component with its sipa-aliases as their keys.
+     *
+     * To work, the instance must already have been rendered at least once. To ensure explicitly, call initTemplate() before, e.g. when accessing children() in the instances constructor.
      *
      * @return  {Object<string, SipaComponent>} Object<alias, component>
      *
@@ -644,6 +659,22 @@ class SipaComponent {
      */
     hasChildren() {
         return !!this._meta.sipa_children?.length > 0;
+    }
+
+    /**
+     * Return all instantiated slot elements of the current instance by name.
+     *
+     * To work, the instance must already have been rendered at least once. To ensure explicitly, call initTemplate() before, e.g. when accessing slots() in the instances constructor.
+     *
+     * @return {Object<string,Element>}
+     */
+    slots() {
+        let slots = {};
+        [...this.element().querySelectorAll(`[slot]:not([slot] [slot])`)].eachWithIndex((el) => {
+           const name = el.getAttribute("slot");
+           slots[name] = el;
+        });
+        return slots;
     }
 
     /**
@@ -709,6 +740,28 @@ class SipaComponent {
         return this._events ??= new SipaEvents(['before_update','after_update','before_destroy','after_destroy']);
     }
 
+    static _refreshClass(component) {
+        component = class extends Object.getPrototypeOf(component.constructor) {
+
+        }
+    }
+
+    /**
+     * Recreate a instance, based on the given instance.
+     *
+     * This feature is needed for hot reloading. First the class will be overwritten by the live webserver.
+     * Then all classes need to be reinstantiated to be an instance of the new, overwritten, reloaded component class.
+     *
+     * @param {SipaComponent} component
+     * @return {SipaComponent} recreated component instance
+     * @private
+     */
+    static _recreateInstance(component) {
+        let new_instance = new (component.constructor)();
+        new_instance._meta = component._meta;
+        new_instance._data = component._data;
+        // TODO: iterate over properties of all ancestor classes recursively and get their values
+    }
 
     /**
      * Return all instances of the component
@@ -726,9 +779,9 @@ class SipaComponent {
         let all_components = [];
         // All SipaComponents
         if (this.name === self.name) {
-            all_components = self.#component_instances;
+            all_components = self._component_instances;
         } else {
-            all_components = self.#component_instances.filter(e => e.constructor.name === this.name);
+            all_components = self._component_instances.filter(e => e.constructor.name === this.name);
         }
         if (!options.include_children) {
             all_components = all_components.filter(e => !e._meta.sipa_parent);
@@ -746,9 +799,9 @@ class SipaComponent {
         const self = SipaComponent;
         const component_class_name = `${this.name}`;
         if (component_class_name === 'SipaComponent') {
-            return SipaComponent.#component_instances.find(x => x._meta.sipa_id === sipa_id);
+            return SipaComponent._component_instances.find(x => x._meta.sipa_id === sipa_id);
         } else {
-            return SipaComponent.#component_instances.find(x => x.constructor.name === component_class_name && x._meta.sipa_id === sipa_id);
+            return SipaComponent._component_instances.find(x => x.constructor.name === component_class_name && x._meta.sipa_id === sipa_id);
         }
     }
 
@@ -781,7 +834,7 @@ class SipaComponent {
             let component_selector;
             // if called by the base component, search for all components
             if (component_class_name === 'SipaComponent') {
-                component_selector = self.#registered_components.map(x => LuckyCase.toDashCase(x.name) + ':not([sipa-id])').join(`,`)
+                component_selector = self._registered_components.map(x => LuckyCase.toDashCase(x.name) + ':not([sipa-id])').join(`,`)
             } else {
                 component_selector = `${LuckyCase.toDashCase(component_class_name)}:not([sipa-id])`;
             }
@@ -892,7 +945,7 @@ class SipaComponent {
         const self = SipaComponent;
         const new_element_node = component.node();
         let uninitialized_children = [];
-        const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
+        const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
         uninitialized_children = new_element_node.querySelectorAll(children_selector);
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
@@ -962,7 +1015,7 @@ class SipaComponent {
         let instance = null;
         if (component) {
             const sipa_id = parseInt(component.getAttribute('sipa-id'));
-            instance = self.#component_instances.filter((el) => {
+            instance = self._component_instances.filter((el) => {
                 return el._meta.sipa_id === sipa_id
             })[0];
         }
@@ -991,8 +1044,8 @@ class SipaComponent {
      */
     static registerComponent(component) {
         const self = SipaComponent;
-        if (!self.#registered_components.includes(component)) {
-            self.#registered_components.push(component);
+        if (!self._registered_components.includes(component)) {
+            self._registered_components.push(component);
         }
     }
 
@@ -1065,7 +1118,7 @@ class SipaComponent {
         const self = SipaComponent;
         const has_slots = html.includes("<slot");
         if(has_slots) {
-            if(this._meta.sipa_body_nodes.length > 0) {
+            if(this._meta.sipa_body_nodes?.length > 0) {
                 // const parsed = self.#parseHtml(html);
                 const parsed_slots = parsed.querySelectorAll('slot:not(slot slot)');
                 [...parsed_slots].eachWithIndex((slot) => {
@@ -1082,9 +1135,13 @@ class SipaComponent {
                         slot.replaceWith(...final_slot_nodes);
                     }
                 });
+                // remove all slots
+                parsed.querySelectorAll('slot').forEach(el => el.remove());
                 return parsed;
             }
         }
+        // remove all slots
+        parsed.querySelectorAll('slot').forEach(el => el.remove());
         return parsed;
     }
 
@@ -1146,7 +1203,7 @@ class SipaComponent {
         options.cache ??= true;
         const parsed = args.parsed || self.#parseHtml(args.html);
         let uninitialized_children = [];
-        const children_selector = self.#registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
+        const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
         if(!children_selector) {
             throw new Error(`No registered components found! Ensure, to register your component class after definition with SipaComponent.registerComponent(MyComponent);`);
         }
@@ -1159,10 +1216,10 @@ class SipaComponent {
                 const alias = el.getAttribute('sipa-alias');
                 if (!alias) {
                     throw new Error(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
-                } else if (this.#apply_alias_duplicate_list.includes(alias)) {
+                } else if (this._apply_alias_duplicate_list.includes(alias)) {
                     throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 }
-                this.#apply_alias_duplicate_list.push(alias);
+                this._apply_alias_duplicate_list.push(alias);
                 let child_component = this._meta.sipa_children.find(x => x._meta.sipa_alias === alias);
                 const child = self.initElement(el, {sipa_component: child_component, parent_data: this._data});
                 if (!this.childrenAliases().includes(alias)) {
@@ -1193,7 +1250,7 @@ class SipaComponent {
         options.cache ??= true;
         const parsed = args.parsed || self.#parseHtml(args.html);
         if (parsed) {
-            const sipa_list_elements = [...parsed.querySelectorAll(`[sipa-list]:not(${self.#registered_components.map(x => LuckyCase.toDashCase(_this.constructor.name) + ' ' + x.tagName() + ' [sipa-list]').join(", ")})`)];
+            const sipa_list_elements = [...parsed.querySelectorAll(`[sipa-list]:not(${self._registered_components.map(x => LuckyCase.toDashCase(_this.constructor.name) + ' ' + x.tagName() + ' [sipa-list]').join(", ")})`)];
             sipa_list_elements.eachWithIndex((el) => {
                 const reference = el.getAttribute("sipa-list");
                 if (this._data[reference]) {
@@ -1204,10 +1261,10 @@ class SipaComponent {
                             const alias = item.alias();
                             if (!alias) {
                                 throw new Error(`Missing sipa-alias for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
-                            } else if(this.#apply_alias_duplicate_list.includes(alias)) {
+                            } else if(this._apply_alias_duplicate_list.includes(alias)) {
                                 throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                             }
-                            this.#apply_alias_duplicate_list.push(alias);
+                            this._apply_alias_duplicate_list.push(alias);
                             if (!this.childrenAliases().includes(alias)) {
                                 item._meta.sipa_parent = this;
                                 item._meta.sipa_list = reference;
@@ -1273,7 +1330,7 @@ class SipaComponent {
      */
     static #generateUniqueId() {
         const self = SipaComponent;
-        return self.#component_id_incrementer++;
+        return self._component_id_incrementer++;
     }
 
     /**
