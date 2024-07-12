@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------
 
-SipaComponentSpecSpec = {};
-SipaComponentSpecSpec.options = {};
+SipaComponentSpec = {};
+SipaComponentSpec.options = {};
 
 //----------------------------------------------------------------------------------------------------
 
@@ -75,14 +75,14 @@ describe('SipaComponent', () => {
                 before_val = component._data.attr;
             }
             compo.initTemplate();
-            expect(compo.data().mychild.family).toEqual("Chuck");
+            expect(compo.cloneData().mychild.family).toEqual("Chuck");
             compo.events().subscribe("before_update", fun);
             compo.update({ attr: true });
             expect(before_val).toEqual(undefined);
             compo.update({ attr: false });
             expect(before_val).toEqual(true);
-            expect(compo.data().mychild.family).toEqual("Speculatius");
-            expect(compo.data().attr).toEqual(false);
+            expect(compo.cloneData().mychild.family).toEqual("Speculatius");
+            expect(compo.cloneData().attr).toEqual(false);
         });
         it('"after_update" event', function () {
             const compo = new SpecOneComponent();
@@ -94,13 +94,62 @@ describe('SipaComponent', () => {
                 after_val = component._data.attr;
             }
             compo.initTemplate();
-            expect(compo.data().mychild.family).toEqual("Chuck");
+            expect(compo.cloneData().mychild.family).toEqual("Chuck");
             compo.events().subscribe("after_update", fun);
             expect(after_val).toEqual(null);
             compo.update({ attr: true });
             expect(after_val).toEqual(true);
             // data is not used or assigned on after_update
-            expect(compo.data().mychild.family).toEqual("Chuck");
+            expect(compo.cloneData().mychild.family).toEqual("Chuck");
+        });
+        it('"before_destroy" event', function () {
+            const compo = new SpecOneComponent({ object: { some: "sama" } });
+            let before_family_val = null;
+            let before_object_val = null;
+            let before_data_val = null;
+            let before_data_ref = null;
+            const fun = (component, data, options) => {
+                before_family_val = component._data.mychild.family;
+                before_object_val = component._data.object;
+                before_data_val = component.cloneData();
+                before_data_ref = component._data;
+            }
+            compo.initTemplate();
+            expect(compo.cloneData().mychild.family).toEqual("Chuck");
+            compo.events().subscribe("before_destroy", fun);
+            compo.update({ some_data: "DATA" });
+            expect(before_family_val).toEqual(null);
+            compo.destroy();
+            expect(before_family_val).toEqual("Chuck");
+            expect(before_object_val).toEqual({ some: "sama"});
+            expect(before_data_val).toEqual({ object: { some: "sama"}, mychild: { family: "Chuck", name: "Franz" }, some_data: "DATA" });
+            // child reference not existing anymore, as they have been destroyed
+            expect(before_data_ref).toEqual({ object: { some: "sama"}, some_data: "DATA" });
+            expect(compo._data).toEqual(undefined);
+        });
+        it('"after_destroy" event', function () {
+            const compo = new SpecOneComponent({ object: { some: "sama" } });
+            let before_family_val = null;
+            let before_object_val = null;
+            let before_data_val = null;
+            let before_data_ref = null;
+            const fun = (component, data, options) => {
+                before_family_val = component._data?.mychild?.family;
+                before_object_val = component._data?.object;
+                before_data_val = component.cloneData();
+                before_data_ref = component._data;
+            }
+            compo.initTemplate();
+            expect(compo.cloneData().mychild.family).toEqual("Chuck");
+            compo.events().subscribe("after_destroy", fun);
+            compo.update({ some_data: "DATA" });
+            expect(before_family_val).toEqual(null);
+            compo.destroy();
+            expect(before_family_val).toEqual(undefined);
+            expect(before_object_val).toEqual(undefined);
+            expect(before_data_val).toEqual(undefined);
+            expect(before_data_ref).toEqual(undefined);
+            expect(compo._data).toEqual(undefined);
         });
     });
 });
