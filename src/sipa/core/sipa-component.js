@@ -95,15 +95,15 @@ class SipaComponent {
         this._data = {};
         this._meta.sipa_children = undefined;
         if(options.content) {
-            const el = self.#parseHtml(`<element>${options.content}</element>`);
+            const el = self._parseHtml(`<element>${options.content}</element>`);
             this._meta.sipa_body_nodes = el.childNodes;
         }
         // unique id
-        this._meta.sipa_id = self.#generateUniqueId();
-        this.#updateData(data);
+        this._meta.sipa_id = self._generateUniqueId();
+        this._updateData(data);
         // get class and display style from original element
-        const html = this.#inheritedClass().template();
-        const parsed = self.#parseHtml(html);
+        const html = this._inheritedClass().template();
+        const parsed = self._parseHtml(html);
         this._meta.sipa_classes = (parsed.className + " " + options.sipa_classes.trim()).trim();
         this._meta.sipa_original_display = parsed.style ? parsed.style.display : '';
         this._meta.sipa_custom_attributes = options.sipa_custom_attributes || {};
@@ -135,8 +135,8 @@ class SipaComponent {
         const self = SipaComponent;
         options ??= {};
         options.cache ??= true;
-        let html = this.#inheritedClass().template();
-        html = this.#applyTemplateId(html);
+        let html = this._inheritedClass().template();
+        html = this._applyTemplateId(html);
         const _this = this;
         try {
             html = ejs.render(html, _.merge(_.cloneDeep(this._data), _.cloneDeep({_meta: this._meta})));
@@ -150,13 +150,13 @@ class SipaComponent {
             }
         }
         this._apply_alias_duplicate_list = [];
-        let parsed = self.#parseHtml(html);
-        parsed = this.#applySlots(parsed, html);
-        parsed = this.#applyTemplateCustomAttributes({ parsed });
-        parsed = this.#applyTemplateClasses({ parsed });
-        parsed = this.#applyTemplateHiddenState({ parsed });
-        parsed = this.#applyTemplateChildrenComponents({ parsed }, { cache: options.cache});
-        parsed = this.#applyTemplateSipaList({ parsed }, { cache: options.cache});
+        let parsed = self._parseHtml(html);
+        parsed = this._applySlots(parsed, html);
+        parsed = this._applyTemplateCustomAttributes({ parsed });
+        parsed = this._applyTemplateClasses({ parsed });
+        parsed = this._applyTemplateHiddenState({ parsed });
+        parsed = this._applyTemplateChildrenComponents({ parsed }, { cache: options.cache});
+        parsed = this._applyTemplateSipaList({ parsed }, { cache: options.cache});
         return parsed.outerHTML;
     }
 
@@ -173,7 +173,7 @@ class SipaComponent {
         options.cache ??= true;
         let parsed;
         if (data_changed || !this._cached_node || !options.cache || !this._meta.sipa_cache) {
-            parsed = self.#parseHtml(this.html({ cache: options.cache}));
+            parsed = self._parseHtml(this.html({ cache: options.cache}));
             this._cached_node = parsed.cloneNode(true);
         } else {
             parsed = this._cached_node.cloneNode(true);
@@ -434,7 +434,7 @@ class SipaComponent {
         options.reset ??= false;
         options.cache ??= true;
         this.events().trigger("before_update", [this, data, options], { validate: false });
-        this.#updateData(data, {reset: options.reset});
+        this._updateData(data, {reset: options.reset});
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
@@ -671,8 +671,8 @@ class SipaComponent {
     slots() {
         let slots = {};
         [...this.element().querySelectorAll(`[slot]:not([slot] [slot])`)].eachWithIndex((el) => {
-           const name = el.getAttribute("slot");
-           slots[name] = el;
+            const name = el.getAttribute("slot");
+            slots[name] = el;
         });
         return slots;
     }
@@ -727,8 +727,8 @@ class SipaComponent {
      * You may want to call this method, if you have a special case and modify the _data attribute manually.
      */
     syncNestedReferences() {
-        this.#synchronizeDataToParent();
-        this.#synchronizeDataToChildren({recursive: true});
+        this._synchronizeDataToParent();
+        this._synchronizeDataToChildren({recursive: true});
     }
 
     /**
@@ -952,7 +952,7 @@ class SipaComponent {
                 component._meta.sipa_children ??= [];
                 const child = self.initElement(el);
                 child._meta.sipa_parent = component;
-                component.#addChild(child);
+                component._addChild(child);
                 const child_node = child.node();
                 el.replaceWith(child_node);
                 if (child._sync_nested_references) {
@@ -1058,7 +1058,7 @@ class SipaComponent {
      * @param {boolean} options.clone=true
      * @private
      */
-    #updateData(data, options = {}) {
+    _updateData(data, options = {}) {
         const self = SipaComponent;
         options ??= {};
         const default_options = {
@@ -1082,8 +1082,8 @@ class SipaComponent {
             } else {
                 this._data = _.merge(this._data, data_copy);
             }
-            this.#synchronizeDataToChildren();
-            this.#synchronizeDataToParent();
+            this._synchronizeDataToChildren();
+            this._synchronizeDataToParent();
         }
     }
 
@@ -1092,7 +1092,7 @@ class SipaComponent {
      *
      * @return {SipaComponent}
      */
-    #inheritedClass() {
+    _inheritedClass() {
         return this.constructor;
     }
 
@@ -1102,7 +1102,7 @@ class SipaComponent {
      * @param {string} html
      * @returns {string}
      */
-    #applyTemplateId(html) {
+    _applyTemplateId(html) {
         const COMPONENT_TAG_REGEX = /^<([a-zA-Z\-\_0-9]+)/gm;
         return html.replace(COMPONENT_TAG_REGEX, `<$1 sipa-id="${this._meta.sipa_id}"`);
     }
@@ -1114,12 +1114,12 @@ class SipaComponent {
      * @param {string} html raw for performance reasons
      * @returns {string}
      */
-    #applySlots(parsed, html) {
+    _applySlots(parsed, html) {
         const self = SipaComponent;
         const has_slots = html.includes("<slot");
         if(has_slots) {
             if(this._meta.sipa_body_nodes?.length > 0) {
-                // const parsed = self.#parseHtml(html);
+                // const parsed = self._parseHtml(html);
                 const parsed_slots = parsed.querySelectorAll('slot:not(slot slot)');
                 [...parsed_slots].eachWithIndex((slot) => {
                     const slot_name = slot.getAttribute("name") || "default";
@@ -1154,9 +1154,9 @@ class SipaComponent {
      * @param {ChildNode} args.parsed
      * @returns {string|ChildNode}
      */
-    #applyTemplateClasses(args) {
+    _applyTemplateClasses(args) {
         const self = SipaComponent;
-        const parsed = args.parsed || self.#parseHtml(args.html);
+        const parsed = args.parsed || self._parseHtml(args.html);
         if (parsed && this._meta.sipa_classes) {
             parsed.className = this._meta.sipa_classes;
         }
@@ -1171,9 +1171,9 @@ class SipaComponent {
      * @param {ChildNode} args.parsed
      * @returns {string|ChildNode}
      */
-    #applyTemplateHiddenState(args) {
+    _applyTemplateHiddenState(args) {
         const self = SipaComponent;
-        const parsed = args.parsed || self.#parseHtml(args.html);
+        const parsed = args.parsed || self._parseHtml(args.html);
         if (parsed && parsed.style) {
             if (this.isHidden()) {
                 parsed.style.display = 'none';
@@ -1197,11 +1197,11 @@ class SipaComponent {
      * @param {boolean} options.cache=true use node cache
      * @returns {string|ChildNode}
      */
-    #applyTemplateChildrenComponents(args, options) {
+    _applyTemplateChildrenComponents(args, options) {
         const self = SipaComponent;
         options ??= {};
         options.cache ??= true;
-        const parsed = args.parsed || self.#parseHtml(args.html);
+        const parsed = args.parsed || self._parseHtml(args.html);
         let uninitialized_children = [];
         const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
         if(!children_selector) {
@@ -1224,7 +1224,7 @@ class SipaComponent {
                 const child = self.initElement(el, {sipa_component: child_component, parent_data: this._data});
                 if (!this.childrenAliases().includes(alias)) {
                     child._meta.sipa_parent = this;
-                    this.#addChild(child);
+                    this._addChild(child);
                 }
                 const child_node = child.node({ cache: options.cache});
                 el.replaceWith(child_node);
@@ -1243,12 +1243,12 @@ class SipaComponent {
      * @param {boolean} options.cache=true use node cache
      * @returns {string|ChildNode}
      */
-    #applyTemplateSipaList(args, options) {
+    _applyTemplateSipaList(args, options) {
         const self = SipaComponent;
         const _this = this;
         options ??= {};
         options.cache ??= true;
-        const parsed = args.parsed || self.#parseHtml(args.html);
+        const parsed = args.parsed || self._parseHtml(args.html);
         if (parsed) {
             const sipa_list_elements = [...parsed.querySelectorAll(`[sipa-list]:not(${self._registered_components.map(x => LuckyCase.toDashCase(_this.constructor.name) + ' ' + x.tagName() + ' [sipa-list]').join(", ")})`)];
             sipa_list_elements.eachWithIndex((el) => {
@@ -1268,7 +1268,7 @@ class SipaComponent {
                             if (!this.childrenAliases().includes(alias)) {
                                 item._meta.sipa_parent = this;
                                 item._meta.sipa_list = reference;
-                                this.#addChild(item);
+                                this._addChild(item);
                             }
                             const child_node = item.node({cache: options.cache});
                             el.append(child_node);
@@ -1292,9 +1292,9 @@ class SipaComponent {
      * @param {ChildNode} args.parsed
      * @returns {string|ChildNode}
      */
-    #applyTemplateCustomAttributes(args) {
+    _applyTemplateCustomAttributes(args) {
         const self = SipaComponent;
-        const parsed = args.parsed || self.#parseHtml(args.html);
+        const parsed = args.parsed || self._parseHtml(args.html);
         if (Object.keys(this._meta.sipa_custom_attributes).length > 0) {
             if (parsed) {
                 this._meta.sipa_custom_attributes.eachWithIndex((key, value) => {
@@ -1319,7 +1319,7 @@ class SipaComponent {
      * @param html
      * @returns {ChildNode}
      */
-    static #parseHtml(html) {
+    static _parseHtml(html) {
         return document.createRange().createContextualFragment(html).firstElementChild;
     }
 
@@ -1328,7 +1328,7 @@ class SipaComponent {
      *
      * @return {number}
      */
-    static #generateUniqueId() {
+    static _generateUniqueId() {
         const self = SipaComponent;
         return self._component_id_incrementer++;
     }
@@ -1339,12 +1339,12 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.recursive=false synchronize through all children trees
      */
-    #synchronizeDataToChildren(options = {}) {
+    _synchronizeDataToChildren(options = {}) {
         options ??= {};
         options.recursive ??= false;
         this.childrenAliases().eachWithIndex((alias, i) => {
             if (typeof this._data[alias] === "object") {
-                this.children()[alias].#updateData(this._data[alias], {clone: false});
+                this.children()[alias]._updateData(this._data[alias], {clone: false});
             } else if (typeof this._data[alias] !== 'undefined') {
                 throw new Error(`Given alias 'data.${alias}' must be of type object! Given: ${Typifier.getType(alias)}`);
             }
@@ -1359,7 +1359,7 @@ class SipaComponent {
     /**
      * Refresh data reference from current instance to its parent
      */
-    #synchronizeDataToParent() {
+    _synchronizeDataToParent() {
         if (this.hasParent()) {
             this.parent()._data[this.alias()] = this._data;
         }
@@ -1370,7 +1370,7 @@ class SipaComponent {
      *
      * @param {SipaComponent} child
      */
-    #addChild(child) {
+    _addChild(child) {
         this._meta.sipa_children.push(child);
     }
 }
