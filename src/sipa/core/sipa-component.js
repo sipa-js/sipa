@@ -168,7 +168,7 @@ class SipaComponent {
     node(options) {
         const self = SipaComponent;
         const data_changed = !(_.isEqual(this._previous_data, this._data));
-        this._previous_data = _.cloneDeep(this._data);
+        this._previous_data = _.clone(this._data);
         options ??= {};
         options.cache ??= true;
         let parsed;
@@ -1119,7 +1119,6 @@ class SipaComponent {
         const has_slots = html.includes("<slot");
         if(has_slots) {
             if(this._meta.sipa_body_nodes?.length > 0) {
-                // const parsed = self._parseHtml(html);
                 const parsed_slots = parsed.querySelectorAll('slot:not(slot slot)');
                 [...parsed_slots].eachWithIndex((slot) => {
                     const slot_name = slot.getAttribute("name") || "default";
@@ -1135,13 +1134,10 @@ class SipaComponent {
                         slot.replaceWith(...final_slot_nodes);
                     }
                 });
-                // remove all slots
-                parsed.querySelectorAll('slot').forEach(el => el.remove());
-                return parsed;
             }
+            // replace remaining slots with their own (default) content
+            parsed.querySelectorAll('slot:not(slot slot)').forEach(el => el.replaceWith(...el.childNodes));
         }
-        // remove all slots
-        parsed.querySelectorAll('slot').forEach(el => el.remove());
         return parsed;
     }
 
