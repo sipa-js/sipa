@@ -15,6 +15,7 @@
   "srcFiles": [
     "lib/templates/project/desktop/app/assets/lib/curly-bracket-parser/curly-bracket-parser.js",
     "lib/templates/project/desktop/app/assets/lib/ejs/ejs.js",
+    "lib/templates/project/desktop/app/assets/lib/fire-once/fire-once.js",
     "lib/templates/project/desktop/app/assets/lib/jquery/jquery-*.js",
     "lib/templates/project/desktop/app/assets/lib/lucky-case/lucky-case.js",
     "lib/templates/project/desktop/app/assets/lib/typifier/typifier.js",

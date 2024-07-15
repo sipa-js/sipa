@@ -93,6 +93,9 @@ const copy_static_files = [
     ['./node_modules/lucky-case/dist/lucky-case.js', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/lucky-case.js'],
     ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
 
+    ['./node_modules/fire-once/dist/fire-once.js', File.expandPath(sipa_build_destination_dir + '/../fire-once/') + '/fire-once.js'],
+    ['./node_modules/fire-once/LICENSE', File.expandPath(sipa_build_destination_dir + '/../fire-once/') + '/LICENSE'],
+
     // 'mobile' project (onsenui)
     ['./node_modules/ruby-nice/dist/ruby-nice.js', File.expandPath(sipa_onsen_build_destination_dir + '/../ruby-nice/') + '/ruby-nice.js'],
     ['./node_modules/ruby-nice/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../ruby-nice/') + '/LICENSE'],
@@ -105,6 +108,9 @@ const copy_static_files = [
 
     ['./node_modules/lucky-case/dist/lucky-case.js', File.expandPath(sipa_onsen_build_destination_dir + '/../lucky-case/') + '/lucky-case.js'],
     ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
+    
+    ['./node_modules/fire-once/dist/fire-once.js', File.expandPath(sipa_onsen_build_destination_dir + '/../fire-once/') + '/fire-once.js'],
+    ['./node_modules/fire-once/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../fire-once/') + '/LICENSE'],
 ]
 
 function version() {

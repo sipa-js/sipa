@@ -1039,6 +1039,11 @@ find-replace@^3.0.0:
   dependencies:
     array-back "^3.0.1"
 
+fire-once@^0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/fire-once/-/fire-once-0.0.6.tgz#a66d8f63452d2220d01ac70764e859a50bbe12ca"
+  integrity sha512-5qVt7vEH0v9oXV3Oc2YZFbJXd5aJjwRY5nJnehWYKoUcfOtVFQObjASeDkvKMgarF/GtElqKE6wNAt+CCZ6L+g==
+
 flatted@^3.2.7:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/flatted/-/flatted-3.3.1.tgz#21db470729a6734d4997002f439cb308987f567a"
