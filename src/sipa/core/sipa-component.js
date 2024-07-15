@@ -139,7 +139,7 @@ class SipaComponent {
         html = this._applyTemplateId(html);
         const _this = this;
         try {
-            html = ejs.render(html, _.merge(_.cloneDeep(this._data), _.cloneDeep({_meta: this._meta})));
+            html = ejs.render(html, Object.assign(_.cloneDeep(this._data), _.cloneDeep({_meta: this._meta})));
         } catch (e) {
             if (e instanceof ReferenceError) {
                 const last_line = e.message.split("\n").getLast();
@@ -914,7 +914,7 @@ class SipaComponent {
             const parent_alias_data = options && options.parent_data && options.parent_data[new_component_obj?._meta?.sipa_alias];
             if (parent_alias_data) {
                 if (typeof parent_alias_data === 'object') {
-                    data = _.merge(data, parent_alias_data);
+                    data = Object.assign(data, parent_alias_data);
                 } else {
                     throw new Error(`Alias data for 'data.${new_component_obj._meta.sipa_alias}' must be of type object! Given: ${Typifier.getType(parent_alias_data)}`)
                 }
@@ -1080,7 +1080,7 @@ class SipaComponent {
             if (options.reset) {
                 this._data = data_copy;
             } else {
-                this._data = _.merge(this._data, data_copy);
+                this._data = Object.assign(this._data, data_copy);
             }
             this._synchronizeDataToChildren();
             this._synchronizeDataToParent();
