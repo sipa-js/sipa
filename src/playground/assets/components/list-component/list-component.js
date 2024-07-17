@@ -35,6 +35,7 @@ class ListComponent extends SipaComponent {
         }
         const new_component = new component_type({ example: this._counter++ }, { sipa_alias: "kok_" + this._counter });
         this._data._clist.push(new_component);
+        this.update();
         new_component.events().subscribe("after_update", (child, data, options) => { alert(JSON.stringify(data)) });
         if(options.render) {
             this.render();
