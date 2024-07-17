@@ -1,5 +1,5 @@
 ![SIPA Particularly simple web framework](doc/_assets/_raw/logo_doc.svg)<br>
-[![npm package](https://img.shields.io/npm/v/sipa?color=63a618&style=plastic&logo=npm)](https://www.npmjs.com/package/sipa)
+[![npm package](https://img.shields.io/npm/v/sipa?color=63a618&style=plastic&logo=npm&logoColor=red)](https://www.npmjs.com/package/sipa)
 ![downloads](https://img.shields.io/npm/dt/sipa?color=dce2df&style=plastic)
 [![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-fabd09.svg?style=plastic)](LICENSE)
 
