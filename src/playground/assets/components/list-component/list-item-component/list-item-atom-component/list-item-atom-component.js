@@ -24,7 +24,7 @@ class ListItemAtomComponent extends SipaComponent {
 ListItemAtomComponent.template = () => {
     return `
 <list-item-atom-component onclick="instance(this).showAlert();" class="template-class">
-    <slot><%= example %>!</slot>
+    <slot>s<%= example %>!</slot>
 </list-item-atom-component>
     `.trim();
 }

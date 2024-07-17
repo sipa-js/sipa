@@ -11,10 +11,6 @@ class SpecChildComponent extends SipaComponent {
 SipaComponent.registerComponent(SpecChildComponent);
 
 class SpecOneComponent extends SipaComponent {
-
-    static template = () => {
-        return `<spec-one-component><spec-child-component sipa-alias="mychild" name="'Franz'"></spec-child-component></spec-one-component>`;
-    }
 }
 
 SipaComponent.registerComponent(SpecOneComponent);
@@ -23,6 +19,12 @@ SipaComponent.registerComponent(SpecOneComponent);
 
 describe('SipaComponent', () => {
     beforeEach(() => {
+        SpecOneComponent = class extends SipaComponent {
+            static template = () => {
+                return `<spec-one-component><spec-child-component sipa-alias="mychild" name="'Franz'"></spec-child-component></spec-one-component>`;
+            }
+        }
+
         SpecChildComponent = class extends SipaComponent {
             constructor(data, options) {
                 data ??= {};
@@ -53,13 +55,29 @@ describe('SipaComponent', () => {
             expect(Object.keys(compo.children())).toEqual(["mychild"]);
             expect(compo._data?.mychild?.name).toEqual("Franz");
         });
+        it('has no alias for its children', function () {
+            SpecOneComponent = class extends SipaComponent {
+                static template = () => {
+                    return `<spec-one-component><spec-child-component name="'Franz'"></spec-child-component></spec-one-component>`;
+                }
+            }
+            expect(() => { (new SpecOneComponent()).initTemplate()}).toThrowError(MissingSipaAliasError);
+        });
+        it('has duplicate alias for its children', function () {
+            SpecOneComponent = class extends SipaComponent {
+                static template = () => {
+                    return `<spec-one-component><spec-child-component sipa-alias="lol"></spec-child-component><spec-child-component sipa-alias="lol"></spec-child-component></spec-one-component>`;
+                }
+            }
+            expect(() => { (new SpecOneComponent()).initTemplate()}).toThrowError(DuplicateSipaAliasError);
+        });
     });
     describe('.html', () => {
         beforeEach(() => {
         });
         it('has a rendered html template with nested children', function () {
             const compo = new SpecOneComponent();
-            expect(compo.html()).toMatch(`<spec-one-component sipa-id="[0-9]"><spec-child-component sipa-id="[0-9]">Franz<\\/spec-child-component><\\/spec-one-component>`);
+            expect(compo.html()).toMatch(`<spec-one-component sipa-id="[0-9]+"><spec-child-component sipa-id="[0-9]+">Franz<\\/spec-child-component><\\/spec-one-component>`);
         });
     });
     describe('events', () => {

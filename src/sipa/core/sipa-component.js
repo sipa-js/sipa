@@ -453,14 +453,18 @@ class SipaComponent {
      * @returns {SipaComponent}
      */
     render(options = {}) {
-        options ??= {};
-        options.cache ??= true;
-        this.elements().forEach((el) => {
-            el.replaceWith(this.node({cache: options.cache}));
-        });
-        if (this._sync_nested_references) {
-            this.syncNestedReferences();
+        const _this = this;
+        const renderFunc = (options) => {
+            options ??= {};
+            options.cache ??= true;
+            _this.elements().forEach((el) => {
+                el.replaceWith(_this.node({cache: options.cache}));
+            });
+            if (_this._sync_nested_references) {
+                _this.syncNestedReferences();
+            }
         }
+        FireOnce.fire('SCR' + this._meta.sipa_id, () => { renderFunc(options); }, { period: 100 });
         return this;
     }
 
@@ -945,10 +949,16 @@ class SipaComponent {
         const self = SipaComponent;
         const new_element_node = component.node();
         let uninitialized_children = [];
-        const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
+        const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id], [sc] [sc])').join(", ");
+        if(!children_selector) {
+            throw new Error(`No registered components found! Ensure, to register your component class after definition with SipaComponent.registerComponent(MyComponent);`);
+        }
+        uninitialized_children = new_element_node.querySelectorAll(children_selector);
+        uninitialized_children.forEach(x => x.setAttribute("sc",""));
         uninitialized_children = new_element_node.querySelectorAll(children_selector);
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
+                el.removeAttribute("sc");
                 component._meta.sipa_children ??= [];
                 const child = self.initElement(el);
                 child._meta.sipa_parent = component;
@@ -1199,21 +1209,25 @@ class SipaComponent {
         options.cache ??= true;
         const parsed = args.parsed || self._parseHtml(args.html);
         let uninitialized_children = [];
-        const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id])').join(", ");
+        const children_selector = self._registered_components.map(x => x.tagName() + ':not([sipa-id], [sc] [sc])').join(", ");
         if(!children_selector) {
             throw new Error(`No registered components found! Ensure, to register your component class after definition with SipaComponent.registerComponent(MyComponent);`);
         }
+        // do not get nested / slot components
+        uninitialized_children = parsed.querySelectorAll(children_selector);
+        uninitialized_children.forEach(x => x.setAttribute("sc",""));
         uninitialized_children = parsed.querySelectorAll(children_selector);
         const are_children_initialized = typeof this._meta.sipa_children !== 'undefined';
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
+                el.removeAttribute("sc");
                 this._meta.sipa_children ??= []; // if not set yet, they will be initialized at the first time
                 // check for alias
                 const alias = el.getAttribute('sipa-alias');
                 if (!alias) {
-                    throw new Error(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                    throw new MissingSipaAliasError(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 } else if (this._apply_alias_duplicate_list.includes(alias)) {
-                    throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                    throw new DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 }
                 this._apply_alias_duplicate_list.push(alias);
                 let child_component = this._meta.sipa_children.find(x => x._meta.sipa_alias === alias);
@@ -1256,9 +1270,9 @@ class SipaComponent {
                             // check for alias
                             const alias = item.alias();
                             if (!alias) {
-                                throw new Error(`Missing sipa-alias for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                                throw new MissingSipaAliasError(`Missing sipa-alias for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                             } else if(this._apply_alias_duplicate_list.includes(alias)) {
-                                throw new Error(`Duplicate sipa-alias "${alias}" for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                                throw new DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                             }
                             this._apply_alias_duplicate_list.push(alias);
                             if (!this.childrenAliases().includes(alias)) {
@@ -1458,4 +1472,19 @@ SipaComponent.template = () => {
  */
 function instance(element) {
     return SipaComponent.instanceOfElement(element);
+}
+
+
+class MissingSipaAliasError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "MissingSipaAliasError";
+    }
+}
+
+class DuplicateSipaAliasError extends Error {
+    constructor(message) {
+        super(message);
+        this.name = "DuplicateSipaAliasError";
+    }
 }

@@ -30,12 +30,13 @@ ListItemComponent.template = () => {
     return `
 <list-item-component class="template-class">
     <span><%= name %> <%= _meta.sipa_id %>! <%= (new Date()).toLocaleTimeString() %></span>
-    <list-item-atom-component sipa-alias="atom1"></list-item-atom-component>
+    <list-item-atom-component sipa-alias="atom1">u</list-item-atom-component>
     SINK
     <list-item-atom-component sipa-alias="atom2">
         <list-item-molecule-component sipa-alias="mole1"></list-item-molecule-component>    
     </list-item-atom-component>
     <list-item-atom-component sipa-alias="atom3"></list-item-atom-component>
+    <list-item-atom-component sipa-alias="atom4">R</list-item-atom-component>
     <button onclick="instance(this).destroy();">Del</button>
     <button onclick="instance(this).change();">Change</button>
 </list-item-component>
