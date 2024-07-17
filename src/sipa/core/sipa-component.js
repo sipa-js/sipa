@@ -19,9 +19,11 @@ class SipaComponent {
     _meta = {};
     _destroyed = false;
     /**
-     * @type {Object}
+     * Flag for caching rendered nodes
+     *
+     * @type {boolean}
      */
-    _previous_data = null;
+    _data_changed = true;
     /**
      * List of to check for alias duplicates
      * @type {Array<string>}
@@ -167,14 +169,13 @@ class SipaComponent {
      */
     node(options) {
         const self = SipaComponent;
-        const data_changed = !(_.isEqual(this._previous_data, this._data));
-        this._previous_data = _.clone(this._data);
         options ??= {};
         options.cache ??= true;
         let parsed;
-        if (data_changed || !this._cached_node || !options.cache || !this._meta.sipa_cache) {
+        if (this._data_changed || !this._cached_node || !options.cache || !this._meta.sipa_cache) {
             parsed = self._parseHtml(this.html({ cache: options.cache}));
             this._cached_node = parsed.cloneNode(true);
+            this._data_changed = false;
         } else {
             parsed = this._cached_node.cloneNode(true);
         }
@@ -435,6 +436,7 @@ class SipaComponent {
         options.cache ??= true;
         this.events().trigger("before_update", [this, data, options], { validate: false });
         this._updateData(data, {reset: options.reset});
+        this._data_changed = true;
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
@@ -867,7 +869,7 @@ class SipaComponent {
             const new_component_obj = {_meta: {sipa_custom_attributes: {}}};
             const attr_keys = [...element.attributes].map(e => e.name);
             const body_nodes = element.childNodes;
-            new_component_obj._meta.sipa_body_nodes = body_nodes;
+            new_component_obj._meta.sipa_body_nodes ??= body_nodes;
             let data = {};
             attr_keys.eachWithIndex((key, i) => {
                 if (key.startsWith("sipa-")) {
@@ -1137,7 +1139,7 @@ class SipaComponent {
                     [...child_nodes].eachWithIndex((node) => {
                         const current_slot_attr = node.getAttribute?.("slot");
                         if((current_slot_attr && current_slot_attr === slot_name) || (!current_slot_attr && slot_name === "default")) {
-                            final_slot_nodes.push(node);
+                            final_slot_nodes.push(node.cloneNode(true));
                         }
                     });
                     if(final_slot_nodes.length > 0) {
