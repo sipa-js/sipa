@@ -435,13 +435,13 @@ class SipaComponent {
         options.reset ??= false;
         options.cache ??= true;
         this.events().trigger("before_update", [this, data, options], { validate: false });
-        this._updateData(data, {reset: options.reset});
+        this._updateData(data, {reset: options.reset, update_data: data });
         this._data_changed = true;
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
         else if (this._sync_nested_references) {
-            this.syncNestedReferences();
+            this.syncNestedReferences({ update_data: data });
         }
         this.events().trigger("after_update", [this, data, options], { validate: false });
         return this;
@@ -731,10 +731,13 @@ class SipaComponent {
      * After that, the update() will manage refreshing to direct children and parent components.
      *
      * You may want to call this method, if you have a special case and modify the _data attribute manually.
+     *
+     * @param {Object} options
+     * @param {Object} options.update_data update data if given
      */
-    syncNestedReferences() {
+    syncNestedReferences(options = { update_data: {}}) {
         this._synchronizeDataToParent();
-        this._synchronizeDataToChildren({recursive: true});
+        this._synchronizeDataToChildren({recursive: true, update_data: options.update_data});
     }
 
     /**
@@ -1068,6 +1071,7 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.reset=false
      * @param {boolean} options.clone=true
+     * @param {Object} options.update_data
      * @private
      */
     _updateData(data, options = {}) {
@@ -1077,6 +1081,7 @@ class SipaComponent {
             reset: false,
             clone: true,
             parent_only: false,
+            update_data: {},
         };
         options = SipaHelper.mergeOptions(default_options, options);
         if (typeof data !== 'object') {
@@ -1094,7 +1099,7 @@ class SipaComponent {
             } else {
                 this._data = Object.assign(this._data, data_copy);
             }
-            this._synchronizeDataToChildren();
+            this._synchronizeDataToChildren({ update_data: options.update_data });
             this._synchronizeDataToParent();
         }
     }
@@ -1350,13 +1355,18 @@ class SipaComponent {
      *
      * @param {Object} options
      * @param {boolean} options.recursive=false synchronize through all children trees
+     * @param {Object} options.update_data update data if given
      */
     _synchronizeDataToChildren(options = {}) {
         options ??= {};
         options.recursive ??= false;
+        options.update_data ??= {};
         this.childrenAliases().eachWithIndex((alias, i) => {
             if (typeof this._data[alias] === "object") {
-                this.children()[alias]._updateData(this._data[alias], {clone: false});
+                this.children()[alias]._updateData(this._data[alias], {clone: false, update_data: options.update_data[alias] });
+                if(options.update_data[alias]) {
+                    this.children()[alias]._data_changed = true;
+                }
             } else if (typeof this._data[alias] !== 'undefined') {
                 throw new Error(`Given alias 'data.${alias}' must be of type object! Given: ${Typifier.getType(alias)}`);
             }
