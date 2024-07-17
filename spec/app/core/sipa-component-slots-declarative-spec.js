@@ -15,11 +15,9 @@ describe('SipaComponent', () => {
     describe('slots by declaration', () => {
         var slot_component;
         beforeAll(() => {
-            SlotComponent = class extends SipaComponent {
-                static template = () => {
-                    return `<slot-component>Spaghetti<slot name="header"></slot><slot></slot><slot name="footer"></slot></slot-component>`;
-                }
-            }
+            SlotComponent.template = () => {
+                return `<slot-component>Spaghetti<slot name="header"></slot><slot></slot><slot name="footer"></slot></slot-component>`;
+            };
         });
         it('can fill named slots', function () {
             document.querySelector("body").append($(`<slot-component>Banana<div slot="header">Header</div></slot-component>`)[0]);
