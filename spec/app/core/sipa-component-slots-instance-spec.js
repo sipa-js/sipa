@@ -7,14 +7,8 @@ SipaComponentSlotsInstanceSpec.options = {};
 
 class SlotComponent extends SipaComponent {
 }
-class SlotNestComponent extends SipaComponent {
-}
-class SlotSuperNestComponent extends SipaComponent {
-}
 
 SipaComponent.registerComponent(SlotComponent);
-SipaComponent.registerComponent(SlotNestComponent);
-SipaComponent.registerComponent(SlotSuperNestComponent);
 
 
 class SlotOneComponent extends SipaComponent {
@@ -63,17 +57,15 @@ describe('SipaComponent', () => {
                     return `<slot-component>Spaghetti<slot name="header"></slot><slot></slot><slot name="footer"></slot></slot-component>`;
                 }
             }
-            SlotNestComponent = class extends SipaComponent {
-                static template = () => {
-                    return `<slot-nest-component>Nested<slot name="header"></slot><slot></slot><slot name="foobar"></slot></slot-nest-component>`;
-                }
-            }
         });
         it('can fill named slots', function () {
             const comp = new SlotComponent({},{
                 content: `Banana<div slot="header">Header</div>`
             });
-            expect(comp.html()).toMatch(`<slot-component sipa-id="[0-9]+">Spaghetti<div slot="header">Header</div>Banana</slot-component>`);
+            const match = `<slot-component sipa-id="[0-9]+">Spaghetti<div slot="header">Header</div>Banana</slot-component>`;
+            expect(comp.html()).toMatch(match);
+            expect(comp.html()).toMatch(match);
+            expect(comp.node().outerHTML).toMatch(match);
         });
         it('can nest components in slots', function () {
             SlotComponent = class extends SipaComponent {
@@ -89,6 +81,7 @@ describe('SipaComponent', () => {
             expect(comp.html()).toMatch(match);
             // second init (check if caching is working properly)
             expect(comp.html()).toMatch(match);
+            expect(comp.node().outerHTML).toMatch(match);
         });
         it('can nest components in slots twice', function () {
             const comp = new SlotOneComponent({},{
@@ -99,6 +92,7 @@ describe('SipaComponent', () => {
             expect(comp.html()).toMatch(match);
             // second init (check if caching is working properly)
             expect(comp.html()).toMatch(match);
+            expect(comp.node().outerHTML).toMatch(match);
         });
     });
 });

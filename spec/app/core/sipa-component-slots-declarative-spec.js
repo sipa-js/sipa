@@ -22,7 +22,10 @@ describe('SipaComponent', () => {
         it('can fill named slots', function () {
             document.querySelector("body").append($(`<slot-component>Banana<div slot="header">Header</div></slot-component>`)[0]);
             SlotComponent.init();
-            expect(document.querySelector("slot-component").outerHTML).toMatch(`<slot-component sipa-id="[0-9]">Spaghetti<div slot="header">Header</div>Banana</slot-component>`);
+            const match = `<slot-component sipa-id="[0-9]">Spaghetti<div slot="header">Header</div>Banana</slot-component>`;
+            expect(document.querySelector("slot-component").outerHTML).toMatch(match);
+            SlotComponent.all()[0].update();
+            expect(document.querySelector("slot-component").outerHTML).toMatch(match);
         });
     });
 });

@@ -66,12 +66,15 @@ describe('SipaComponent', () => {
             const first_match = `<slot-uno-component sipa-id="[0-9]+">UnostartoBirne<slot-dos-component sipa-id="[0-9]+">Dosos</slot-dos-component>UnoUnosos<slot-tres-component sipa-id="[0-9]+">Tresos<slot-cuatro-component sipa-id="[0-9]+">Cuasros</slot-cuatro-component></slot-tres-component>Unoendo</slot-uno-component>`;
             expect(comp.html()).toMatch(first_match);
             expect(comp.html()).toMatch(first_match); // check cache
+            expect(comp.node().outerHTML).toMatch(first_match);
             comp.update({name: "Unostara"});
             const second_match = `<slot-uno-component sipa-id="[0-9]+">UnostartoBirne<slot-dos-component sipa-id="[0-9]+">Dosos</slot-dos-component>UnoUnostara<slot-tres-component sipa-id="[0-9]+">Tresos<slot-cuatro-component sipa-id="[0-9]+">Cuasros</slot-cuatro-component></slot-tres-component>Unoendo</slot-uno-component>`;
             expect(comp.html()).toMatch(second_match);
+            expect(comp.node().outerHTML).toMatch(second_match);
             comp.update({name: "Barbara", treso: { name: "Tretos", cuatroso: { name: "Cuatros" } }, doso: { name: "Dotos" } });
             const third_match = `<slot-uno-component sipa-id="[0-9]+">UnostartoBirne<slot-dos-component sipa-id="[0-9]+">Dotos</slot-dos-component>UnoBarbara<slot-tres-component sipa-id="[0-9]+">Tretos<slot-cuatro-component sipa-id="[0-9]+">Cuatros</slot-cuatro-component></slot-tres-component>Unoendo</slot-uno-component>`;
             expect(comp.html()).toMatch(third_match);
+            expect(comp.node().outerHTML).toMatch(third_match);
         });
     });
 });
