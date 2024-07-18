@@ -7,8 +7,13 @@ SipaComponentSlotsInstanceSpec.options = {};
 
 class SlotComponent extends SipaComponent {
 }
-
 SipaComponent.registerComponent(SlotComponent);
+class SlotNestComponent extends SipaComponent {
+    static template = () => {
+        return `<slot-nest-component>Nested<slot name="header"></slot><slot></slot><slot name="foobar"></slot></slot-nest-component>`;
+    }
+}
+SipaComponent.registerComponent(SlotNestComponent);
 
 
 class SlotOneComponent extends SipaComponent {
