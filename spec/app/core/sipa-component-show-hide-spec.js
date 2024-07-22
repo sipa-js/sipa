@@ -51,21 +51,21 @@ describe('SipaComponent', () => {
             let html = document.querySelector("show-hide-component").outerHTML;
             // first init
             expect(html).toMatch(match_init);
-            comp.update({ render_period: 0 });
+            comp.update();
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_init); // caching
             // hide
-            comp.hide({ render_period: 0 });
+            comp.hide();
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_hidden);
-            comp.update({ render_period: 0 });
+            comp.update();
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_hidden); // caching
             // show again
-            comp.show({ render_period: 0 });
+            comp.show();
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_init);
-            comp.update({ render_period: 0 });
+            comp.update();
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_init); // caching
         });
