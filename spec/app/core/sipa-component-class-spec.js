@@ -11,6 +11,10 @@ class ClassesComponent extends SipaComponent {
     }
 }
 
+class ClassesCombinedComponent {
+
+}
+
 //----------------------------------------------------------------------------------------------------
 
 describe('SipaComponent', () => {
@@ -89,6 +93,68 @@ describe('SipaComponent', () => {
             comp.update();
             html = document.querySelector("classes-component").outerHTML;
             expect(html).toMatch(match); // caching
+        });
+        it('can declare classes in the template (declarative) and programatically by class attribute', function () {
+            ClassesCombinedComponent = class extends SipaComponent {
+                static template = () => {
+                    return `<classes-combined-component class="temp-combined-class">Some content inside!</classes-combined-component>`;
+                }
+            }
+            document.querySelector("playground").appendChild($(`<classes-combined-component attr-class="attribute-class"></classes-combined-component>`)[0]);
+            ClassesCombinedComponent.init();
+            const comp = ClassesCombinedComponent.all().getLast();
+            comp._meta.sipa._render_period = 0; // disable as we render more than one time in period
+            const match = `<classes-combined-component sipa-id="[0-9]+" class="temp-combined-class attribute-class">Some content inside!</classes-combined-component>`;
+            const match_one_removed = `<classes-combined-component sipa-id="[0-9]+" class="attribute-class">Some content inside!</classes-combined-component>`;
+            const match_both_removed = `<classes-combined-component sipa-id="[0-9]+">Some content inside!</classes-combined-component>`;
+            let html = document.querySelector("classes-combined-component").outerHTML;
+            // first init
+            expect(html).toMatch(match);
+            // remove
+            comp.removeClass("temp-combined-class");
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_one_removed);
+            comp.update();
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_one_removed); // caching
+            // remove again
+            comp.removeClass("attribute-class");
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_both_removed);
+            comp.update();
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_both_removed); // caching
+        });
+        it('can declare classes in the template (declarative) and programatically by class attribute 2', function () {
+            ClassesCombinedComponent = class extends SipaComponent {
+                static template = () => {
+                    return `<classes-combined-component class="temp-combined-class">Some content inside!</classes-combined-component>`;
+                }
+            }
+            document.querySelector("playground").appendChild($(`<classes-combined-component attr-class="attribute-class"></classes-combined-component>`)[0]);
+            ClassesCombinedComponent.init();
+            const comp = ClassesCombinedComponent.all().getLast();
+            comp._meta.sipa._render_period = 0; // disable as we render more than one time in period
+            const match = `<classes-combined-component sipa-id="[0-9]+" class="temp-combined-class attribute-class">Some content inside!</classes-combined-component>`;
+            const match_one_removed = `<classes-combined-component sipa-id="[0-9]+" class="temp-combined-class">Some content inside!</classes-combined-component>`;
+            const match_both_removed = `<classes-combined-component sipa-id="[0-9]+">Some content inside!</classes-combined-component>`;
+            let html = document.querySelector("classes-combined-component").outerHTML;
+            // first init
+            expect(html).toMatch(match);
+            // remove
+            comp.removeClass("attribute-class");
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_one_removed);
+            comp.update();
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_one_removed); // caching
+            // remove again
+            comp.removeClass("temp-combined-class");
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_both_removed);
+            comp.update();
+            html = document.querySelector("classes-combined-component").outerHTML;
+            expect(html).toMatch(match_both_removed); // caching
         });
     });
 });
