@@ -17,28 +17,6 @@ class SipaComponent {
      * @private
      */
     _meta = {};
-    _destroyed = false;
-    /**
-     * Flag for caching rendered nodes
-     *
-     * @type {boolean}
-     */
-    _data_changed = true;
-    /**
-     * List of to check for alias duplicates
-     * @type {Array<string>}
-     */
-    _apply_alias_duplicate_list = [];
-    /**
-     * @type {Element}
-     */
-    _cached_node = null;
-    /**
-     * Sync nested references automatically after every render update
-     * May be disabled on performance cases. Then overwrite to 'false' at the inherited class.
-     * @type {boolean}
-     */
-    _sync_nested_references = true;
 
     /**
      * @type {number}
@@ -87,31 +65,33 @@ class SipaComponent {
             {param_name: 'options', param_value: options, expected_type: 'Object'},
         ]);
         options ??= {};
-        const default_options = {
-            sipa_hidden: false,
-            sipa_classes: "",
-            sipa_cache: true,
-        };
-        options = SipaHelper.mergeOptions(default_options, options);
-
+        options.sipa_hidden ??= false;
+        options.sipa_classes ??= "";
+        options.sipa_cache ??= true;
+        this._meta.sipa ??= {};
+        this._meta.sipa._destroyed ??= false;
+        this._meta.sipa._data_changed ??= true;
+        this._meta.sipa._cached_node ??= null;
+        this._meta.sipa._render_period ??= 100;
         this._data = {};
-        this._meta.sipa_children = undefined;
+        this._meta.sipa.children = undefined;
         if(options.content) {
             const el = self._parseHtml(`<element>${options.content}</element>`);
-            this._meta.sipa_body_nodes = el.childNodes;
+            this._meta.sipa.body_nodes = el.childNodes;
         }
+
         // unique id
-        this._meta.sipa_id = self._generateUniqueId();
+        this._meta.sipa.id = self._generateUniqueId();
         this._updateData(data);
         // get class and display style from original element
         const html = this._inheritedClass().template();
         const parsed = self._parseHtml(html);
-        this._meta.sipa_classes = (parsed.className + " " + options.sipa_classes.trim()).trim();
-        this._meta.sipa_original_display = parsed.style ? parsed.style.display : '';
-        this._meta.sipa_custom_attributes = options.sipa_custom_attributes || {};
-        this._meta.sipa_hidden = options.sipa_hidden;
-        this._meta.sipa_cache = options.sipa_cache;
-        this._meta.sipa_alias = options.sipa_alias;
+        this._meta.sipa.classes = (parsed.className + " " + options.sipa_classes.trim()).trim();
+        this._meta.sipa.original_display = parsed.style ? parsed.style.display : '';
+        this._meta.sipa.custom_attributes = options.sipa_custom_attributes || {};
+        this._meta.sipa.hidden = options.sipa_hidden;
+        this._meta.sipa.cache = options.sipa_cache;
+        this._meta.sipa.alias = options.sipa_alias;
         self._component_instances.push(this);
     }
 
@@ -151,6 +131,10 @@ class SipaComponent {
                 throw e;
             }
         }
+        /**
+         * @type {Array<string>}
+         * @private
+         */
         this._apply_alias_duplicate_list = [];
         let parsed = self._parseHtml(html);
         parsed = this._applySlots(parsed, html);
@@ -172,12 +156,12 @@ class SipaComponent {
         options ??= {};
         options.cache ??= true;
         let parsed;
-        if (this._data_changed || !this._cached_node || !options.cache || !this._meta.sipa_cache) {
+        if (this._meta.sipa._data_changed || !this._meta.sipa._cached_node || !options.cache || !this._meta.sipa.cache) {
             parsed = self._parseHtml(this.html({ cache: options.cache}));
-            this._cached_node = parsed.cloneNode(true);
-            this._data_changed = false;
+            this._meta.sipa._cached_node = parsed.cloneNode(true);
+            this._meta.sipa._data_changed = false;
         } else {
-            parsed = this._cached_node.cloneNode(true);
+            parsed = this._meta.sipa._cached_node.cloneNode(true);
         }
         return parsed;
     }
@@ -230,7 +214,7 @@ class SipaComponent {
      * @returns {string}
      */
     alias() {
-        return this._meta.sipa_alias;
+        return this._meta.sipa.alias;
     }
 
     /**
@@ -277,7 +261,7 @@ class SipaComponent {
      * Value representation of the component. Should be usually overwritten by the inherited component class.
      */
     value() {
-        return this._meta.sipa_id;
+        return this._meta.sipa.id;
     }
 
     /**
@@ -314,10 +298,10 @@ class SipaComponent {
      * @returns {string} css selector
      */
     selector() {
-        if (this._destroyed) {
+        if (this._meta.sipa._destroyed) {
             throw new Error(`This instance of ${this.constructor.name} has already been destroyed and can not be accessed any more.`);
         } else {
-            return `[sipa-id="${this._meta.sipa_id}"]`;
+            return `[sipa-id="${this._meta.sipa.id}"]`;
         }
     }
 
@@ -336,9 +320,9 @@ class SipaComponent {
             });
         }
         if (this.hasParent()) {
-            const parent_index = this.parent()._meta.sipa_children.indexOf(this);
-            delete this.parent()._meta.sipa_children[parent_index];
-            this.parent()._meta.sipa_children = this.parent()._meta.sipa_children.filter(x => x); // remove empty entries
+            const parent_index = this.parent()._meta.sipa.children.indexOf(this);
+            delete this.parent()._meta.sipa.children[parent_index];
+            this.parent()._meta.sipa.children = this.parent()._meta.sipa.children.filter(x => x); // remove empty entries
         }
         const index = self._component_instances.indexOf(this);
         this.remove();
@@ -348,24 +332,24 @@ class SipaComponent {
         }
         if(this.hasParent()) {
             const parent = this.parent();
-            const sipa_list_ref = this._meta.sipa_list;
+            const sipa_list_ref = this._meta.sipa.list;
             if(sipa_list_ref) {
                 delete parent._data[sipa_list_ref][parent._data[sipa_list_ref].indexOf(this)];
                 parent._data[sipa_list_ref] = parent._data[sipa_list_ref].filter(x => !!x);
             }
-            delete parent._meta.sipa_children[parent._meta.sipa_children.indexOf(this)];
-            parent._meta.sipa_children = parent._meta.sipa_children.filter(x => !!x);
-            const alias = this._meta.sipa_alias;
+            delete parent._meta.sipa.children[parent._meta.sipa.children.indexOf(this)];
+            parent._meta.sipa.children = parent._meta.sipa.children.filter(x => !!x);
+            const alias = this._meta.sipa.alias;
             if(alias) {
                 delete parent._data[alias];
-                parent._meta.sipa_children
+                parent._meta.sipa.children
             } else {
                 throw new Error(`Missing alias for component.`);
             }
         }
         this._data = undefined;
         this._meta = undefined;
-        this._destroyed = true;
+        this._meta = { sipa: { _destroyed: true } };
         delete this;
         this.events().trigger("after_destroy", [this], { validate: false });
         return this;
@@ -377,7 +361,7 @@ class SipaComponent {
      * @return {boolean} true if destroyed
      */
     isDestroyed() {
-        return this._destroyed;
+        return this._meta.sipa._destroyed;
     }
 
     /**
@@ -389,7 +373,7 @@ class SipaComponent {
         const self = SipaComponent;
         const elements = this.elements();
         if (elements.length === 0) {
-            console.warn(`Tried to remove() ${this.constructor.name} with sipa-id '${this._meta.sipa_id}', but it does not exist in DOM.`);
+            console.warn(`Tried to remove() ${this.constructor.name} with sipa-id '${this._meta.sipa.id}', but it does not exist in DOM.`);
         } else {
             elements.eachWithIndex((el) => {
                 el.remove();
@@ -436,7 +420,7 @@ class SipaComponent {
         options.cache ??= true;
         this.events().trigger("before_update", [this, data, options], { validate: false });
         this._updateData(data, {reset: options.reset, update_data: data });
-        this._data_changed = true;
+        this._meta.sipa._data_changed = true;
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
@@ -452,13 +436,14 @@ class SipaComponent {
      *
      * @param {Object} options
      * @param {boolean} options.cache=true use node cache or not on component and all(!) children and their children
+     * @param {boolean} options.render_period overwrite default render period (_meta.sipa._render_period) only once
      * @returns {SipaComponent}
      */
     render(options = {}) {
         const _this = this;
+        options ??= {};
+        options.cache ??= true;
         const renderFunc = (options) => {
-            options ??= {};
-            options.cache ??= true;
             _this.elements().forEach((el) => {
                 el.replaceWith(_this.node({cache: options.cache}));
             });
@@ -466,7 +451,12 @@ class SipaComponent {
                 _this.syncNestedReferences();
             }
         }
-        FireOnce.fire('SCR' + this._meta.sipa_id, () => { renderFunc(options); }, { period: 100 });
+        const render_period = (typeof options.render_period !== "undefined") ? options.render_period : this._meta.sipa._render_period;
+        if(render_period === 0) {
+            renderFunc(options);
+        } else {
+            FireOnce.fire('SCR' + this._meta.sipa.id, () => { renderFunc(options); }, { period: render_period });
+        }
         return this;
     }
 
@@ -483,13 +473,13 @@ class SipaComponent {
             update: true,
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        let split = this._meta.sipa_classes.trim().split(' ');
+        let split = this._meta.sipa.classes.trim().split(' ');
         class_name.split(' ').eachWithIndex((class_value, i) => {
             if (class_value && split.indexOf(class_value) === -1) {
                 split.push(class_value);
             }
         });
-        this._meta.sipa_classes = split.join(' ').trim();
+        this._meta.sipa.classes = split.join(' ').trim();
         if (options.update) {
             this.update();
         }
@@ -518,7 +508,7 @@ class SipaComponent {
     hasClass(class_name) {
         let result = true;
         class_name.split(' ').eachWithIndex((current_class) => {
-            if (!this._meta.sipa_classes.split(" ").includes(current_class)) {
+            if (!this._meta.sipa.classes.split(" ").includes(current_class)) {
                 result = false;
                 return false;
             }
@@ -539,14 +529,14 @@ class SipaComponent {
             update: true,
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        let split = this._meta.sipa_classes.trim().split(' ');
+        let split = this._meta.sipa.classes.trim().split(' ');
         class_name.split(' ').eachWithIndex((class_value, i) => {
             if (split.indexOf(class_value) !== -1) {
                 delete split[split.indexOf(class_value)];
             }
         });
         split = split.filter(el => !!el); // remove empty elements
-        this._meta.sipa_classes = split.join(' ').trim();
+        this._meta.sipa.classes = split.join(' ').trim();
         if (options.update) {
             this.update();
         }
@@ -565,8 +555,8 @@ class SipaComponent {
             update: true,
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        this._meta.sipa_hidden = false;
-        this._meta.sipa_changed_visibility = true;
+        this._meta.sipa.hidden = false;
+        this._meta.sipa.changed_visibility = true;
         if (options && options.update) {
             this.update();
         }
@@ -585,8 +575,8 @@ class SipaComponent {
             update: true,
         };
         options = SipaHelper.mergeOptions(default_options, options);
-        this._meta.sipa_hidden = true;
-        this._meta.sipa_changed_visibility = true;
+        this._meta.sipa.hidden = true;
+        this._meta.sipa.changed_visibility = true;
         if (options && options.update) {
             this.update();
         }
@@ -599,7 +589,7 @@ class SipaComponent {
      * @return {boolean}
      */
     isHidden() {
-        return this._meta.sipa_hidden;
+        return this._meta.sipa.hidden;
     }
 
     /**
@@ -632,9 +622,9 @@ class SipaComponent {
      */
     children() {
         let children = {};
-        if (this._meta.sipa_children) {
-            this._meta.sipa_children.eachWithIndex((child, i) => {
-                children[child._meta.sipa_alias ?? i] = child;
+        if (this._meta.sipa.children) {
+            this._meta.sipa.children.eachWithIndex((child, i) => {
+                children[child._meta.sipa.alias ?? i] = child;
             });
         }
         return children;
@@ -664,7 +654,7 @@ class SipaComponent {
      * @return {boolean}
      */
     hasChildren() {
-        return !!this._meta.sipa_children?.length > 0;
+        return !!this._meta.sipa.children?.length > 0;
     }
 
     /**
@@ -689,7 +679,7 @@ class SipaComponent {
      * @return {undefined|SipaComponent} component
      */
     parent() {
-        return this._meta.sipa_parent;
+        return this._meta.sipa.parent;
     }
 
     /**
@@ -698,7 +688,7 @@ class SipaComponent {
      * @return {boolean}
      */
     hasParent() {
-        return !!this._meta.sipa_parent;
+        return !!this._meta.sipa.parent;
     }
 
     /**
@@ -721,7 +711,7 @@ class SipaComponent {
      * // => ExampleComponent
      */
     parentTop() {
-        return this._meta.sipa_parent ? this._meta.sipa_parent.parentTop() : this;
+        return this._meta.sipa.parent ? this._meta.sipa.parent.parentTop() : this;
     }
 
     /**
@@ -793,7 +783,7 @@ class SipaComponent {
             all_components = self._component_instances.filter(e => e.constructor.name === this.name);
         }
         if (!options.include_children) {
-            all_components = all_components.filter(e => !e._meta.sipa_parent);
+            all_components = all_components.filter(e => !e._meta.sipa.parent);
         }
         return all_components;
     }
@@ -808,9 +798,9 @@ class SipaComponent {
         const self = SipaComponent;
         const component_class_name = `${this.name}`;
         if (component_class_name === 'SipaComponent') {
-            return SipaComponent._component_instances.find(x => x._meta.sipa_id === sipa_id);
+            return SipaComponent._component_instances.find(x => x._meta.sipa.id === sipa_id);
         } else {
-            return SipaComponent._component_instances.find(x => x.constructor.name === component_class_name && x._meta.sipa_id === sipa_id);
+            return SipaComponent._component_instances.find(x => x.constructor.name === component_class_name && x._meta.sipa.id === sipa_id);
         }
     }
 
@@ -869,10 +859,10 @@ class SipaComponent {
         options ??= {};
         if (!element.getAttribute('sipa-id') && typeof options.sipa_component === 'undefined') {
             const element_class = SipaHelper.constantizeString(LuckyCase.toPascalCase(element.tagName));
-            const new_component_obj = {_meta: {sipa_custom_attributes: {}}};
+            const new_component_obj = {_meta: {sipa: { custom_attributes: {}}}};
             const attr_keys = [...element.attributes].map(e => e.name);
             const body_nodes = element.childNodes;
-            new_component_obj._meta.sipa_body_nodes ??= body_nodes;
+            new_component_obj._meta.sipa.body_nodes ??= body_nodes;
             let data = {};
             attr_keys.eachWithIndex((key, i) => {
                 if (key.startsWith("sipa-")) {
@@ -880,26 +870,26 @@ class SipaComponent {
                     const d_value = element.attributes[key].value;
                     if (d_key === "hidden") {
                         if (d_value === "true") {
-                            new_component_obj._meta.sipa_hidden = true;
+                            new_component_obj._meta.sipa.hidden = true;
                         } else {
-                            new_component_obj._meta.sipa_hidden = false;
+                            new_component_obj._meta.sipa.hidden = false;
                         }
                     } else if (d_key === "cache") {
                         if (d_value === "true") {
-                            new_component_obj._meta.sipa_cache = true;
+                            new_component_obj._meta.sipa.cache = true;
                         } else {
-                            new_component_obj._meta.sipa_cache = false;
+                            new_component_obj._meta.sipa.cache = false;
                         }
                     } else if (d_key === "alias") {
-                        new_component_obj._meta.sipa_alias = d_value;
+                        new_component_obj._meta.sipa.alias = d_value;
                     } else {
                         throw new Error(`Invalid sipa attribute '${key}'`);
                     }
                     //data[d_key] = element.attributes[key].value;
                 } else if (key === "class") {
-                    new_component_obj._meta.sipa_classes = element.attributes[key].value;
+                    new_component_obj._meta.sipa.classes = element.attributes[key].value;
                 } else if (key.startsWith("attr-")) {
-                    new_component_obj._meta.sipa_custom_attributes[key.substring("attr-".length)] = element.attributes[key].value;
+                    new_component_obj._meta.sipa.custom_attributes[key.substring("attr-".length)] = element.attributes[key].value;
                 } else {
                     try {
                         let value = null;
@@ -920,18 +910,16 @@ class SipaComponent {
                     }
                 }
             });
-            const parent_alias_data = options && options.parent_data && options.parent_data[new_component_obj?._meta?.sipa_alias];
+            const parent_alias_data = options && options.parent_data && options.parent_data[new_component_obj?._meta?.sipa?.alias];
             if (parent_alias_data) {
                 if (typeof parent_alias_data === 'object') {
                     data = Object.assign(data, parent_alias_data);
                 } else {
-                    throw new Error(`Alias data for 'data.${new_component_obj._meta.sipa_alias}' must be of type object! Given: ${Typifier.getType(parent_alias_data)}`)
+                    throw new Error(`Alias data for 'data.${new_component_obj._meta.sipa.alias}' must be of type object! Given: ${Typifier.getType(parent_alias_data)}`)
                 }
             }
             const new_component = new (element_class)(data);
-            new_component_obj._meta.eachWithIndex((key, val) => {
-                new_component._meta[key] = val;
-            });
+            new_component._meta = _.merge(new_component._meta, new_component_obj._meta);
             const new_element_node = self.initChildComponents(new_component);
             element.replaceWith(new_element_node);
             if (new_component._sync_nested_references) {
@@ -964,9 +952,9 @@ class SipaComponent {
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
                 el.removeAttribute("sc");
-                component._meta.sipa_children ??= [];
+                component._meta.sipa.children ??= [];
                 const child = self.initElement(el);
-                child._meta.sipa_parent = component;
+                child._meta.sipa.parent = component;
                 component._addChild(child);
                 const child_node = child.node();
                 el.replaceWith(child_node);
@@ -1031,7 +1019,7 @@ class SipaComponent {
         if (component) {
             const sipa_id = parseInt(component.getAttribute('sipa-id'));
             instance = self._component_instances.filter((el) => {
-                return el._meta.sipa_id === sipa_id
+                return el._meta.sipa.id === sipa_id
             })[0];
         }
         if (instance) {
@@ -1121,7 +1109,7 @@ class SipaComponent {
      */
     _applyTemplateId(html) {
         const COMPONENT_TAG_REGEX = /^<([a-zA-Z\-\_0-9]+)/gm;
-        return html.replace(COMPONENT_TAG_REGEX, `<$1 sipa-id="${this._meta.sipa_id}"`);
+        return html.replace(COMPONENT_TAG_REGEX, `<$1 sipa-id="${this._meta.sipa.id}"`);
     }
 
     /**
@@ -1135,11 +1123,11 @@ class SipaComponent {
         const self = SipaComponent;
         const has_slots = html.includes("<slot");
         if(has_slots) {
-            if(this._meta.sipa_body_nodes?.length > 0) {
+            if(this._meta.sipa.body_nodes?.length > 0) {
                 const parsed_slots = parsed.querySelectorAll('slot:not(slot slot)');
                 [...parsed_slots].eachWithIndex((slot) => {
                     const slot_name = slot.getAttribute("name") || "default";
-                    const child_nodes = this._meta.sipa_body_nodes;
+                    const child_nodes = this._meta.sipa.body_nodes;
                     const final_slot_nodes = [];
                     [...child_nodes].eachWithIndex((node) => {
                         const current_slot_attr = node.getAttribute?.("slot");
@@ -1170,8 +1158,8 @@ class SipaComponent {
     _applyTemplateClasses(args) {
         const self = SipaComponent;
         const parsed = args.parsed || self._parseHtml(args.html);
-        if (parsed && this._meta.sipa_classes) {
-            parsed.className = this._meta.sipa_classes;
+        if (parsed && this._meta.sipa.classes) {
+            parsed.className = this._meta.sipa.classes;
         }
         return args.parsed ? parsed : parsed.outerHTML;
     }
@@ -1191,8 +1179,8 @@ class SipaComponent {
             if (this.isHidden()) {
                 parsed.style.display = 'none';
             } // respect initial display none on the class style attribute
-            else if (this._meta.sipa_changed_visibility && !this._meta.sipa_original_display.includes("none") || !this._meta.sipa_changed_visibility) {
-                parsed.style.dispaly = this._meta.sipa_original_display;
+            else if (this._meta.sipa.changed_visibility && !this._meta.sipa.original_display.includes("none") || !this._meta.sipa.changed_visibility) {
+                parsed.style.dispaly = this._meta.sipa.original_display;
             } else {
                 parsed.style.display = '';
             }
@@ -1224,11 +1212,11 @@ class SipaComponent {
         uninitialized_children = parsed.querySelectorAll(children_selector);
         uninitialized_children.forEach(x => x.setAttribute("sc",""));
         uninitialized_children = parsed.querySelectorAll(children_selector);
-        const are_children_initialized = typeof this._meta.sipa_children !== 'undefined';
+        const are_children_initialized = typeof this._meta.sipa.children !== 'undefined';
         if (uninitialized_children.length > 0) {
             [...uninitialized_children].eachWithIndex((el, i) => {
                 el.removeAttribute("sc");
-                this._meta.sipa_children ??= []; // if not set yet, they will be initialized at the first time
+                this._meta.sipa.children ??= []; // if not set yet, they will be initialized at the first time
                 // check for alias
                 const alias = el.getAttribute('sipa-alias');
                 if (!alias) {
@@ -1237,10 +1225,10 @@ class SipaComponent {
                     throw new DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 }
                 this._apply_alias_duplicate_list.push(alias);
-                let child_component = this._meta.sipa_children.find(x => x._meta.sipa_alias === alias);
+                let child_component = this._meta.sipa.children.find(x => x._meta.sipa.alias === alias);
                 const child = self.initElement(el, {sipa_component: child_component, parent_data: this._data});
                 if (!this.childrenAliases().includes(alias)) {
-                    child._meta.sipa_parent = this;
+                    child._meta.sipa.parent = this;
                     this._addChild(child);
                 }
                 const child_node = child.node({ cache: options.cache});
@@ -1273,7 +1261,7 @@ class SipaComponent {
                 if (this._data[reference]) {
                     if (Typifier.isArray(this._data[reference])) {
                         this._data[reference].eachWithIndex((item) => {
-                            this._meta.sipa_children ??= []; // if not set yet, they will be initialized at the first time
+                            this._meta.sipa.children ??= []; // if not set yet, they will be initialized at the first time
                             // check for alias
                             const alias = item.alias();
                             if (!alias) {
@@ -1283,8 +1271,8 @@ class SipaComponent {
                             }
                             this._apply_alias_duplicate_list.push(alias);
                             if (!this.childrenAliases().includes(alias)) {
-                                item._meta.sipa_parent = this;
-                                item._meta.sipa_list = reference;
+                                item._meta.sipa.parent = this;
+                                item._meta.sipa.list = reference;
                                 this._addChild(item);
                             }
                             const child_node = item.node({cache: options.cache});
@@ -1312,9 +1300,9 @@ class SipaComponent {
     _applyTemplateCustomAttributes(args) {
         const self = SipaComponent;
         const parsed = args.parsed || self._parseHtml(args.html);
-        if (Object.keys(this._meta.sipa_custom_attributes).length > 0) {
+        if (Object.keys(this._meta.sipa.custom_attributes).length > 0) {
             if (parsed) {
-                this._meta.sipa_custom_attributes.eachWithIndex((key, value) => {
+                this._meta.sipa.custom_attributes.eachWithIndex((key, value) => {
                     // special case, we merge classes from template class and declarative attr-class
                     if (key === "class") {
                         this.addClass(value, {update: false});
@@ -1365,7 +1353,7 @@ class SipaComponent {
             if (typeof this._data[alias] === "object") {
                 this.children()[alias]._updateData(this._data[alias], {clone: false, update_data: options.update_data[alias] });
                 if(options.update_data[alias]) {
-                    this.children()[alias]._data_changed = true;
+                    this.children()[alias]._meta.sipa._data_changed = true;
                 }
             } else if (typeof this._data[alias] !== 'undefined') {
                 throw new Error(`Given alias 'data.${alias}' must be of type object! Given: ${Typifier.getType(alias)}`);
@@ -1393,25 +1381,40 @@ class SipaComponent {
      * @param {SipaComponent} child
      */
     _addChild(child) {
-        this._meta.sipa_children.push(child);
+        this._meta.sipa.children.push(child);
     }
 }
 
 /**
  * @typedef {Object} SipaComponent.Meta
- * @property {number} sipa_id auto increment
- * @property {string} sipa_classes internal state representation for classes managed by components methods addClass() and removeClass()
- * @property {boolean} sipa_hidden=false state representation of hide() and show() methods
- * @property {boolean} sipa_cache=true use node caching for templates
- * @property {string} sipa_alias alias to access children by uniq accessor name
- * @property {Array<SipaComponent>} sipa_children array of children sipa components
- * @property {SipaComponent} sipa_parent parent sipa component when using nested components
- * @property {string} sipa_list parent sipa components _data reference, if the component has been initialized by using sipa-list
- * @property {string} sipa_original_display store original display style when using hide() to restore on show()
- * @property {boolean} sipa_changed_visibility info if visibility has been changed at least once
- * @property {Object<string, string>} sipa_custom_attributes state representation of declarative custom attributes defined with attr- prefix
- * @property {NodeList} sipa_body_nodes body as childNodes of original declarative element
+ * @property {Object} sipa all sipa meta info
+ * @property {number} sipa.id auto increment
+ * @property {string} sipa.classes internal state representation for classes managed by components methods addClass() and removeClass()
+ * @property {boolean} sipa.hidden=false state representation of hide() and show() methods
+ * @property {boolean} sipa.cache=true use node caching for templates
+ * @property {string} sipa.alias alias to access children by uniq accessor name
+ * @property {Array<SipaComponent>} sipa.children array of children sipa components
+ * @property {SipaComponent} sipa.parent parent sipa component when using nested components
+ * @property {string} sipa.list parent sipa components _data reference, if the component has been initialized by using sipa-list
+ * @property {string} sipa.original_display store original display style when using hide() to restore on show()
+ * @property {boolean} sipa.changed_visibility info if visibility has been changed at least once
+ * @property {Object<string, string>} sipa.custom_attributes state representation of declarative custom attributes defined with attr- prefix
+ * @property {NodeList} sipa.body_nodes body as childNodes of original declarative element
+ * @property {boolean} sipa._destroyed=false Flag to determine if object has been destroyed
+ * @property {boolean} sipa._data_changed=true Flag for caching rendered nodes
+ * @property {Element} sipa._cached_node=null Store cached node to reuse when rendering again without any data change or update()
+ * @property {number} sipa._render_period=100 Only one rendering per period in milliseconds for performance reasons. Disabled when option is 0. Caution: when rendering several times in this period, only the first and last rendering will happen at 0ms and 100ms
+ *
  */
+
+/**
+ * Sync nested references automatically after every render update
+ * May be disabled on performance cases. Then overwrite to 'false' at the inherited class.
+ * @type {boolean}
+ */
+_sync_nested_references = true;
+
+
 
 /**
  * @typedef {Object} SipaComponent.Data
