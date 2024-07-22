@@ -32,11 +32,15 @@ describe('SipaComponent', () => {
             expect(comp.node().outerHTML).toMatch(match_init);
             // hide
             comp.hide();
+            expect(comp.isHidden()).toEqual(true);
+            expect(comp.isVisible()).toEqual(false);
             expect(comp.html()).toMatch(match_hidden);
             expect(comp.html()).toMatch(match_hidden); // caching
             expect(comp.node().outerHTML).toMatch(match_hidden);
             // show again
             comp.show();
+            expect(comp.isHidden()).toEqual(false);
+            expect(comp.isVisible()).toEqual(true);
             expect(comp.html()).toMatch(match_init);
             expect(comp.html()).toMatch(match_init); // caching
             expect(comp.node().outerHTML).toMatch(match_init);
@@ -51,21 +55,33 @@ describe('SipaComponent', () => {
             let html = document.querySelector("show-hide-component").outerHTML;
             // first init
             expect(html).toMatch(match_init);
+            expect(comp.isHidden()).toEqual(false);
+            expect(comp.isVisible()).toEqual(true);
             comp.update();
+            expect(comp.isHidden()).toEqual(false);
+            expect(comp.isVisible()).toEqual(true);
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_init); // caching
             // hide
             comp.hide();
+            expect(comp.isHidden()).toEqual(true);
+            expect(comp.isVisible()).toEqual(false);
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_hidden);
             comp.update();
+            expect(comp.isHidden()).toEqual(true);
+            expect(comp.isVisible()).toEqual(false);
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_hidden); // caching
             // show again
             comp.show();
+            expect(comp.isHidden()).toEqual(false);
+            expect(comp.isVisible()).toEqual(true);
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_init);
             comp.update();
+            expect(comp.isHidden()).toEqual(false);
+            expect(comp.isVisible()).toEqual(true);
             html = document.querySelector("show-hide-component").outerHTML;
             expect(html).toMatch(match_init); // caching
         });

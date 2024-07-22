@@ -234,7 +234,6 @@ class SipaComponent {
         return _.cloneDeep(this._data);
     }
 
-
     /**
      * Set cloned data of the current instance
      *
