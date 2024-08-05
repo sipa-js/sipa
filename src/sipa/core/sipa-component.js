@@ -7,14 +7,12 @@ class SipaComponent {
      * The components data representation
      *
      * @type {Object}
-     * @private
      */
     _data = {};
     /**
      * The components meta data for internal management
      *
      * @type {SipaComponent.Meta}
-     * @private
      */
     _meta = {};
 
@@ -127,6 +125,8 @@ class SipaComponent {
                 const last_line = e.message.split("\n").getLast();
                 const attribute_name = last_line.split(" ").getFirst();
                 throw new ReferenceError(`The property 'data.${attribute_name}' in the template of <${LuckyCase.toDashCase(_this.constructor.name)}> is not defined.`);
+            } else if (e instanceof TypeError && this._meta.sipa._destroyed === true) {
+                throw new SipaComponent.InstanceAlreadyDestroyedError(undefined, this);
             } else {
                 throw e;
             }
@@ -277,9 +277,9 @@ class SipaComponent {
     }
 
     /**
-     * Get all elements of the current instance that is in the DOM
+     * Get all elements of the current instance that is in the DOM.
      *
-     * @return {Array<Element>|undefined}
+     * @return {Array<Element>}
      */
     elements() {
         const self = SipaComponent;
@@ -297,11 +297,8 @@ class SipaComponent {
      * @returns {string} css selector
      */
     selector() {
-        if (this._meta.sipa._destroyed) {
-            throw new Error(`This instance of ${this.constructor.name} has already been destroyed and can not be accessed any more.`);
-        } else {
-            return `[sipa-id="${this._meta.sipa.id}"]`;
-        }
+        this._checkDestroyed();
+        return `[sipa-id="${this._meta.sipa.id}"]`;
     }
 
     /**
@@ -412,6 +409,7 @@ class SipaComponent {
      *
      */
     update(data = {}, options = {}) {
+        this._checkDestroyed();
         options ??= {};
         data ??= {};
         options.render ??= true;
@@ -470,6 +468,7 @@ class SipaComponent {
      * @returns {SipaComponent}
      */
     addClass(class_name, options = {}) {
+        this._checkDestroyed();
         const default_options = {
             update: true,
         };
@@ -526,6 +525,7 @@ class SipaComponent {
      * @returns {SipaComponent}
      */
     removeClass(class_name, options = {}) {
+        this._checkDestroyed();
         const default_options = {
             update: true,
         };
@@ -598,6 +598,7 @@ class SipaComponent {
      * @return {boolean}
      */
     isHidden() {
+        this._checkDestroyed();
         return this._meta.sipa.hidden;
     }
 
@@ -1168,7 +1169,7 @@ class SipaComponent {
         const self = SipaComponent;
         const parsed = args.parsed || self._parseHtml(args.html);
         if (parsed) {
-            if(!this._meta.sipa.classes) {
+            if (!this._meta.sipa.classes) {
                 parsed.removeAttribute("class");
             } else {
                 parsed.className = this._meta.sipa.classes;
@@ -1233,9 +1234,9 @@ class SipaComponent {
                 // check for alias
                 const alias = el.getAttribute('sipa-alias');
                 if (!alias) {
-                    throw new MissingSipaAliasError(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                    throw new SipaComponent.MissingSipaAliasError(`Missing sipa-alias for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 } else if (this._apply_alias_duplicate_list.includes(alias)) {
-                    throw new DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                    throw new SipaComponent.DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${LuckyCase.toDashCase(el.tagName)}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                 }
                 this._apply_alias_duplicate_list.push(alias);
                 let child_component = this._meta.sipa.children.find(x => x._meta.sipa.alias === alias);
@@ -1278,9 +1279,9 @@ class SipaComponent {
                             // check for alias
                             const alias = item.alias();
                             if (!alias) {
-                                throw new MissingSipaAliasError(`Missing sipa-alias for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                                throw new SipaComponent.MissingSipaAliasError(`Missing sipa-alias for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                             } else if (this._apply_alias_duplicate_list.includes(alias)) {
-                                throw new DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
+                                throw new SipaComponent.DuplicateSipaAliasError(`Duplicate sipa-alias "${alias}" for embedded component <${item.constructor.tagName()}> in <${LuckyCase.toDashCase(this.constructor.name)}>`);
                             }
                             this._apply_alias_duplicate_list.push(alias);
                             if (!this.childrenAliases().includes(alias)) {
@@ -1399,6 +1400,17 @@ class SipaComponent {
     _addChild(child) {
         this._meta.sipa.children.push(child);
     }
+
+    /**
+     * Check if the component is already destroyed, and if, throw an specific error.
+     * @throws {SipaComponent.InstanceAlreadyDestroyedError}
+     * @private
+     */
+    _checkDestroyed() {
+        if (this._meta.sipa._destroyed) {
+            throw new SipaComponent.InstanceAlreadyDestroyedError(undefined, this);
+        }
+    }
 }
 
 /**
@@ -1505,16 +1517,26 @@ function instance(element) {
 }
 
 
-class MissingSipaAliasError extends Error {
+SipaComponent.MissingSipaAliasError = class extends Error {
     constructor(message) {
         super(message);
-        this.name = "MissingSipaAliasError";
+        this.name = "SipaComponent.MissingSipaAliasError";
     }
 }
 
-class DuplicateSipaAliasError extends Error {
+SipaComponent.DuplicateSipaAliasError = class extends Error {
     constructor(message) {
         super(message);
-        this.name = "DuplicateSipaAliasError";
+        this.name = "SipaComponent.DuplicateSipaAliasError";
+    }
+}
+
+SipaComponent.InstanceAlreadyDestroyedError = class extends Error {
+    constructor(message, instance) {
+        if (instance) {
+            message ??= `This instance of ${instance.constructor.name} has already been destroyed and can not be accessed any more.`;
+        }
+        super(message);
+        this.name = "SipaComponent.InstanceAlreadyDestroyedError";
     }
 }
