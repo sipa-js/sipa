@@ -1,7 +1,7 @@
 //----------------------------------------------------------------------------------------------------
 
-SipaComponentClassSpec = {};
-SipaComponentClassSpec.options = {};
+SipaComponentClassesSpec = {};
+SipaComponentClassesSpec.options = {};
 
 //----------------------------------------------------------------------------------------------------
 
