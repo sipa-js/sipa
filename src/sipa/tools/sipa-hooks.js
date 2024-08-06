@@ -35,6 +35,31 @@ class SipaHooks {
         }
     }
 
+
+    /**
+     * Set, remove or trigger event 'beforeShowPage'
+     *
+     * @param {SipaHooks.HookType} type
+     * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
+     * @param {string} page_id
+     */
+    static beforeShowPage(type, func, page_id) {
+        const self = SipaOnsenHooks;
+        switch (type) {
+            case 'on':
+                self._addFunction(self._before_show_page_functions, func);
+                break;
+            case 'off':
+                self._removeFunction(self._before_show_page_functions, func);
+                break;
+            case 'trigger':
+                self._triggerFunctions(self._before_show_page_functions, page_id);
+                break;
+            default:
+                throw `Invalid type '${type}'`;
+        }
+    }
+
     /**
      * Set, remove or trigger event 'beforeDestroyPage'
      *
@@ -127,6 +152,7 @@ class SipaHooks {
     static reset() {
         const self = SipaHooks;
         self._before_init_page_functions = [];
+        self._before_show_page_functions = [];
         self._before_destroy_page_functions = [];
         self._before_init_layout_functions = [];
         self._before_destroy_layout_functions = [];
@@ -160,6 +186,7 @@ class SipaHooks {
 }
 
 SipaHooks._before_init_page_functions = [];
+SipaHooks._before_show_page_functions = [];
 SipaHooks._before_destroy_page_functions = [];
 SipaHooks._before_init_layout_functions = [];
 SipaHooks._before_destroy_layout_functions = [];

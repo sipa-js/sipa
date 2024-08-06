@@ -58,7 +58,6 @@ class SipaOnsenHooks extends SipaHooks {
 
     static reset() {
         const self = SipaOnsenHooks;
-        self._before_show_page_functions = [];
         self._before_hide_page_functions = [];
         super.reset();
     }
@@ -67,5 +66,4 @@ class SipaOnsenHooks extends SipaHooks {
 
 }
 
-SipaOnsenHooks._before_show_page_functions = [];
 SipaOnsenHooks._before_hide_page_functions = [];

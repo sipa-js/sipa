@@ -85,9 +85,6 @@ class SipaPage {
                             }
                             j_container.html(data);
                             SipaHooks.beforeInitPage('trigger');
-                            if (options.fade_effect) {
-                                j_container.fadeIn(150);
-                            }
                             if (options.stack_page) {
                                 self.stackHistoryState({page_id: new_page_id, layout_id: layout_id, options: options});
                             }
@@ -103,6 +100,14 @@ class SipaPage {
                                 SipaUrl.setAnchor(current_anchor, true);
                             }
                             self.callMethodOfPage(new_page_id, 'onInit', [{last_page_id: last_page_id}]);
+                            if (options.fade_effect) {
+                                j_container.fadeIn(150, () => {
+                                    SipaHooks.beforeShowPage("trigger", null, page_id);
+                                    self.callMethodOfPage(new_page_id, 'onShow', [{last_page_id: last_page_id}]);
+                                });
+                            } else {
+                                self.callMethodOfPage(new_page_id, 'onShow', [{last_page_id: last_page_id}]);
+                            }
                             if(Typifier.isFunction(options.success)) {
                                 options.success(data, text, response);
                             }
