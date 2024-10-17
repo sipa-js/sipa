@@ -1,3 +1,16 @@
+# 0.9.38
+* Make jQuery cache for loading pages/layouts configurable.
+
+## New option in your app/config/config.js
+```js
+/* use jQuery cache: true/false.
+
+   when disabled, jQuery will add a underscore parameter ?_=<number> on
+   page and layout requests, to avoid browser caching
+ */
+cache_page_layout_requests: false,
+```
+
 # 0.9.26
 * Added basic sipa compontents
 ## Migration steps from 0.9.x to 0.9.26+
