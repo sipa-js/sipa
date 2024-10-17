@@ -65,7 +65,7 @@ class SipaOnsenPage {
                         url: page_path,
                         method: 'GET',
                         dataType: 'html',
-                        cache: false,
+                        cache: !!self.config.cache_page_layout_requests,
                         success: (data, text, response) => {
                             self._is_first_load = false;
                             const navi = self.getOnsenNavigator();
@@ -261,7 +261,7 @@ class SipaOnsenPage {
                 url: layout_path,
                 method: 'GET',
                 dataType: 'html',
-                cache: false,
+                cache: !!self.config.cache_page_layout_requests,
                 success: (data, text, response) => {
                     after_loaded_function(data, text, response, 'success');
                 },
