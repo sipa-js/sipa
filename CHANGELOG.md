@@ -2,8 +2,23 @@
 * Make jQuery cache for loading pages/layouts configurable.
 
 ## Migration steps from 0.9.26+ to 0.9.38
-### Add library
+### add component section in index.html
+In your `app/index.html`, add the following lines after `<!---------------===== /LAYOUTS =====--------------->`.
+
+```html
+    <!---------------===== COMPONENTS =====--------------->
+    <!-- section for your layouts -->
+    <!-- COMPONENT-JS -->
+    <script type="text/javascript" src="assets/components/example/example.js"></script>
+    <!-- /COMPONENT-JS -->
+    <!-- COMPONENT-CSS -->
+    <link rel="stylesheet" href="assets/components/example/example.css">
+    <!-- /COMPONENT-CSS -->
+    <!---------------===== /COMPONENTS =====--------------->
+```
+### Add files
 * Copy the folder of the latest version from repo at `lib/templates/project/default/app/assets/lib/fire-once` into your project to `app/assets/lib/fire-once`. After run `sipa i` and confirm with ´+´ to add the lib to the project.
+* Copy the folder of the latest version from repo at `lib/templates/project/default/app/assets/components/example` into your project to `app/assets/components/example`. After run `sipa i` and confirm with ´+´ to add the lib to the project.
 ### New option in your app/config/config.js
 ```js
 /* use jQuery cache: true/false.
@@ -13,6 +28,8 @@
  */
 cache_page_layout_requests: false,
 ```
+
+
 
 # 0.9.26
 * Added basic sipa compontents
