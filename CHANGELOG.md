@@ -1,7 +1,10 @@
 # 0.9.38
 * Make jQuery cache for loading pages/layouts configurable.
 
-## New option in your app/config/config.js
+## Migration steps from 0.9.26+ to 0.9.38
+### Add library
+* Copy the folder of the latest version from repo at `lib/templates/project/default/app/assets/lib/fire-once` into your project to `app/assets/lib/fire-once`. After run `sipa i` and confirm with ´+´ to add the lib to the project.
+### New option in your app/config/config.js
 ```js
 /* use jQuery cache: true/false.
 
