@@ -28,7 +28,8 @@ In your `app/index.html`, add the following lines after `<!---------------===== 
  */
 cache_page_layout_requests: false,
 ```
-
+### Add sipa component styles to path
+In `sipa.json` add `"assets/components",` to the attribute `"sass_watch_paths"`
 
 
 # 0.9.26
