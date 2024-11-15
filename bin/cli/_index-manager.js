@@ -3,6 +3,7 @@
 const fs = require('fs');
 const glob = require('glob');
 const LuckyCase = require('lucky-case');
+const File = require('ruby-nice/file');
 
 const SipaCliTools = require('./_tools');
 const SipaHelper = require('./../../src/sipa/tools/sipa-helper');
@@ -43,11 +44,12 @@ class SipaCliIndexManager {
     /**
      * Get list of all javascript entries in index.html
      *
+     * @param {string|undefined} html_path=null optionally provide path to  an html, otherwise it will be read from project index.html
      * @returns {Array<String>}
      */
-    static getJsEntries() {
+    static getJsEntries(html_path = undefined) {
         const self = SipaCliIndexManager;
-        let index_content = SipaCliTools.readProjectIndexFile();
+        let index_content = html_path ? File.read(html_path) : SipaCliTools.readProjectIndexFile();
         return [...index_content.matchAll(self.script_tag_regex)].map((e) => {
             return e[1];
         });
