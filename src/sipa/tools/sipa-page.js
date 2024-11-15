@@ -4,6 +4,7 @@ if (typeof require === 'function' && typeof module !== 'undefined' && module.exp
     LuckyCase = require('lucky-case');
     CurlyBracketParser = require('curly-bracket-parser');
 }
+
 //<!-- /MODULE -->//
 
 /**
@@ -45,23 +46,23 @@ class SipaPage {
             keep_params: Typifier.isBoolean(self.config.keep_params) ? self.config.keep_params : true,
         }
         const new_page_id = self.extractIdOfTemplate(page_id, {type: 'page'});
-        if(!options.layout_id && self.config.default_layouts && self.config.default_layouts.hasOwnProperty(new_page_id)) {
+        if (!options.layout_id && self.config.default_layouts && self.config.default_layouts.hasOwnProperty(new_page_id)) {
             options.layout_id = self.config.default_layouts[new_page_id];
         }
         options = SipaHelper.mergeOptions(default_options, options);
-        if(!options.anchor && SipaUrl.getAnchorOfUrl(page_id)) {
+        if (!options.anchor && SipaUrl.getAnchorOfUrl(page_id)) {
             options.anchor = SipaUrl.getAnchorOfUrl(page_id);
-        } else if(!options.anchor && !options.keep_anchor && !SipaUrl.getAnchorOfUrl(page_id)) {
+        } else if (!options.anchor && !options.keep_anchor && !SipaUrl.getAnchorOfUrl(page_id)) {
             SipaUrl.removeAnchor();
         }
-        if(!options.params && Object.keys(SipaUrl.getParamsOfUrl(page_id)).length > 0) {
-            if(options.keep_params) {
+        if (!options.params && Object.keys(SipaUrl.getParamsOfUrl(page_id)).length > 0) {
+            if (options.keep_params) {
                 options.params = SipaHelper.mergeOptions(SipaUrl.getParams(), SipaUrl.getParamsOfUrl(page_id));
             } else {
                 options.params = SipaUrl.getParamsOfUrl(page_id);
             }
         }
-        if(!options.keep_params) {
+        if (!options.keep_params) {
             SipaUrl.removeParams(Object.keys(SipaUrl.getParams()));
         }
         const last_page_id = self.currentPageId();
@@ -69,6 +70,10 @@ class SipaPage {
         const page_path = self._makeFullPath(new_page_id, {type: 'page'});
         const j_body = $('body');
         j_body.attr('data-page-id', new_page_id);
+        if (last_page_id) {
+            SipaHooks.beforeDestroyPage('trigger', null, last_page_id);
+            self.callMethodOfPage(last_page_id, 'onDestroy', [{next_page_id: new_page_id}]);
+        }
         self.loadLayout(layout_id, {
             success: (data, text, response) => {
                 $.ajax({
@@ -79,10 +84,6 @@ class SipaPage {
                     success: (data, text, response) => {
                         const j_container = $(self.page_container_css_selector);
                         const load_function = () => {
-                            SipaHooks.beforeDestroyPage('trigger');
-                            if (last_page_id) {
-                                self.callMethodOfPage(last_page_id, 'onDestroy', [{next_page_id: new_page_id}]);
-                            }
                             j_container.html(data);
                             SipaHooks.beforeInitPage('trigger');
                             if (options.stack_page) {
@@ -108,10 +109,10 @@ class SipaPage {
                             } else {
                                 self.callMethodOfPage(new_page_id, 'onShow', [{last_page_id: last_page_id}]);
                             }
-                            if(Typifier.isFunction(options.success)) {
+                            if (Typifier.isFunction(options.success)) {
                                 options.success(data, text, response);
                             }
-                            if(Typifier.isFunction(options.always)) {
+                            if (Typifier.isFunction(options.always)) {
                                 options.always(data, text, response);
                             }
                         }
@@ -123,10 +124,10 @@ class SipaPage {
                     },
                     error: (response, text, data) => {
                         j_body.attr('data-page-id', last_page_id);
-                        if(Typifier.isFunction(options.error)) {
+                        if (Typifier.isFunction(options.error)) {
                             options.error(response, text, data);
                         }
-                        if(Typifier.isFunction(options.always)) {
+                        if (Typifier.isFunction(options.always)) {
                             options.always(data, text, response);
                         }
                     }
@@ -165,8 +166,8 @@ class SipaPage {
         }
         id = SipaHelper.cutLeadingCharacters(id, type.prefix);
         // cut .html file from path
-        if(id.match(/\/[^\/]+\.html$/)) {
-            id = id.split("/").slice(0,id.split("/").length-1).join("/");
+        if (id.match(/\/[^\/]+\.html$/)) {
+            id = id.split("/").slice(0, id.split("/").length - 1).join("/");
         }
         id = SipaHelper.cutTrailingCharacters(id, type.file_ext);
         id = SipaHelper.cutTrailingCharacters(id, '/');
@@ -273,12 +274,17 @@ class SipaPage {
          * @param {'success'|'always'} type
          */
         const after_loaded_function = (data, text, response, type) => {
-            SipaHooks.beforeDestroyLayout('trigger');
             if (last_layout_id) {
+                SipaHooks.beforeDestroyLayout('trigger', null, last_layout_id);
                 self.callMethodOfLayout(last_layout_id, 'onDestroy', [{next_layout_id: layout_id}]);
             }
             j_body.hide();
-            j_body.html(data);
+            if(self.config.preserve_script_link_tags) {
+                j_body.children().not('script, link').remove();
+                j_body.prepend(data);
+            } else {
+                j_body.html(data);
+            }
             SipaHooks.beforeInitLayout('trigger');
             self.callMethodOfLayout(layout_id, 'onInit', [{last_layout_id: last_layout_id}]);
             if (typeof options[type] === 'function') {
@@ -381,7 +387,7 @@ class SipaPage {
         options = SipaHelper.mergeOptions(default_options, options);
         const type = self.typeOptions(options.type);
         const id_split = template.split('/');
-        const file_name = id_split[id_split.length-1];
+        const file_name = id_split[id_split.length - 1];
         let full_path = SipaHelper.cutLeadingCharacters(template, '/');
         full_path = SipaHelper.cutTrailingCharacters(full_path, type.file_ext);
         if (!full_path.startsWith(type.prefix)) {
@@ -457,7 +463,7 @@ class SipaPage {
         ]);
         self.config = config;
         // init only when running in browser
-        if(typeof window !== 'undefined') {
+        if (typeof window !== 'undefined') {
             SipaPage.initHistoryState();
         }
     }
@@ -465,6 +471,17 @@ class SipaPage {
     static isInitialized() {
         const self = SipaPage;
         return self.config !== null;
+    }
+
+    /**
+     * Reset all states
+     *
+     * Useful for unit testing
+     *
+     */
+    static reset() {
+        $('body').removeAttr('data-page-id');
+        $('body').removeAttr('data-layout-id');
     }
 }
 

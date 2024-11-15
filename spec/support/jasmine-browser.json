@@ -1,12 +1,12 @@
 {
   "specDir": "spec",
   "specFiles": [
-    "app/**/*[Ss]pec.?(m)js"
+    "sipa/**/*[Ss]pec.?(m)js"
   ],
   "helpers": [
     "helpers/**/*.?(m)js"
   ],
-  "browser": "headlessChrome",
+  "browser": "chrome",
   "env": {
     "random": false,
     "stopSpecOnExpectationFailure": false
@@ -21,6 +21,7 @@
     "lib/templates/project/desktop/app/assets/lib/typifier/typifier.js",
     "lib/templates/project/desktop/app/assets/lib/ruby-nice/ruby-nice.js",
     "lib/templates/project/desktop/app/assets/lib/lodash/lodash.js",
+    "lib/templates/project/mobile/app/assets/lib/onsenui/js/onsenui.magynhard.min.js",
     "src/sipa/core/sipa-basic-view.js",
     "src/sipa/core/sipa-events.js",
     "src/sipa/core/sipa-component.js",
@@ -34,6 +35,8 @@
     "src/sipa/tools/sipa-onsen-page.js",
     "src/sipa/tools/sipa-url.js",
     "src/sipa/sipa.js",
-    "src/sipa/sipa-onsen.js"
+    "src/sipa/sipa-onsen.js",
+    "spec/_test_data/views/pages/test/test.js",
+    "spec/_test_data/views/pages/sample/sample.js"
   ]
 }

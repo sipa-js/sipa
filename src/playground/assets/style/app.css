@@ -1,0 +1,5 @@
+.menu-element {
+    display: inline-block;
+    border: 1px solid orange;
+    padding: 8px;
+}

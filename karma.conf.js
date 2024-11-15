@@ -19,14 +19,25 @@ module.exports = function(config) {
     // available frameworks: https://www.npmjs.com/search?q=keywords:karma-adapter
     frameworks: ['jasmine'],
 
+    client: {
+      jasmine: {
+        random: false
+      }
+    },
+
     // list of files / patterns to load in the browser
     files: [
         ...jasmine_config.srcFiles,
-      // { pattern: "**/*.json", included: false },
-      // { pattern: "dict/*.*", included: false },
-        ...jasmine_config.specFiles.map(f => `${"../".repeat(src_dir_folder_segments)}${jasmine_config.specDir}/${f}`)
+        ...jasmine_config.specFiles.map(f => `${"../".repeat(src_dir_folder_segments)}${jasmine_config.specDir}/${f}`),
+      'lib/templates/project/mobile/app/assets/style/app.css',
+      { pattern: 'lib/templates/project/mobile/app/assets/lib/onsenui/css/*.css', included: true },
+      { pattern: 'spec/_test_data/views/**/*.css', included: true }, // CSS, do not include as script
+      { pattern: 'spec/_test_data/views/**/*.html', included: false }, // HTML, do not include as script
     ],
 
+    proxies: {
+      '/views/': '/base/spec/_test_data/views/' // map directory
+    },
 
     // list of files / patterns to exclude
     exclude: [
@@ -65,6 +76,7 @@ module.exports = function(config) {
     // start these browsers
     // available browser launchers: https://www.npmjs.com/search?q=keywords:karma-launcher
     browsers: ['ChromeHeadless'],
+    // browsers: ['Chrome'],
 
 
     // Continuous Integration mode
