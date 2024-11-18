@@ -1,9 +1,7 @@
 <a name="SipaOnsen"></a>
 
 ## SipaOnsen
-SipaOnsen
-
-Framework core class to provide core functionality for OnsenUI.
+SipaOnsenFramework core class to provide core functionality for OnsenUI.
 <a name="SipaOnsen.init"></a>
 
 ### SipaOnsen.init(init_function)

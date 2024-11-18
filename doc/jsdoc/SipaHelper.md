@@ -1,9 +1,7 @@
 <a name="String"></a>
 
 ## SipaHelper
-SipaHelper
-
-Tool helper class with common helper methods
+SipaHelperTool helper class with common helper methods
 
 * [SipaHelper](#SipaHelper)
     * [.mergeOptions(source, addition)](#SipaHelper.mergeOptions) &rarr; <code>Object</code>
@@ -16,9 +14,7 @@ Tool helper class with common helper methods
 <a name="SipaHelper.mergeOptions"></a>
 
 ### SipaHelper.mergeOptions(source, addition) &rarr; <code>Object</code>
-Merge default options (source) with custom options (addition)
-
-Works only fine with one level depth, don't merge nested (Object) options, as references are copied then!
+Merge default options (source) with custom options (addition)Works only fine with one level depth, don't merge nested (Object) options, as references are copied then!
 
 **Returns**: <code>Object</code> - merged object  
 
@@ -30,8 +26,7 @@ Works only fine with one level depth, don't merge nested (Object) options, as re
 
 **Example**
 ```js
-SipaHelper.mergeOptions({ a: 1, b: "two"},{b: "TWO", c: null });
-// => { a: 1, b: "TWO", c: null }
+SipaHelper.mergeOptions({ a: 1, b: "two"},{b: "TWO", c: null });// => { a: 1, b: "TWO", c: null }
 ```
 <a name="SipaHelper.isArrayContainingEmptyValue"></a>
 
@@ -51,18 +46,12 @@ Check if given value is a array (slice) of size 1 and contains type empty
 
 **Example**
 ```js
-let arr = ["one"];
-delete arr[1]:
-arr;
-// => [empty]
-SipaHelper.isArrayContainingEmptyValue(arr);
-// => true
+let arr = ["one"];delete arr[1]:arr;// => [empty]SipaHelper.isArrayContainingEmptyValue(arr);// => true
 ```
 <a name="SipaHelper.validateParams"></a>
 
 ### SipaHelper.validateParams(params)
-Check the given parameter to be of the expected type.
-If is is not valid, throw an exception.
+Check the given parameter to be of the expected type.If is is not valid, throw an exception.
 **Throws**:
 
 - <code>Error</code> throws an error if given parameter is not valid.
@@ -75,14 +64,7 @@ If is is not valid, throw an exception.
 
 **Example**
 ```js
-function Example(param_one, other_param) {
-    SipaHelper.validateParams([
-        {param_name: 'param_one', param_value: param_one, expected_type: 'Object'},
-        {param_name: 'other_param', param_value: other_param, expected_type: 'boolean'},
-    ]);
-}
-Example("one",true);
-// => Invalid parameter 'param_one' given. Expected type 'Object' but got type 'string'!`
+function Example(param_one, other_param) {    SipaHelper.validateParams([        {param_name: 'param_one', param_value: param_one, expected_type: 'Object'},        {param_name: 'other_param', param_value: other_param, expected_type: 'boolean'},    ]);}Example("one",true);// => Invalid parameter 'param_one' given. Expected type 'Object' but got type 'string'!`
 ```
 <a name="SipaHelper.cutLeadingCharacters"></a>
 
@@ -97,8 +79,7 @@ Cut leading characters (string) from given text
 
 **Example**
 ```js
-.cutLeadingCharacters('/some/path/is/that','/')
- // => 'some/path/is/that'
+.cutLeadingCharacters('/some/path/is/that','/') // => 'some/path/is/that'
 ```
 <a name="SipaHelper.cutTrailingCharacters"></a>
 
@@ -113,8 +94,7 @@ Cut trailing characters (string) from given text
 
 **Example**
 ```js
-.cutLeadingCharacters('/some/path/file.ext','.ext')
- // => 'some/path/file'
+.cutLeadingCharacters('/some/path/file.ext','.ext') // => 'some/path/file'
 ```
 <a name="SipaHelper.constantizeString"></a>
 
@@ -128,12 +108,7 @@ Transform the given string into its constant representation.
 
 **Example**
 ```js
-class Foo {
-    static function bar() { console.log("foobar"); }
-}
-
-SipaHelper.constantizeString("Foo").bar();
-// => foobar
+class Foo {    static function bar() { console.log("foobar"); }}SipaHelper.constantizeString("Foo").bar();// => foobar
 ```
 <a name="SipaParamValidation"></a>
 

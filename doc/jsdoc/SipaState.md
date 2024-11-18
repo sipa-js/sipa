@@ -1,16 +1,7 @@
 <a name="SipaState"></a>
 
 ## SipaState
-Tool class to store global states at different persistence levels.
-
-Level 1 (variable): Data will be lost after reload (SipaState.LEVEL.VARIABLE)
-                    You can even store references and functions!
-
-Level 2 (session): Data will be lost when browser is closed (SipaState.LEVEL.SESSION)
-                   You can not store references but thanks to SipaSerializer isolated functions are possible!
-
-Level 3 (storage): Data will be lost when clearing browser cache only (SipaState.LEVEL.STORAGE)
-                   You can not store references but thanks to SipaSerializer isolated functions are possible!
+Tool class to store global states at different persistence levels.Level 1 (variable): Data will be lost after reload (SipaState.LEVEL.VARIABLE)                    You can even store references and functions!Level 2 (session): Data will be lost when browser is closed (SipaState.LEVEL.SESSION)                   You can not store references but thanks to SipaSerializer isolated functions are possible!Level 3 (storage): Data will be lost when clearing browser cache only (SipaState.LEVEL.STORAGE)                   You can not store references but thanks to SipaSerializer isolated functions are possible!
 
 * [SipaState](#SipaState)
     * [.set(key, value, options)](#SipaState.set)
@@ -82,8 +73,7 @@ Set value in persistence level 3 (storage)
 <a name="SipaState.getLevel"></a>
 
 ### SipaState.getLevel(key) &rarr; <code>SipaState.LEVEL</code> \| <code>null</code>
-Get the persistence level of the value stored at the given key.
-If key is not set at any level, returns null.
+Get the persistence level of the value stored at the given key.If key is not set at any level, returns null.
 
 | Param | Type |
 | --- | --- |

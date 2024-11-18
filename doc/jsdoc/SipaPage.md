@@ -1,9 +1,7 @@
 <a name="SipaPage"></a>
 
 ## SipaPage
-SipaPage
-
-Tool class with page loader with included router
+SipaPageTool class with page loader with included router
 
 * [SipaPage](#SipaPage)
     * [.config](#SipaPage.config) : <code>SipaPageConfig</code>
@@ -20,6 +18,7 @@ Tool class with page loader with included router
     * [.initHistoryState()](#SipaPage.initHistoryState)
     * [.stackHistoryState(state, replace_state)](#SipaPage.stackHistoryState)
     * [.setConfig(config)](#SipaPage.setConfig)
+    * [.reset()](#SipaPage.reset)
     * [.PageType](#SipaPage.PageType) : <code>Object</code>
 
 <a name="SipaPage.config"></a>
@@ -162,16 +161,12 @@ Set the configuration of pages and layouts
 
 **Example**
 ```js
-SipaPage.setConfig({
-      // default layout for all pages
-      default_layout: 'default',
-      // specific layouts for some pages { <page-name>: <layout-name> }
-      default_layouts: {
-          // overwrites the layout for the page 'login-page' with layout 'mini-dialog'
-          'login-page': 'mini-dialog'
-      }
-  });
+SipaPage.setConfig({      // default layout for all pages      default_layout: 'default',      // specific layouts for some pages { <page-name>: <layout-name> }      default_layouts: {          // overwrites the layout for the page 'login-page' with layout 'mini-dialog'          'login-page': 'mini-dialog'      }  });
 ```
+<a name="SipaPage.reset"></a>
+
+### SipaPage.reset()
+Reset all statesUseful for unit testing
 <a name="SipaPage.PageType"></a>
 
 ### SipaPage.PageType : <code>Object</code>

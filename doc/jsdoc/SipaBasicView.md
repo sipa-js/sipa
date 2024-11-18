@@ -15,9 +15,7 @@ Check if the current view is loaded
 
 **Example**
 ```js
-// ImprintPage is loaded
-LoginPage.isLoaded();
-// => false
+// ImprintPage is loadedLoginPage.isLoaded();// => false
 ```
 <a name="SipaBasicView.className"></a>
 
@@ -26,12 +24,7 @@ Get the class name of the current view
 
 **Example**
 ```js
-class MyPage extends SipaBasicView {
-}
-
-const a = MyPage;
-a.className()
-// => 'MyPage'
+class MyPage extends SipaBasicView {}const a = MyPage;a.className()// => 'MyPage'
 ```
 <a name="SipaBasicView.type"></a>
 
@@ -40,9 +33,5 @@ Get the type of the current view
 
 **Example**
 ```js
-class MyLayout extends SipaBasicView {
-}
-
-MyLayout.type()
-// => 'layout'
+class MyLayout extends SipaBasicView {}MyLayout.type()// => 'layout'
 ```

@@ -1,9 +1,7 @@
 <a name="String"></a>
 
 ## SipaOnsenPage
-SipaOnsenPage
-
-Tool class with page loader with included router for OnsenUI
+SipaOnsenPageTool class with page loader with included router for OnsenUI
 
 * [SipaOnsenPage](#SipaOnsenPage)
     * [.config](#SipaOnsenPage.config) : [<code>SipaOnsenPageConfig</code>](#SipaOnsenPageConfig)
@@ -22,6 +20,7 @@ Tool class with page loader with included router for OnsenUI
     * [.addStatusBarMock()](#SipaOnsenPage.addStatusBarMock)
     * [.removeStatusBarMock()](#SipaOnsenPage.removeStatusBarMock)
     * [._initStatusBarMock()](#SipaOnsenPage._initStatusBarMock)
+    * [.reset()](#SipaOnsenPage.reset)
     * [.OnsenOptions](#SipaOnsenPage.OnsenOptions) : <code>Object</code>
 
 <a name="SipaOnsenPage.config"></a>
@@ -150,15 +149,7 @@ Set the configuration of pages and layouts
 
 **Example**
 ```js
-SipaOnsenPage.setConfig({
-      // default layout for all pages
-      default_layout: 'default',
-      // specific layouts for some pages { <page-name>: <layout-name> }
-      default_layouts: {
-          // overwrites the layout for the page 'login-page' with layout 'mini-dialog'
-          'login-page': 'mini-dialog'
-      }
-  });
+SipaOnsenPage.setConfig({      // default layout for all pages      default_layout: 'default',      // specific layouts for some pages { <page-name>: <layout-name> }      default_layouts: {          // overwrites the layout for the page 'login-page' with layout 'mini-dialog'          'login-page': 'mini-dialog'      }  });
 ```
 <a name="SipaOnsenPage.popPage"></a>
 
@@ -182,6 +173,10 @@ Remove status bar mock of the app
 
 ### SipaOnsenPage.\_initStatusBarMock()
 Initialize status bar mock - do not run before first page is loaded!
+<a name="SipaOnsenPage.reset"></a>
+
+### SipaOnsenPage.reset()
+Reset all statesUseful for unit testing
 <a name="SipaOnsenPage.OnsenOptions"></a>
 
 ### SipaOnsenPage.OnsenOptions : <code>Object</code>

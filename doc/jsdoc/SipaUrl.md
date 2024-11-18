@@ -1,10 +1,7 @@
 <a name="SipaUrl"></a>
 
 ## SipaUrl
-SipaUrl
-
-Tool class to access and manipulate
-the current or given URLs
+SipaUrlTool class to access and manipulatethe current or given URLs
 
 * [SipaUrl](#SipaUrl)
     * [.getUrl()](#SipaUrl.getUrl) &rarr; <code>string</code>
@@ -34,8 +31,7 @@ Get the current address of the website
 
 **Example**
 ```js
-SipaUrl.getUrl();
-// => https://my-website.com/web/?page=abc&param=ok
+SipaUrl.getUrl();// => https://my-website.com/web/?page=abc&param=ok
 ```
 <a name="SipaUrl.getProtocol"></a>
 
@@ -44,8 +40,7 @@ Get the protocol of the current url (without colon)
 
 **Example**
 ```js
-SipaUrl.getProtocol();
-// => 'https'
+SipaUrl.getProtocol();// => 'https'
 ```
 <a name="SipaUrl.getHostName"></a>
 
@@ -54,10 +49,7 @@ Get the host name of the current url
 
 **Example**
 ```js
-localhost
-     127.0.0.1
-     localhost:7000
-     my-domain.com
+localhost     127.0.0.1     localhost:7000     my-domain.com
 ```
 <a name="SipaUrl.getParams"></a>
 
@@ -66,9 +58,7 @@ Get all params of the current URL
 
 **Example**
 ```js
-// URL: https://my-business.com/?one=1&stat=true
-SipaUrl.getParams();
-// => { "one": "1", "stat": "true" }
+// URL: https://my-business.com/?one=1&stat=trueSipaUrl.getParams();// => { "one": "1", "stat": "true" }
 ```
 <a name="SipaUrl.setParams"></a>
 
@@ -82,9 +72,7 @@ Set or overwrite given parameters of the current url
 
 **Example**
 ```js
-// URL: https://my-business.com/?one=1&stat=true&that=cool
-SipaUrl.setParams({ "more": "better", "stat": "false"});
-// URL: https://my-business.com/?one=1&stat=false&that=cool&more=better
+// URL: https://my-business.com/?one=1&stat=true&that=coolSipaUrl.setParams({ "more": "better", "stat": "false"});// URL: https://my-business.com/?one=1&stat=false&that=cool&more=better
 ```
 <a name="SipaUrl.setParam"></a>
 
@@ -99,9 +87,7 @@ Set or overwrite one specific parameter of the current url
 
 **Example**
 ```js
-// URL: https://my-business.com/?super=banana&coca=cola
-SipaUrl.setParam("pepsi","coke");
-// URL: https://my-business.com/?super=banana&coca=cola&pepsi=coke
+// URL: https://my-business.com/?super=banana&coca=colaSipaUrl.setParam("pepsi","coke");// URL: https://my-business.com/?super=banana&coca=cola&pepsi=coke
 ```
 <a name="SipaUrl.removeParams"></a>
 
@@ -115,9 +101,7 @@ Remove given params of the current url
 
 **Example**
 ```js
-// URL: https://my-business.com/?some=stuff&foo=bar&more=power
-SipaUrl.removeParams(["some","more"]);
-// URL: https://my-business.com/?foo=bar
+// URL: https://my-business.com/?some=stuff&foo=bar&more=powerSipaUrl.removeParams(["some","more"]);// URL: https://my-business.com/?foo=bar
 ```
 <a name="SipaUrl.removeParam"></a>
 
@@ -131,9 +115,7 @@ Remove given param of the current url
 
 **Example**
 ```js
-// URL: https://my-business.com/?some=stuff&foo=bar
-SipaUrl.removeParam("foo");
-// URL: https://my-business.com/?some=stuff
+// URL: https://my-business.com/?some=stuff&foo=barSipaUrl.removeParam("foo");// URL: https://my-business.com/?some=stuff
 ```
 <a name="SipaUrl.setAnchor"></a>
 
@@ -152,9 +134,7 @@ Remove the anchor of the current URL
 
 **Example**
 ```js
-// URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
-SipaUrl.removeAnchor();
-// URL: https://my-business.com/?some=stuff&foo=bar
+// URL: https://my-business.com/?some=stuff&foo=bar#my-anchorSipaUrl.removeAnchor();// URL: https://my-business.com/?some=stuff&foo=bar
 ```
 <a name="SipaUrl.getAnchor"></a>
 
@@ -175,9 +155,7 @@ Creates an url query string based on the given key<->value object
 
 **Example**
 ```js
-{ a: 1, b: [1,2,3], c: "test space" }
- =>
- 'a=1&b=1&b=2&b=3&c=test%20space'
+{ a: 1, b: [1,2,3], c: "test space" } => 'a=1&b=1&b=2&b=3&c=test%20space'
 ```
 <a name="SipaUrl.getParamsOfUrl"></a>
 
@@ -195,8 +173,7 @@ Create a JSON, containing the parameters of the given url
 
 **Example**
 ```js
-SipaUrl.getParamsOfUrl("https://my-business.com/?some=stuff&foo=bar");
-// => { "some": "stuff", "foo": "bar" }
+SipaUrl.getParamsOfUrl("https://my-business.com/?some=stuff&foo=bar");// => { "some": "stuff", "foo": "bar" }
 ```
 <a name="SipaUrl.removeParamsOfUrl"></a>
 

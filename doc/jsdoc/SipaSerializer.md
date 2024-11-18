@@ -1,19 +1,7 @@
 <a name="SipaSerializer"></a>
 
 ## SipaSerializer
-Serializer to serialize data of primitive types or even complex Objects,
-to ensure to be stored as valid JSON and can be deserialized back without data loss.
-
-Includes support for
-- Boolean, Number, String, Array, Object, null (native JS[SON] support)
-And special type handling to support the following types
-- Functions
-- RegExp, Date
-- NaN, Infinity, undefined
-- empty (special type when deleting an item of an array)
-
-The special types are escaped by an internal escaping when serialized.
-See SipaSerializer.STORAGE_PLACEHOLDERS for the escapes.
+Serializer to serialize data of primitive types or even complex Objects,to ensure to be stored as valid JSON and can be deserialized back without data loss.Includes support for- Boolean, Number, String, Array, Object, null (native JS[SON] support)And special type handling to support the following types- Functions- RegExp, Date- NaN, Infinity, undefined- empty (special type when deleting an item of an array)The special types are escaped by an internal escaping when serialized.See SipaSerializer.STORAGE_PLACEHOLDERS for the escapes.
 
 * [SipaSerializer](#SipaSerializer)
     * [.serialize(value)](#SipaSerializer.serialize) &rarr; <code>string</code> \| <code>null</code>
@@ -84,10 +72,7 @@ Deserialize a valid javascript string into a callable function
 <a name="SipaSerializer.deepSerializeSpecialTypes"></a>
 
 ### SipaSerializer.deepSerializeSpecialTypes(obj) &rarr; <code>Array</code> \| <code>Object</code>
-Serializes (escapes) all special types within an Array or Object
-to be stored in JSON without data loss.
-
-Original Array or Object is cloned and will not be manipulated.
+Serializes (escapes) all special types within an Array or Objectto be stored in JSON without data loss.Original Array or Object is cloned and will not be manipulated.
 
 | Param | Type |
 | --- | --- |
@@ -96,9 +81,7 @@ Original Array or Object is cloned and will not be manipulated.
 <a name="SipaSerializer.deepDeserializeSpecialTypes"></a>
 
 ### SipaSerializer.deepDeserializeSpecialTypes(obj) &rarr; <code>Array</code> \| <code>Object</code>
-Deserializes (unescapes) all special types of the given Array or Object
-
-Original Array or Object is cloned and will not be manipulated.
+Deserializes (unescapes) all special types of the given Array or ObjectOriginal Array or Object is cloned and will not be manipulated.
 
 | Param | Type |
 | --- | --- |

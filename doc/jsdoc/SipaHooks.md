@@ -1,12 +1,11 @@
 <a name="SipaHooks"></a>
 
 ## SipaHooks
-SipaHooks
-
-App hook manager
+SipaHooksApp hook manager
 
 * [SipaHooks](#SipaHooks)
     * [.beforeInitPage(type, func, page_id)](#SipaHooks.beforeInitPage)
+    * [.beforeShowPage(type, func, page_id)](#SipaHooks.beforeShowPage)
     * [.beforeDestroyPage(type, func, page_id)](#SipaHooks.beforeDestroyPage)
     * [.beforeInitLayout(type, func, layout_id)](#SipaHooks.beforeInitLayout)
     * [.beforeDestroyLayout(type, func, layout_id)](#SipaHooks.beforeDestroyLayout)
@@ -26,10 +25,19 @@ Set, remove or trigger event 'beforeInitPage'
 
 **Example**
 ```js
-SipaHooks.beforeInitPage('on', () => {
-    console.log("This is run before onInit() of any page is executed!");
-}
+SipaHooks.beforeInitPage('on', () => {    console.log("This is run before onInit() of any page is executed!");}
 ```
+<a name="SipaHooks.beforeShowPage"></a>
+
+### SipaHooks.beforeShowPage(type, func, page_id)
+Set, remove or trigger event 'beforeShowPage'
+
+| Param | Type | Description |
+| --- | --- | --- |
+| type | [<code>HookType</code>](#SipaHooks.HookType) |  |
+| func | <code>function</code> | function to set or remove, ignored if parameter type is 'trigger' |
+| page_id | <code>string</code> |  |
+
 <a name="SipaHooks.beforeDestroyPage"></a>
 
 ### SipaHooks.beforeDestroyPage(type, func, page_id)
@@ -44,9 +52,7 @@ Set, remove or trigger event 'beforeDestroyPage'
 
 **Example**
 ```js
-SipaHooks.beforeDestroyPage('on', () => {
-    console.log("This is run before onDestroy() of any page is executed!");
-}
+SipaHooks.beforeDestroyPage('on', () => {    console.log("This is run before onDestroy() of any page is executed!");}
 ```
 <a name="SipaHooks.beforeInitLayout"></a>
 
@@ -62,9 +68,7 @@ Set, remove or trigger event 'beforeInitLayout'
 
 **Example**
 ```js
-SipaHooks.beforeInitLayout('on', () => {
-    console.log("This is run before onInit() of any layout is executed!");
-}
+SipaHooks.beforeInitLayout('on', () => {    console.log("This is run before onInit() of any layout is executed!");}
 ```
 <a name="SipaHooks.beforeDestroyLayout"></a>
 
@@ -80,9 +84,7 @@ Set, remove or trigger event 'beforeDestroyLayout'
 
 **Example**
 ```js
-SipaHooks.beforeDestroyLayout('on', () => {
-    console.log("This is run before onDestroy) of any layout is executed!");
-}
+SipaHooks.beforeDestroyLayout('on', () => {    console.log("This is run before onDestroy) of any layout is executed!");}
 ```
 <a name="SipaHooks.HookType"></a>
 

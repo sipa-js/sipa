@@ -1,9 +1,7 @@
 <a name="Sipa"></a>
 
 ## Sipa
-Sipa
-
-Framework core class to provide core functionality.
+SipaFramework core class to provide core functionality.
 
 * [Sipa](#Sipa)
     * [.getVersion()](#Sipa.getVersion) &rarr; <code>string</code>
@@ -16,9 +14,7 @@ Get the version of the used library
 <a name="Sipa.init"></a>
 
 ### Sipa.init(init_function)
-Callback function to fire to init the whole Sipa app.
-
-This is the entry point for your app. The given callback is called after Sipa is initialized.
+Callback function to fire to init the whole Sipa app.This is the entry point for your app. The given callback is called after Sipa is initialized.
 
 | Param | Type |
 | --- | --- |
@@ -27,7 +23,5 @@ This is the entry point for your app. The given callback is called after Sipa is
 
 **Example**
 ```js
-Sipa.init(() => {
-  SipaPage.load('login');
-});
+Sipa.init(() => {  SipaPage.load('login');});
 ```
