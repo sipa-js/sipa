@@ -1,3 +1,9 @@
+//<!-- MODULE -->//
+if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
+    SipaTest = require('./../tools/sipa-test');
+}
+//<!-- /MODULE -->//
+
 /**
  * Easy but powerful component class implementation to create your reusable components
  */
@@ -37,6 +43,7 @@ class SipaComponent {
      * @param {boolean} options.sipa_cache=true use node caching for templates
      * @param {string} options.sipa_classes additional classes for component tag
      * @param {string} options.sipa_alias alias to access from parent by uniq accessor name
+     * @param {number} options.sipa_render_period=100 max once per period (ms), a component is rerendered again on data changed. Set to 0 for unlimited renderings at the same time.
      * @param {Object<string, string>} options.sipa_custom_attributes additional custom attributes on the component tag
      * @param {string} options.content HTML content inside the component element, available for slots
      *
@@ -70,7 +77,7 @@ class SipaComponent {
         this._meta.sipa._destroyed ??= false;
         this._meta.sipa._data_changed ??= true;
         this._meta.sipa._cached_node ??= null;
-        this._meta.sipa._render_period ??= 100;
+        this._meta.sipa._render_period ??= typeof options.sipa_render_period !== "undefined" ? options.sipa_render_period : 100;
         this._data = {};
         this._meta.sipa.children = undefined;
         if (options.content) {
@@ -448,7 +455,7 @@ class SipaComponent {
                 _this.syncNestedReferences();
             }
         }
-        const render_period = (typeof options.render_period !== "undefined") ? options.render_period : this._meta.sipa._render_period;
+        const render_period = SipaTest.isTestingMode() ? 0 : (typeof options.render_period !== "undefined") ? options.render_period : this._meta.sipa._render_period;
         if (render_period === 0) {
             renderFunc(options);
         } else {
@@ -1540,3 +1547,9 @@ SipaComponent.InstanceAlreadyDestroyedError = class extends Error {
         this.name = "SipaComponent.InstanceAlreadyDestroyedError";
     }
 }
+
+//<!-- MODULE -->//
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = SipaComponent;
+}
+//<!-- /MODULE -->//
