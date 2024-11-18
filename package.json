@@ -20,6 +20,7 @@
     "debug": "CWD=$(pwd) && cd $PROJECT_DIR && node $CWD/bin/cli/cli.js n",
     "doc": "node bin/doc.js",
     "link_dev": "sudo npm link",
+    "unlink_dev": "sudo npm rm --global sipa",
     "release": "npm publish --access public",
     "test": "karma start --single-run",
     "test_browser": "karma start --single-run --browsers Chrome",
