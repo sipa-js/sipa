@@ -8,6 +8,12 @@
     */
     preserve_script_link_tags: false,
 ```
+### New class for your tests
+When writing tests, use the `beforeAll()` method in your spec tests and run
+```
+SipaTest.enableTestMode()
+```
+to ensure optimized testing capabilities. For example performance optimizations with lazy rendering are disabled, to ensure you get the rendered results immediately and do not need to delay the test run.
 
 # 0.9.38
 * Make jQuery cache for loading pages/layouts configurable.
