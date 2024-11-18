@@ -181,6 +181,12 @@ class SipaOnsenPage {
         const path = self.getOnsenNavigator()?.topPage?._meta?.PageLoader?.page;
         if (path) {
             return self.extractIdOfTemplate(path);
+        } else {
+            const page_stack = self.getOnsenNavigator()?.querySelectorAll("ons-page");
+            if(page_stack?.length > 0) {
+                const id = [...page_stack].getLast()?.getAttribute("data-page-id");
+                return id;
+            }
         }
     }
 
@@ -243,7 +249,12 @@ class SipaOnsenPage {
                     self.callMethodOfLayout(last_layout_id, 'onDestroy', [{next_layout_id: layout_id}]);
                 }
                 j_body.hide();
-                j_body.html(data);
+                if(self.config.preserve_script_link_tags) {
+                    j_body.children().not('script, link').remove();
+                    j_body.prepend(data);
+                } else {
+                    j_body.html(data);
+                }
                 SipaOnsenHooks.beforeInitLayout('trigger', null, layout_id);
                 self.callMethodOfLayout(layout_id, 'onInit', [{last_layout_id: last_layout_id}]);
                 if (typeof options[type] === 'function') {
@@ -424,9 +435,10 @@ class SipaOnsenPage {
                 if (self._is_loading_history_tree || self._getPageStack().length === 0) {
                     return;
                 }
-                const page_id = self.extractIdOfTemplate(event.target._meta.PageLoader.page);
+                const meta_page = event.target?._meta?.PageLoader?.page;
+                const page_id = (meta_page ? self.extractIdOfTemplate(meta_page) : event.target.getAttribute("data-page-id")) || self._current_page.page_id;
                 let last_page_id = null;
-                if(event.target._meta.PageLoader.parent.pages?.length > 1) {
+                if(event.target._meta?.PageLoader?.parent?.pages?.length > 1) {
                     last_page_id = self.extractIdOfTemplate(event.target._meta.PageLoader.parent.pages[event.target._meta.PageLoader.parent.pages.length-2]._meta.PageLoader.page);
                 } else if (self._current_page.last_page_id) {
                     last_page_id = self._current_page.last_page_id;
@@ -615,6 +627,17 @@ class SipaOnsenPage {
         SipaOnsenHooks.beforeInitPage("trigger", null, page_id);
         self.callMethodOfPage(page_id, 'onInit', [{last_page_id: last_page_id}]);
         self._initializeBackButton();
+    }
+
+    /**
+     * Reset all states
+     *
+     * Useful for unit testing
+     *
+     */
+    static reset() {
+        $('body').removeAttr('data-page-id');
+        $('body').removeAttr('data-layout-id');
     }
 }
 

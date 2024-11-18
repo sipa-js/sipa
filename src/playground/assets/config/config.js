@@ -17,9 +17,4 @@ SipaPage.setConfig({
        page and layout requests, to avoid browser caching
      */
     cache_page_layout_requests: false,
-    /*
-        Preserve <link> and <script> children tags of body on layout loading
-        Useful when you inject scripts or stylesheets on the body dynamically
-    */
-    preserve_script_link_tags: false,
 });

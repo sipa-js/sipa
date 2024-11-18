@@ -44,7 +44,7 @@ class SipaHooks {
      * @param {string} page_id
      */
     static beforeShowPage(type, func, page_id) {
-        const self = SipaOnsenHooks;
+        const self = SipaHooks;
         switch (type) {
             case 'on':
                 self._addFunction(self._before_show_page_functions, func);

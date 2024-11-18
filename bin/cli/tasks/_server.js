@@ -32,8 +32,8 @@ class SipaCliServer {
     static _runLiveServerAndSass() {
         const self = SipaCliServer;
         (async function run() {
-            const host = SipaCliTools.readProjectSipaConfig().development_server?.host || '7000';
-            const port = SipaCliTools.readProjectSipaConfig().development_server?.port || '0.0.0.0';
+            const host = SipaCliTools.readProjectSipaConfig().development_server?.host || '0.0.0.0';
+            const port = SipaCliTools.readProjectSipaConfig().development_server?.port || '7000';
             const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/sipa-live-server/bin/sipa-live-server.js`;
             const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/sipa-live-server/bin/sipa-live-server.js`);
             let live_server_js_path = null;

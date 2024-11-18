@@ -20,11 +20,11 @@
     "debug": "CWD=$(pwd) && cd $PROJECT_DIR && node $CWD/bin/cli/cli.js n",
     "doc": "node bin/doc.js",
     "link_dev": "sudo npm link",
+    "unlink_dev": "sudo npm rm --global sipa",
     "release": "npm publish --access public",
-    "test": "node node_modules/jasmine-browser-runner/bin/jasmine-browser-runner runSpecs",
-    "karma": "node karma.conf.js",
-    "test_browser": "node node_modules/jasmine-browser-runner/bin/jasmine-browser-runner serve",
-    "unlink_dev": "sudo npm rm --global sipa"
+    "test": "karma start --single-run",
+    "test_browser": "karma start --single-run --browsers Chrome",
+    "test_browser_keep": "karma start --no-single-run --browsers Chrome"
   },
   "files": [
     "bin/cli/**/*",

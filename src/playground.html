@@ -21,6 +21,17 @@
         <script src="sipa/tools/sipa-page.js"></script>
         <script src="sipa/tools/sipa-url.js"></script>
         <script src="sipa/sipa.js"></script>
+        <!-- playground -->
+        <script src="playground/assets/config/config.js"></script>
+        <script src="playground/assets/config/hooks.js"></script>
+        <script src="playground/assets/config/init.js"></script>
+        <link rel="stylesheet" href="playground/assets/style/app.css">
+        <!-- pages -->
+        <script src="views/layouts/default/default.js"></script>
+        <link rel="stylesheet" href="views/layouts/default/default.css">
+        <script src="views/pages/home/home.js"></script>
+        <link rel="stylesheet" href="views/pages/home/home.css">
+        <!-- components -->
         <script src="playground/assets/components/list-component/list-component.js"></script>
         <link rel="stylesheet" href="playground/assets/components/list-component/list-component.css">
         <script src="playground/assets/components/list-component/list-item-component/list-item-component.js"></script>
@@ -33,28 +44,8 @@
         <link rel="stylesheet" href="playground/assets/components/list-component/list-item-component/list-item-molecule-component/list-item-molecule-component.css">
         <script src="playground/assets/components/panel-component/panel-component.js"></script>
         <link rel="stylesheet" href="playground/assets/components/panel-component/panel-component.css">
-        <script>
-            Sipa.init(() => {
-                SipaComponent.init();
-            });
-        </script>
     </head>
 <body>
-    <h1>Playground</h1>
-    Test HTML file, including Sipa for testing and debugging purpose only.
-    <h1>Käse</h1>
-    <panel-component>
-        Some Content
-        <b>more</b>
-        test
-        <div slot="header">
-            PRiest
-            <list-component sipa-alias="gorast" sipa-hidden="false" sipa-cache="false"></list-component>
-        </div>
-        Kola
-        <h3>FOOTER</h3>
-    </panel-component>
-    <h2>Case</h2>
-    <list-component sipa-hidden="false" sipa-cache="false"></list-component>
+
 </body>
 </html>

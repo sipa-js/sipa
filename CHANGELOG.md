@@ -1,3 +1,14 @@
+# 0.9.39
+## Migration steps from 0.9.38 to 0.9.39
+### New option in your app/config/config.js
+```js
+    /*
+        Preserve <link> and <script> children tags of body on layout loading
+        Useful when you inject scripts or stylesheets on the body dynamically
+    */
+    preserve_script_link_tags: false,
+```
+
 # 0.9.38
 * Make jQuery cache for loading pages/layouts configurable.
 
