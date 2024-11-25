@@ -808,6 +808,13 @@ class SipaComponent {
     /**
      * Get instance of current component class by sipa-id
      *
+     * @example
+     *
+     * <example-component sipa-id="1">Initialized component</example-component>
+     *
+     * SipaComponent.bySipaId(1);
+     * // => ExampleComponent
+     *
      * @param {number} sipa_id
      * @return {undefined|SipaComponent}
      */
@@ -819,6 +826,25 @@ class SipaComponent {
         } else {
             return SipaComponent._component_instances.find(x => x.constructor.name === component_class_name && x._meta.sipa.id === sipa_id);
         }
+    }
+
+    /**
+     * Get instance of current component class by id attribute
+     *
+     * @example
+     *
+     * <example-component attr-id="my-unique-id">Component declaration in body</example-component>
+     *
+     * SipaComponent.byId("my-unique-id");
+     * // => ExampleComponent
+     *
+     * @param {number} id
+     * @return {undefined|SipaComponent}
+     */
+    static byId(id) {
+        const self = SipaComponent;
+        const component_tag_name = LuckyCase.toUpperDashCase(`${this.name}`); // e.g. SipaComponent or ancestor class
+        return SipaComponent.instanceOfElement(document.getElementById(id), component_tag_name);
     }
 
     /**
@@ -1024,12 +1050,12 @@ class SipaComponent {
      * SipaComponent.instanceOfElement(top_span);
      * // => ExampleComponent
      */
-    static instanceOfElement(element) {
+    static instanceOfElement(element, component_tag_name = null) {
         const self = SipaComponent;
         // get component main element
         let component = element;
         // component will be null when reaching parent of html
-        while (component !== null && component.getAttribute('sipa-id') === null) {
+        while ((component !== null && component.getAttribute('sipa-id') === null) || (component_tag_name === null || component !== null && component?.getAttribute('sipa-id') !== null && (component_tag_name !== "SIPA-COMPONENT" && component?.tagName !== component_tag_name))) {
             component = component.parentElement;
         }
         let instance = null;

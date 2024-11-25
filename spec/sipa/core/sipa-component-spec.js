@@ -249,6 +249,49 @@ describe('SipaComponent', () => {
             expect(document.querySelectorAll(compo.selector()).length).toEqual(0);
         });
     });
+    describe('.bySipaId', () => {
+        beforeEach(() => {
+        });
+        it('get SpecOneComponent by SipaComponent.bySipaId', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(SipaComponent.bySipaId(compo._meta.sipa.id)).toEqual(compo);
+        });
+        it('get SpecOneComponent by SpecOneComponent.bySipaId', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(SpecOneComponent.bySipaId(compo._meta.sipa.id)).toEqual(compo);
+        });
+        it('do not get SpecOneComponent by SpecChildComponent.bySipaId', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(SpecChildComponent.bySipaId(compo._meta.sipa.id)).toEqual(undefined);
+        });
+    });
+    describe('.byId', () => {
+        beforeEach(() => {
+            $("playground").remove();
+            $("body").append($(`<playground><div class="by-id"></div></playground>`)[0]);
+        });
+        it('get SpecOneComponent by SipaComponent.byId', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            compo.element().setAttribute("id", "by-id-1-test");
+            expect(SipaComponent.byId("by-id-1-test")).toEqual(compo);
+        });
+        it('get SpecOneComponent by SpecOneComponent.byId', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            compo.element().setAttribute("id", "by-id-2-test");
+            expect(SpecOneComponent.byId("by-id-2-test")).toEqual(compo);
+        });
+        it('do not get SpecOneComponent by SpecChildComponent.byId', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            compo.element().setAttribute("id", "by-id-3-test");
+            expect(SpecChildComponent.byId("by-id-3-test")).toEqual(undefined);
+        });
+    });
     describe('.destroy / .isDestroyed', () => {
         beforeEach(() => {
             $("playground").remove();
