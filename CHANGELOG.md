@@ -1,3 +1,21 @@
+# 0.9.40
+## New method
+A new method `SipaComponent.byId(id)` has been added to the `SipaComponent` class for easier referencing an element from the HTML DOM. It returns the component with the given id attribute.
+
+For example:
+
+```html
+<body>
+  <div class="some-container">
+    <example-component attr-id="my-custom-id">Some content</example-component>
+  </div>
+</body>
+```
+
+```javascript
+ ExampleComponent.byId("my-custom-id"); // get instance of ExampleComponent with given attribute id
+```
+
 # 0.9.39
 ## Migration steps from 0.9.38 to 0.9.39
 ### New option in your app/config/config.js
