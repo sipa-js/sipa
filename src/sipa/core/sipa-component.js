@@ -1028,10 +1028,13 @@ class SipaComponent {
     }
 
     /**
-     * Get the component instance of the given element or one of its parent
+     * Get the component instance of the given element or one of its parent.
+     *
+     * Be aware, that SipaComponent.instanceOfElement can find any component,
+     * while ExampleComponent.instanceOfElement can only find ExampleComponent instances but not find a OtherComponent instance.
      *
      * @param {HTMLElement} element
-     * @returns {SipaComponent}
+     * @returns {SipaComponent|undefined} returns undefined if no instance is found
      *
      * @example
      *
@@ -1052,11 +1055,22 @@ class SipaComponent {
      */
     static instanceOfElement(element, component_tag_name = null) {
         const self = SipaComponent;
+        if(component_tag_name === null) {
+            component_tag_name = LuckyCase.toUpperDashCase(`${this.name}`);
+        }
         // get component main element
         let component = element;
         // component will be null when reaching parent of html
-        while ((component !== null && component.getAttribute('sipa-id') === null) || (component_tag_name === null || component !== null && component?.getAttribute('sipa-id') !== null && (component_tag_name !== "SIPA-COMPONENT" && component?.tagName !== component_tag_name))) {
-            component = component.parentElement;
+        while (component !== null) {
+            if(component.getAttribute('sipa-id') === null) {
+                component = component.parentElement;
+            } else {
+                if(component_tag_name === "SIPA-COMPONENT" || component?.tagName === component_tag_name) {
+                    break;
+                } else {
+                    component = component.parentElement;
+                }
+            }
         }
         let instance = null;
         if (component) {
@@ -1068,7 +1082,7 @@ class SipaComponent {
         if (instance) {
             return instance;
         } else {
-            console.error(`Instance of element could not be retrieved.`, element);
+            console.error(`Instance of type '${LuckyCase.toPascalCase(component_tag_name)}' for element could not be retrieved.`, element);
         }
     }
 

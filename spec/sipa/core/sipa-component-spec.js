@@ -252,6 +252,11 @@ describe('SipaComponent', () => {
     describe('.bySipaId', () => {
         beforeEach(() => {
         });
+        it('get SipaComponent by SipaComponent.bySipaId', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(SipaComponent.bySipaId(compo._meta.sipa.id)).toEqual(compo);
+        });
         it('get SpecOneComponent by SipaComponent.bySipaId', function () {
             const compo = new SpecOneComponent();
             compo.append("playground");
@@ -267,11 +272,27 @@ describe('SipaComponent', () => {
             compo.append("playground");
             expect(SpecChildComponent.bySipaId(compo._meta.sipa.id)).toEqual(undefined);
         });
+        it('do not get SipaComponent by SpecChildComponent.bySipaId', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(SpecChildComponent.bySipaId(compo._meta.sipa.id)).toEqual(undefined);
+        });
+        it('do not get SipaComponent by SpecChildComponent.bySipaId', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(SpecChildComponent.bySipaId(compo._meta.sipa.id)).toEqual(undefined);
+        });
     });
     describe('.byId', () => {
         beforeEach(() => {
             $("playground").remove();
             $("body").append($(`<playground><div class="by-id"></div></playground>`)[0]);
+        });
+        it('get SipaComponent by SipaComponent.byId', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            compo.element().setAttribute("id", "by-id-1-test");
+            expect(SipaComponent.byId("by-id-1-test")).toEqual(compo);
         });
         it('get SpecOneComponent by SipaComponent.byId', function () {
             const compo = new SpecOneComponent();
@@ -290,6 +311,90 @@ describe('SipaComponent', () => {
             compo.append("playground");
             compo.element().setAttribute("id", "by-id-3-test");
             expect(SpecChildComponent.byId("by-id-3-test")).toEqual(undefined);
+        });
+        it('do not get SipaComponent by SpecChildComponent.byId', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            compo.element().setAttribute("id", "by-id-4-test");
+            expect(SpecChildComponent.byId("by-id-4-test")).toEqual(undefined);
+        });
+        it('do not get SipaComponent by SpecOneComponent.byId', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            compo.element().setAttribute("id", "by-id-5-test");
+            expect(SpecOneComponent.byId("by-id-5-test")).toEqual(undefined);
+        });
+    });
+    describe('.instanceOfElement', () => {
+        beforeEach(() => {
+            $("playground").remove();
+            $("body").append($(`<playground><div class="instance-of-element"></div></playground>`)[0]);
+        });
+        it('get SipaComponent instance by SipaComponent', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(SipaComponent.instanceOfElement(compo.element())).toBeInstanceOf(SipaComponent);
+        });
+        it('get SpecOneComponent instance by SipaComponent', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(SipaComponent.instanceOfElement(compo.element())).toBeInstanceOf(SpecOneComponent);
+        });
+        it('get SpecOneComponent instance by SpecOneComponent', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(SpecOneComponent.instanceOfElement(compo.element())).toBeInstanceOf(SpecOneComponent);
+        });
+        it('get SpecChildComponent instance by SipaComponent', function () {
+            const compo = new SpecChildComponent();
+            compo.append("playground");
+            expect(SipaComponent.instanceOfElement(compo.element())).toBeInstanceOf(SpecChildComponent);
+        });
+        it('get SpecChildComponent instance by SpecChildComponent', function () {
+            const compo = new SpecChildComponent();
+            compo.append("playground");
+            expect(SpecChildComponent.instanceOfElement(compo.element())).toBeInstanceOf(SpecChildComponent);
+        });
+        it('do not get SpecOneComponent instance by SpecChildComponent', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(SpecChildComponent.instanceOfElement(compo.element())).toBeUndefined();
+        });
+        it('do not get SpecChildComponent instance by SpecOneComponent', function () {
+            const compo = new SpecChildComponent();
+            compo.append("playground");
+            expect(SpecOneComponent.instanceOfElement(compo.element())).toBeUndefined();
+        });
+        it('do not get SipaComponent instance by SpecChildComponent', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(SpecChildComponent.instanceOfElement(compo.element())).toBeUndefined();
+        });
+        it('do not get SipaComponent instance by SpecOneComponent', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(SpecOneComponent.instanceOfElement(compo.element())).toBeUndefined();
+        });
+    });
+    describe('instance', () => {
+        beforeEach(() => {
+            $("playground").remove();
+            $("body").append($(`<playground><div class="instance"></div></playground>`)[0]);
+        });
+        it('get SipaComponent', function () {
+            const compo = new SipaComponent();
+            compo.append("playground");
+            expect(instance(compo.element())).toBeInstanceOf(SipaComponent);
+        });
+        it('get SpecOneComponent', function () {
+            const compo = new SpecOneComponent();
+            compo.append("playground");
+            expect(instance(compo.element())).toBeInstanceOf(SpecOneComponent);
+        });
+        it('get SpecChildComponent', function () {
+            const compo = new SpecChildComponent();
+            compo.append("playground");
+            expect(instance(compo.element())).toBeInstanceOf(SpecChildComponent);
         });
     });
     describe('.destroy / .isDestroyed', () => {
