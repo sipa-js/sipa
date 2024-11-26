@@ -60,6 +60,7 @@ Easy but powerful component class implementation to create your reusable compone
     * _static_
         * [.all(options)](#SipaComponent.all) &rarr; <code>\*</code> \| <code>function</code>
         * [.bySipaId(sipa_id)](#SipaComponent.bySipaId) &rarr; <code>undefined</code> \| [<code>SipaComponent</code>](#SipaComponent)
+        * [.byId(id)](#SipaComponent.byId) &rarr; <code>undefined</code> \| [<code>SipaComponent</code>](#SipaComponent)
         * [.destroyAll()](#SipaComponent.destroyAll)
         * [.init(css_selector)](#SipaComponent.init) &rarr; [<code>Array.&lt;SipaComponent&gt;</code>](#SipaComponent)
         * [.initElement(element, options)](#SipaComponent.initElement) &rarr; [<code>SipaComponent</code>](#SipaComponent)
@@ -503,6 +504,25 @@ Get instance of current component class by sipa-id
 | --- | --- |
 | sipa_id | <code>number</code> | 
 
+
+**Example**
+```js
+<example-component sipa-id="1">Initialized component</example-component>SipaComponent.bySipaId(1);// => ExampleComponent
+```
+<a name="SipaComponent.byId"></a>
+
+### SipaComponent.byId(id) &rarr; <code>undefined</code> \| [<code>SipaComponent</code>](#SipaComponent)
+Get instance of current component class by id attribute
+
+| Param | Type |
+| --- | --- |
+| id | <code>number</code> | 
+
+
+**Example**
+```js
+<example-component attr-id="my-unique-id">Component declaration in body</example-component>SipaComponent.byId("my-unique-id");// => ExampleComponent
+```
 <a name="SipaComponent.destroyAll"></a>
 
 ### SipaComponent.destroyAll()
