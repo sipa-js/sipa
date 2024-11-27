@@ -905,6 +905,12 @@ class SipaComponent {
             const new_component_obj = {_meta: {sipa: {custom_attributes: {}}}};
             const attr_keys = [...element.attributes].map(e => e.name);
             const body_nodes = element.childNodes;
+            // remove whitespace only nodes
+            body_nodes.forEach(node => {
+                if (node.nodeType === Node.TEXT_NODE && node.textContent.trim() === '') {
+                    node.remove();
+                }
+            });
             new_component_obj._meta.sipa.body_nodes ??= body_nodes;
             let data = {};
             attr_keys.eachWithIndex((key, i) => {
