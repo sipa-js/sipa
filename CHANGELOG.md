@@ -29,7 +29,7 @@ For example:
 ### New class for your tests
 When writing tests, use the `beforeAll()` method in your spec tests and run
 ```
-SipaTest.enableTestMode()
+SipaTest.enableTestingMode()
 ```
 to ensure optimized testing capabilities. For example performance optimizations with lazy rendering are disabled, to ensure you get the rendered results immediately and do not need to delay the test run.
 
