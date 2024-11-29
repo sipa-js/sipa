@@ -34,7 +34,7 @@ const release_header_template = `/**
  *
  * @version {{version}}
  * @date {{date}}
- * @link https://github.com/magynhard/sipa
+ * @link https://github.com/sipa-js/sipa
  * @author Matthäus J. N. Beyrle
  * @copyright Matthäus J. N. Beyrle
  */

@@ -118,7 +118,7 @@ SipaCliNew.SECTIONS.new_ready = [
         content: [
             `Hey, your basic project has been created, it's time to have fun again! 🎁`,
             '',
-            `If you have no idea how to get started, read the documentation 📄 at {underline.blue https://github.com/magynhard/sipa#readme}`,
+            `If you have no idea how to get started, read the documentation 📄 at {underline.blue https://github.com/sipa-js/sipa#readme}`,
             '',
             "And don't forget to tell one person today, that you love him or her! ❤️",
             '',

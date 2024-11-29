@@ -1,6 +1,6 @@
 # {{project_name}}
 
-This is my project created with [Sipa](https://github.com/magynhard/sipa#readme)!
+This is my project created with [Sipa](https://github.com/sipa-js/sipa#readme)!
 
 ## Getting started
 
