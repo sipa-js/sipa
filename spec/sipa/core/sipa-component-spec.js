@@ -397,10 +397,11 @@ describe('SipaComponent', () => {
             expect(instance(compo.element())).toBeInstanceOf(SpecChildComponent);
         });
     });
-    describe('.destroy / .isDestroyed', () => {
+    describe('.destroy / .isDestroyed / .destroyAll', () => {
         beforeEach(() => {
             $("playground").remove();
             $("body").append($(`<playground></playground>`)[0]);
+            SipaComponent.destroyAll();
         });
         it('destroys not appended element', function () {
             const compo = new SpecChildComponent();
@@ -435,6 +436,46 @@ describe('SipaComponent', () => {
             expect(() => { compo.append("playground")() }).toThrowError(SipaComponent.InstanceAlreadyDestroyedError);
             expect(() => { compo.update() }).toThrowError(SipaComponent.InstanceAlreadyDestroyedError);
             expect(() => { compo.element() }).toThrowError(SipaComponent.InstanceAlreadyDestroyedError);
+        });
+        it('destroy instances and list is empty after', function () {
+            expect(SipaComponent._component_instances.length).toEqual(0);
+            const c1 = new SpecChildComponent();
+            expect(SipaComponent._component_instances.length).toEqual(1);
+            const c2 = new SpecChildComponent();
+            expect(SipaComponent._component_instances.length).toEqual(2);
+            const c3 = new SpecChildComponent();
+            expect(SipaComponent._component_instances.length).toEqual(3);
+            expect(SipaComponent._component_instances.includes(c1)).toEqual(true);
+            expect(SipaComponent._component_instances.includes(c2)).toEqual(true);
+            expect(SipaComponent._component_instances.includes(c3)).toEqual(true);
+            c1.destroy();
+            expect(SipaComponent._component_instances.includes(c1)).toEqual(false);
+            expect(SipaComponent._component_instances.length).toEqual(2);
+            c2.destroy();
+            expect(SipaComponent._component_instances.includes(c2)).toEqual(false);
+            expect(SipaComponent._component_instances.length).toEqual(1);
+            c3.destroy();
+            expect(SipaComponent._component_instances.includes(c3)).toEqual(false);
+            expect(SipaComponent._component_instances.length).toEqual(0);
+        });
+        it('destroys all instances at once and list is cleaned', function () {
+            expect(SipaComponent._component_instances.length).toEqual(0);
+            const c1 = new SpecChildComponent();
+            const c2 = new SpecChildComponent();
+            const c3 = new SpecChildComponent();
+            const c4 = new SpecOneComponent();
+            const c5 = new SpecOneComponent();
+            expect(SipaComponent._component_instances.length).toEqual(5);
+            SpecOneComponent.destroyAll();
+            expect(SipaComponent._component_instances.length).toEqual(3);
+            SpecChildComponent.destroyAll();
+            expect(SipaComponent._component_instances.length).toEqual(0);
+            const c6 = new SpecChildComponent();
+            const c7 = new SpecOneComponent();
+            const c8 = new SpecOneComponent();
+            expect(SipaComponent._component_instances.length).toEqual(3);
+            SipaComponent.destroyAll();
+            expect(SipaComponent._component_instances.length).toEqual(0);
         });
     });
     describe('events', () => {

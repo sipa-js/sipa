@@ -19,19 +19,16 @@ SipaComponent.registerComponent(ChildComponent);
 
 describe('SipaComponent', () => {
     beforeAll(() => {
-        SipaTest.enableTestingMode();
+
     });
-    beforeEach(() => {
-        $("playground").remove();
-        $("body").append($("<playground></playground>")[0]);
-    });
+
     describe('nested children', () => {
         beforeAll(() => {
+            SipaTest.enableTestingMode();
+
             ParentComponent = class extends SipaComponent {
                 constructor(data = {}, opts = {}) {
-                    data.list ??= [];
                     super(data, opts);
-                    this._autoinc = 0;
                 }
 
                 static template = () => {
@@ -51,7 +48,11 @@ describe('SipaComponent', () => {
                 }
             }
 
-            ChildComponent._autoinc = 0;
+            ChildComponent._autoinc = 1;
+        });
+        beforeEach(() => {
+            $("playground").remove();
+            $("body").append($("<playground></playground>")[0]);
         });
         it('render parent with children', function () {
             const comp = new ParentComponent();
@@ -59,15 +60,37 @@ describe('SipaComponent', () => {
             expect(comp.html()).toMatch(match1);
             expect(comp.childrenAliases().length).toEqual(2);
         });
+        it('has synced children after append', function () {
+            const comp = new ParentComponent();
+            comp.append("playground");
+            expect(comp._data.child_1).not.toBeUndefined();
+            expect(comp._data.child_2).not.toBeUndefined();
+        });
+        it('has synced children after prepend', function () {
+            const comp = new ParentComponent();
+            comp.prepend("playground");
+            expect(comp._data.child_1).not.toBeUndefined();
+            expect(comp._data.child_2).not.toBeUndefined();
+        });
+        it('has synced children after replaceWith', function () {
+            const comp = new ParentComponent();
+            comp.replaceWith("playground");
+            expect(comp._data.child_1).not.toBeUndefined();
+            expect(comp._data.child_2).not.toBeUndefined();
+        });
         it('keeps correct references of children, also after rerendering', function () {
             const comp = new ParentComponent();
             comp.append("playground");
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_0")).toBeInstanceOf(ChildComponent);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_0")._data.name).toEqual("child 1");
-            expect(comp.children().child_1 === SipaComponent._component_instances.find(c => c._data.id === "child_0")).toBe(true);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1")).toBeInstanceOf(ChildComponent);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1")._data.name).toEqual("child 2");
-            expect(comp.children().child_2 === SipaComponent._component_instances.find(c => c._data.id === "child_1")).toBe(true);
+            const sipa_id = comp._meta.sipa.id;
+            comp._data.child_1.id = "child_1R";
+            comp._data.child_2.id = "child_2R";
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1R")).toBeInstanceOf(ChildComponent);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1R")._data.name).toEqual("child 1");
+            expect(comp.children().child_1).toBeInstanceOf(ChildComponent);
+            expect(comp.children().child_1 === SipaComponent._component_instances.find(c => c._data.id === "child_1R")).toBe(true);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_2R")).toBeInstanceOf(ChildComponent);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_2R")._data.name).toEqual("child 2");
+            expect(comp.children().child_2 === SipaComponent._component_instances.find(c => c._data.id === "child_2R")).toBe(true);
             let sipa_id_1 = comp.children().child_1._meta.sipa.id;
             expect(ChildComponent.bySipaId(sipa_id_1) === SipaComponent._component_instances.find(c => c._meta.sipa.id === sipa_id_1)).toBe(true);
             let sipa_id_2 = comp.children().child_2._meta.sipa.id;
@@ -76,12 +99,12 @@ describe('SipaComponent', () => {
             comp.remove();
             comp.append("playground");
             comp.update();
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_0")).toBeInstanceOf(ChildComponent);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_0")._data.name).toEqual("child 1");
-            expect(comp.children().child_1 === SipaComponent._component_instances.find(c => c._data.id === "child_0")).toBe(true);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1")).toBeInstanceOf(ChildComponent);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1")._data.name).toEqual("child 2");
-            expect(comp.children().child_2 === SipaComponent._component_instances.find(c => c._data.id === "child_1")).toBe(true);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1R")).toBeInstanceOf(ChildComponent);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_1R")._data.name).toEqual("child 1");
+            expect(comp.children().child_1 === SipaComponent._component_instances.find(c => c._data.id === "child_1R")).toBe(true);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_2R")).toBeInstanceOf(ChildComponent);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "child_2R")._data.name).toEqual("child 2");
+            expect(comp.children().child_2 === SipaComponent._component_instances.find(c => c._data.id === "child_2R")).toBe(true);
             sipa_id_1 = comp.children().child_1._meta.sipa.id;
             expect(ChildComponent.bySipaId(sipa_id_1) === SipaComponent._component_instances.find(c => c._meta.sipa.id === sipa_id_1)).toBe(true);
             sipa_id_2 = comp.children().child_2._meta.sipa.id;

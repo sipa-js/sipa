@@ -20,6 +20,7 @@ SipaComponent.registerComponent(ListItemComponent);
 describe('SipaComponent', () => {
     beforeAll(() => {
         SipaTest.enableTestingMode();
+        SipaComponent.destroyAll();
     });
     beforeEach(() => {
         $("playground").remove();
@@ -35,7 +36,10 @@ describe('SipaComponent', () => {
                 }
 
                 addItem(name = "new item") {
-                    this._data.list.push(new ListItemComponent({name: name, id: "id_" + this._autoinc}, {sipa_alias: "item_" + this._autoinc++}));
+                    this._data.list.push(new ListItemComponent({
+                        name: name,
+                        id: "list_item_id_" + this._autoinc
+                    }, {sipa_alias: "item_" + this._autoinc++}));
                     this.update();
                 }
 
@@ -55,23 +59,26 @@ describe('SipaComponent', () => {
                 }
             }
         });
+        beforeEach(() => {
+            SipaComponent.destroyAll()
+        });
         it('add 3 items, remove 1 by destroy(), add 2 again', function () {
             const comp = new ListComponent();
             const match1 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"></div></list-component>`;
             expect(comp.html()).toMatch(match1);
             expect(comp.childrenAliases().length).toEqual(0);
-            comp.addItem("item 1");
-            comp.addItem("item 2");
-            comp.addItem("item 3");
-            const match2 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"><list-item-component sipa-id="[0-9]+">item 1</list-item-component><list-item-component sipa-id="[0-9]+">item 2</list-item-component><list-item-component sipa-id="[0-9]+">item 3</list-item-component></div></list-component>`;
+            comp.addItem("item 1A");
+            comp.addItem("item 2A");
+            comp.addItem("item 3A");
+            const match2 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"><list-item-component sipa-id="[0-9]+">item 1A</list-item-component><list-item-component sipa-id="[0-9]+">item 2A</list-item-component><list-item-component sipa-id="[0-9]+">item 3A</list-item-component></div></list-component>`;
             expect(comp.html()).toMatch(match2);
             expect(comp.childrenAliases().length).toEqual(3);
             comp.children().item_1.destroy();
-            const match3 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"><list-item-component sipa-id="[0-9]+">item 1</list-item-component><list-item-component sipa-id="[0-9]+">item 3</list-item-component></div></list-component>`;
+            const match3 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"><list-item-component sipa-id="[0-9]+">item 1A</list-item-component><list-item-component sipa-id="[0-9]+">item 3A</list-item-component></div></list-component>`;
             expect(comp.html()).toMatch(match3);
-            comp.addItem("item 4");
-            comp.addItem("item 5");
-            const match4 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"><list-item-component sipa-id="[0-9]+">item 1</list-item-component><list-item-component sipa-id="[0-9]+">item 3</list-item-component><list-item-component sipa-id="[0-9]+">item 4</list-item-component><list-item-component sipa-id="[0-9]+">item 5</list-item-component></div></list-component>`;
+            comp.addItem("item 4A");
+            comp.addItem("item 5A");
+            const match4 = `<list-component sipa-id="[0-9]+">List<div class="list-container" sipa-list="list"><list-item-component sipa-id="[0-9]+">item 1A</list-item-component><list-item-component sipa-id="[0-9]+">item 3A</list-item-component><list-item-component sipa-id="[0-9]+">item 4A</list-item-component><list-item-component sipa-id="[0-9]+">item 5A</list-item-component></div></list-component>`;
             expect(comp.html()).toMatch(match4);
             expect(comp.childrenAliases().length).toEqual(4);
         });
@@ -95,15 +102,16 @@ describe('SipaComponent', () => {
             expect(comp.childrenAliases().length).toEqual(3);
             expect(comp.children().item_0).toBeInstanceOf(ListItemComponent);
             expect(comp.children().item_0._data.name).toEqual("item 1 R");
-            expect(ListItemComponent.byId("id_0")).toBeInstanceOf(ListItemComponent);
-            expect(ListItemComponent.byId("id_0")._data.name).toEqual("item 1 R");
-            expect(ListItemComponent.byId("id_0")._data.name).toEqual(comp.children().item_0._data.name);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "id_0")).toBeInstanceOf(ListItemComponent);
-            expect(SipaComponent._component_instances.find(c => c._data.id === "id_0")._data.name).toEqual("item 1 R");
-            expect(ListItemComponent.byId("id_0") === SipaComponent._component_instances.find(c => c._data.id === "id_0")).toBe(true);
-            // TODO: references do not match!
-            expect(comp.children().item_1 === SipaComponent._component_instances.find(c => c._data.id === "id_0")).toBe(true);
-            expect(comp.children().item_1 === ListItemComponent.byId("id_0")).toBe(true);
+            expect(ListItemComponent.byId("list_item_id_0")).toBeInstanceOf(ListItemComponent);
+            expect(ListItemComponent.byId("list_item_id_0")._data.name).toEqual("item 1 R");
+            expect(ListItemComponent.byId("list_item_id_0")._data.name).toEqual(comp.children().item_0._data.name);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "list_item_id_0")).toBeInstanceOf(ListItemComponent);
+            expect(SipaComponent._component_instances.find(c => c._data.id === "list_item_id_0")._data.name).toEqual("item 1 R");
+            expect(ListItemComponent.byId("list_item_id_0") === SipaComponent._component_instances.find(c => c._data.id === "list_item_id_0")).toBe(true);
+            expect(comp.children().item_0 === SipaComponent._component_instances.find(c => c._data.id === "list_item_id_0")).toBe(true);
+            expect(comp.children().item_0 === ListItemComponent.byId("list_item_id_0")).toBe(true);
+            expect(comp.children().item_1 === SipaComponent._component_instances.find(c => c._data.id === "list_item_id_1")).toBe(true);
+            expect(comp.children().item_1 === ListItemComponent.byId("list_item_id_1")).toBe(true);
         });
     });
 });

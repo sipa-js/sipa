@@ -77,6 +77,7 @@ class SipaComponent {
         this._meta.sipa._destroyed ??= false;
         this._meta.sipa._data_changed ??= true;
         this._meta.sipa._cached_node ??= null;
+        this._meta.sipa._sync_nested_references ??= true;
         this._meta.sipa._render_period ??= typeof options.sipa_render_period !== "undefined" ? options.sipa_render_period : 100;
         this._data = {};
         this._meta.sipa.children = undefined;
@@ -184,6 +185,9 @@ class SipaComponent {
         document.querySelectorAll(query_selector).forEach((el) => {
             el.appendChild(this.node());
         });
+        if (this._meta.sipa._sync_nested_references) {
+            this.syncNestedReferences();
+        }
         return this;
     }
 
@@ -198,6 +202,9 @@ class SipaComponent {
         document.querySelectorAll(query_selector).forEach((el) => {
             el.prepend(this.node());
         });
+        if (this._meta.sipa._sync_nested_references) {
+            this.syncNestedReferences();
+        }
         return this;
     }
 
@@ -212,6 +219,9 @@ class SipaComponent {
         document.querySelectorAll(query_selector).forEach((el) => {
             el.replaceWith(this.node());
         });
+        if (this._meta.sipa._sync_nested_references) {
+            this.syncNestedReferences();
+        }
         return this;
     }
 
@@ -257,7 +267,7 @@ class SipaComponent {
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
-        else if (this._sync_nested_references) {
+        else if (this._meta.sipa._sync_nested_references) {
             this.syncNestedReferences();
         }
         return this;
@@ -328,7 +338,7 @@ class SipaComponent {
             this.parent()._meta.sipa.children = this.parent()._meta.sipa.children.filter(x => x); // remove empty entries
         }
         const index = self._component_instances.indexOf(this);
-        this.remove();
+        this.remove({ console_warn_if_not_found: false });
         if (index !== -1) {
             delete self._component_instances[index];
             self._component_instances = self._component_instances.filter(x => x);
@@ -370,14 +380,18 @@ class SipaComponent {
     /**
      * Remove the DOM representation(s), but keep the class data representation
      *
+     * @param {Object} options
+     * @param {boolean} options.console_warn_if_not_found=true warning on console if no element is found
      * @returns {SipaComponent}
      */
-    remove() {
+    remove(options = { console_warn_if_not_found: true }) {
         const self = SipaComponent;
+        options ??= {};
+        options.console_warn_if_not_found ??= true;
         const elements = this.elements();
-        if (elements.length === 0) {
+        if (elements.length === 0 && options.console_warn_if_not_found) {
             console.warn(`Tried to remove() ${this.constructor.name} with sipa-id '${this._meta.sipa.id}', but it does not exist in DOM.`);
-        } else {
+        } else if(elements.length > 0) {
             elements.eachWithIndex((el) => {
                 el.remove();
             });
@@ -428,7 +442,7 @@ class SipaComponent {
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
-        else if (this._sync_nested_references) {
+        else if (this._meta.sipa._sync_nested_references) {
             this.syncNestedReferences({update_data: data});
         }
         this.events().trigger("after_update", [this, data, options], {validate: false});
@@ -451,7 +465,7 @@ class SipaComponent {
             _this.elements().forEach((el) => {
                 el.replaceWith(_this.node({cache: options.cache}));
             });
-            if (_this._sync_nested_references) {
+            if (_this._meta.sipa._sync_nested_references) {
                 _this.syncNestedReferences();
             }
         }
@@ -839,12 +853,16 @@ class SipaComponent {
      * // => ExampleComponent
      *
      * @param {number} id
+     * @param {Object} options
+     * @param {boolean} options.console_error_if_not_found=true
      * @return {undefined|SipaComponent}
      */
-    static byId(id) {
+    static byId(id, options = { console_error_if_not_found: true }) {
         const self = SipaComponent;
+        options ??= {};
+        options.console_error_if_not_found ??= true;
         const component_tag_name = LuckyCase.toUpperDashCase(`${this.name}`); // e.g. SipaComponent or ancestor class
-        return SipaComponent.instanceOfElement(document.getElementById(id), component_tag_name);
+        return SipaComponent.instanceOfElement(document.getElementById(id), { component_tag_name, console_error_if_not_found: options.console_error_if_not_found });
     }
 
     /**
@@ -855,6 +873,8 @@ class SipaComponent {
         const component_class_name = `${this.name}`;
         self.all().eachWithIndex((el, i) => {
             if (component_class_name === "SipaComponent" || component_class_name === el.constructor.name) {
+                // delete self._component_instances[i];
+                // self._component_instances = self._component_instances.filter(x => x);
                 el.destroy();
             }
         });
@@ -971,7 +991,7 @@ class SipaComponent {
             new_component._meta = _.merge(new_component._meta, new_component_obj._meta);
             const new_element_node = self.initChildComponents(new_component);
             element.replaceWith(new_element_node);
-            if (new_component._sync_nested_references) {
+            if (new_component._meta.sipa._sync_nested_references) {
                 new_component.syncNestedReferences();
             }
             return new_component;
@@ -1007,7 +1027,7 @@ class SipaComponent {
                 component._addChild(child);
                 const child_node = child.node();
                 el.replaceWith(child_node);
-                if (child._sync_nested_references) {
+                if (child._meta.sipa._sync_nested_references) {
                     child.syncNestedReferences();
                 }
             });
@@ -1033,36 +1053,43 @@ class SipaComponent {
         return LuckyCase.toDashCase(this.prototype.constructor.name);
     }
 
-    /**
-     * Get the component instance of the given element or one of its parent.
-     *
-     * Be aware, that SipaComponent.instanceOfElement can find any component,
-     * while ExampleComponent.instanceOfElement can only find ExampleComponent instances but not find a OtherComponent instance.
-     *
-     * @param {HTMLElement} element
-     * @returns {SipaComponent|undefined} returns undefined if no instance is found
-     *
-     * @example
-     *
-     * <example-component sipa-id="1">
-     *     <nested-component sipa-id="2">
-     *         <span id="nested_span">nested</span>
-     *     </nested-component>
-     *     <span id="top_span">top</span>
-     * </example-component>
-     *
-     * const nested_span = document.getElementById("nested_span");
-     * SipaComponent.instanceOfElement(nested_span);
-     * // => NestedComponent
-     *
-     * const top_span = document.getElementById("top_span");
-     * SipaComponent.instanceOfElement(top_span);
-     * // => ExampleComponent
-     */
-    static instanceOfElement(element, component_tag_name = null) {
+    static instanceOfElement(element, options = { component_tag_name: null, console_error_if_not_found: true }) {
+        /**
+         * Get the component instance of the given element or one of its parent.
+         *
+         * Be aware, that SipaComponent.instanceOfElement can find any component,
+         * while ExampleComponent.instanceOfElement can only find ExampleComponent instances but not find a OtherComponent instance.
+         *
+         * @param {HTMLElement} element
+         * @param {Object} options
+         * @param {string} options.component_tag_name=null when called from another static class method, needs to be passed to only consider given tags
+         * @param {boolean} options.console_error_if_not_found=true
+         * @returns {SipaComponent|undefined} returns undefined if no instance is found
+         *
+         * @example
+         *
+         * <example-component sipa-id="1">
+         *     <nested-component sipa-id="2">
+         *         <span id="nested_span">nested</span>
+         *     </nested-component>
+         *     <span id="top_span">top</span>
+         * </example-component>
+         *
+         * const nested_span = document.getElementById("nested_span");
+         * SipaComponent.instanceOfElement(nested_span);
+         * // => NestedComponent
+         *
+         * const top_span = document.getElementById("top_span");
+         * SipaComponent.instanceOfElement(top_span);
+         * // => ExampleComponent
+         */
         const self = SipaComponent;
-        if(component_tag_name === null) {
-            component_tag_name = LuckyCase.toUpperDashCase(`${this.name}`);
+        options ??= {};
+        options.component_tag_name ??= null;
+        options.console_error_if_not_found ??= true;
+        let ctag_name = options.component_tag_name;
+        if(ctag_name === null) {
+            ctag_name = LuckyCase.toUpperDashCase(`${this.name}`);
         }
         // get component main element
         let component = element;
@@ -1071,7 +1098,7 @@ class SipaComponent {
             if(component.getAttribute('sipa-id') === null) {
                 component = component.parentElement;
             } else {
-                if(component_tag_name === "SIPA-COMPONENT" || component?.tagName === component_tag_name) {
+                if(ctag_name === "SIPA-COMPONENT" || component?.tagName === ctag_name) {
                     break;
                 } else {
                     component = component.parentElement;
@@ -1087,8 +1114,8 @@ class SipaComponent {
         }
         if (instance) {
             return instance;
-        } else {
-            console.error(`Instance of type '${LuckyCase.toPascalCase(component_tag_name)}' for element could not be retrieved.`, element);
+        } else if(options.console_error_if_not_found && !SipaTest.isTestingMode()) {
+            console.error(`Instance of type '${LuckyCase.toPascalCase(ctag_name)}' for element could not be retrieved.`, element);
         }
     }
 
@@ -1484,17 +1511,10 @@ class SipaComponent {
  * @property {boolean} sipa._destroyed=false Flag to determine if object has been destroyed
  * @property {boolean} sipa._data_changed=true Flag for caching rendered nodes
  * @property {Element} sipa._cached_node=null Store cached node to reuse when rendering again without any data change or update()
+ * @property {boolean} sipa._sync_nested_reference=true Sync nested references automatically after every render update. May be disabled on performance cases. Then overwrite to 'false' at the inherited classes constructor after calling super().
  * @property {number} sipa._render_period=100 Only one rendering per period in milliseconds for performance reasons. Disabled when option is 0. Caution: when rendering several times in this period, only the first and last rendering will happen at 0ms and 100ms
  *
  */
-
-/**
- * Sync nested references automatically after every render update
- * May be disabled on performance cases. Then overwrite to 'false' at the inherited class.
- * @type {boolean}
- */
-_sync_nested_references = true;
-
 
 /**
  * @typedef {Object} SipaComponent.Data
@@ -1542,6 +1562,8 @@ SipaComponent.template = () => {
  * Handy shortcut alias for SipaComponent.instanceOfElement().
  *
  * @param {Element} element
+ * @param {Object} options
+ * @param {boolean} options.console_error_if_not_found=true
  * @return {SipaComponent}
  *
  * @example
@@ -1565,8 +1587,10 @@ SipaComponent.template = () => {
  *     `;
  * }
  */
-function instance(element) {
-    return SipaComponent.instanceOfElement(element);
+function instance(element, options = { console_error_if_not_found: true }) {
+    options ??= {};
+    options.console_error_if_not_found ??= true;
+    return SipaComponent.instanceOfElement(element, options);
 }
 
 
