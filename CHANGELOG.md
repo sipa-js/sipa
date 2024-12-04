@@ -116,6 +116,13 @@ In `sipa.json` add `"assets/components",` to the attribute `"sass_watch_paths"`
 
 
 
+# 0.9.1
+## Migration steps from 0.9.0 to 0.9.1
+
+Rename `app/assets/lib/simpartic/simpartic.js` to `app/assets/lib/sipa/sipa.js`
+
+
+
 
 # 0.9.0
 ## And again we go back to Sipa from Simpartic
