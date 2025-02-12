@@ -13,11 +13,8 @@ But I allow you to use it anyway!
 > Writing Javascript and HTML the old way, but using latest, modern JavaScript! So I can directly run and debug my code in the browser without any special tools. Instantly!
 > No modules! Really? Really! Read more about SIPA in the [docs](https://sipa-js.github.io).
 
-```diff
-------------------------------------------
-- in development, beta state. 
-------------------------------------------
-```
+> [!CAUTION]
+> in development, beta state.
 
 To get started or just to read the docs, you are welcome to visit the official Sipa documentation at https://sipa-js.github.io.
 
