@@ -567,6 +567,34 @@ describe('SipaComponent', () => {
             expect(before_data_ref).toEqual(undefined);
             expect(compo._data).toEqual(undefined);
         });
+        it('"can handle numbers that are smaller than big integers', function () {
+            $("playground").remove();
+            $("body").append($(`<playground></playground>`)[0]);
+            $("playground").append($(`<spec-child-component attr-id="bigint1" name="123456789012345"></spec-child-component>`)[0])
+            SpecChildComponent.init();
+            expect(SpecChildComponent.byId("bigint1").element().textContent).toEqual("123456789012345");
+        });
+        it('"can handle numbers that are big integers', function () {
+            $("playground").remove();
+            $("body").append($(`<playground></playground>`)[0]);
+            $("playground").append($(`<spec-child-component attr-id="bigint1" name="12345678901234567890"></spec-child-component>`)[0])
+            SpecChildComponent.init();
+            expect(SpecChildComponent.byId("bigint1").element().textContent).toEqual("12345678901234567890");
+        });
+        it('"can handle numbers that are negative big integers', function () {
+            $("playground").remove();
+            $("body").append($(`<playground></playground>`)[0]);
+            $("playground").append($(`<spec-child-component attr-id="bigint1" name="-12345678901234567890"></spec-child-component>`)[0])
+            SpecChildComponent.init();
+            expect(SpecChildComponent.byId("bigint1").element().textContent).toEqual("-12345678901234567890");
+        });
+        it('"can handle numbers that are invalid big integers', function () {
+            $("playground").remove();
+            $("body").append($(`<playground></playground>`)[0]);
+            $("playground").append($(`<spec-child-component attr-id="bigint1" name="'12345678901234567890a'"></spec-child-component>`)[0])
+            SpecChildComponent.init();
+            expect(SpecChildComponent.byId("bigint1").element().textContent).toEqual("12345678901234567890a");
+        });
     });
 });
 

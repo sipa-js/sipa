@@ -965,6 +965,9 @@ class SipaComponent {
                         const raw_value = element.attributes[key].value;
                         if (raw_value.trim() === '') {
                             value = undefined;
+                        } // BigInt support
+                        else if (/^[-]?\d{16,}$/.test(raw_value)) {
+                            value = BigInt(raw_value);
                         } else {
                             value = eval(`(${element.attributes[key].value})`);
                         }
