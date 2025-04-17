@@ -1,3 +1,17 @@
+# 0.9.44
+## Added support for BigInt in attributes
+Attributes were restricted to numbers with 16 digits (long), but now support BigIntegers as well.
+
+Before, Big ints were cut or mangled.
+
+```html
+<body>
+  <div class="some-container">
+    <example-component number="123456789012345" big-int="12345678901234567890">BigInts are working from now!</example-component>
+  </div>
+</body>
+```
+
 # 0.9.40
 ## New method
 A new method `SipaComponent.byId(id)` has been added to the `SipaComponent` class for easier referencing an element from the HTML DOM. It returns the component with the given id attribute.
