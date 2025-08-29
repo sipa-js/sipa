@@ -16,7 +16,54 @@
 class SipaSerializer {
 
     /**
-     * Serialize given value to be stored in JSON without loosing its original value
+     * Serialize given value to be stored in JSON without loosing its original value.
+     *
+     * @example
+     *
+     * const my_example_object = {
+     *    name: "My Object",
+     *    created: new Date(),
+     *    pattern: /abc/i,
+     *    doSomething: function(a, b) { return a + b; },
+     *    nothing: null,
+     *    not_defined: undefined,
+     *    not_a_number: NaN,
+     *    infinite: Infinity,
+     *    items: [1, 2, 3, 4]
+     *  };
+     *
+     *  delete my_example_object.items[2]; // create an empty entry in the array
+     *  console.log(my_example_object.items); // [1, 2, empty, 4]
+     *
+     *
+     *  const serialized = SipaSerializer.serialize(my_example_object);
+     *  console.log(serialized);
+     *  // Example output (formatted for readability):
+     *  /*{
+     *    "name": "My Object",
+     *    "created": "::Date::2023-10-05T12:34:56.789Z",
+     *    "pattern": "::RegExp::/abc/i",
+     *    "doSomething": "function(a, b) { return a + b; }",
+     *    "nothing": null,
+     *    "not_defined": "::undefined::",
+     *    "not_a_number": "::NaN::",
+     *    "infinite": "::Infinity::",
+     *    "items": [1, 2, "::empty::", 4]
+     *  }* /
+     *  // serialized is now a valid JSON string that can be stored without data loss
+     *
+     *
+     *  const deserialized = SipaSerializer.deserialize(serialized);
+     *  // deserialized is now a clone of my_example_object with all original values and types
+     *  console.log(deserialized.name); // "My Object"
+     *  console.log(deserialized.created instanceof Date); // true
+     *  console.log(deserialized.pattern instanceof RegExp); // true
+     *  console.log(typeof deserialized.doSomething === 'function'); // true
+     *  console.log(deserialized.nothing === null); // true
+     *  console.log(typeof deserialized.not_defined === 'undefined'); // true
+     *  console.log(typeof deserialized.not_a_number === 'number' && isNaN(deserialized.not_a_number)); // true
+     *  console.log(deserialized.infinite === Infinity); // true
+     *  console.log(Array.isArray(deserialized.items) && deserialized.items.length === 4 && !(2 in deserialized.items)); // true, note the empty entry at index 2
      *
      * @param {any} value
      * @returns {string|null} returns string or null if value is null
@@ -47,7 +94,36 @@ class SipaSerializer {
     }
 
     /**
-     * Serialize given value to be stored in JSON without loosing its original value
+     * Serialize given value to be stored in JSON without loosing its original value.
+     *
+     * @example
+     *
+     * const serialized = `{
+     *   "name": "My Object",
+     *   "created": "::Date::2023-10-05T12:34:56.789Z",
+     *   "pattern": "::RegExp::/abc/i",
+     *   "doSomething": "function(a, b) { return a + b; }",
+     *   "nothing": null,
+     *   "not_defined": "::undefined::",
+     *   "not_a_number": "::NaN::",
+     *   "infinite": "::Infinity::",
+     *   "items": [1, 2, "::empty::", 4]
+     *   }`;
+     *
+     *   const deserialized = SipaSerializer.deserialize(serialized);
+     *   // deserialized is now a clone of my_example_object with all original values and types
+     *   console.log(deserialized); // show the full object
+     *   {
+     *       name: "My Object",
+     *       created: Date, // actual Date object
+     *       pattern: RegExp, // actual RegExp object
+     *       doSomething: function(a, b) { return a + b; }, //
+     *       nothing: null,
+     *       not_defined: undefined,
+     *       not_a_number: NaN,
+     *       infinite: Infinity,
+     *       items: [1, 2, empty, 4]
+     *   }
      *
      * @param {String|null} value
      * @returns {Boolean|String|Number|Array|Object|RegExp|Date|undefined|NaN|Infinity|null|*}
@@ -84,7 +160,17 @@ class SipaSerializer {
     }
 
     /**
-     * Check if given string is a valid javascript function
+     * Check if given string is a valid javascript function.
+     *
+     * Note: This method does not check if the function makes sense, only if the syntax is valid.
+     *
+     * @example
+     *
+     * SipaSerializer.isFunctionString("function(a, b) { return a + b; }"); // true
+     * SipaSerializer.isFunctionString("(a, b) => { return a + b; }"); // true
+     * SipaSerializer.isFunctionString("a => a * 2"); // true
+     * SipaSerializer.isFunctionString("function myFunc(a, b) { return a + b; }"); // true
+     * SipaSerializer.isFunctionString("myFunc(a, b) { return a + b; }"); // true, function name without prefix 'function'
      *
      * @param {String} value
      * @returns {boolean}
@@ -117,7 +203,17 @@ class SipaSerializer {
     }
 
     /**
-     * Check if given string is a valid javascript array
+     * Check if given string is a valid javascript array.
+     *
+     * @example
+     *
+     * SipaSerializer.isArrayString("[1, 2, 3]"); // true
+     * SipaSerializer.isArrayString("['a', 'b', 'c']"); // true
+     * SipaSerializer.isArrayString("[true, false, null]"); // true
+     * SipaSerializer.isArrayString("[1, [2, 3], {a: 4}]"); // true
+     * SipaSerializer.isArrayString("{a: 1, b: 2}"); // false
+     * SipaSerializer.isArrayString("function() {}"); // false
+     * SipaSerializer.isArrayString("not an array"); // false
      *
      * @param {String} value
      * @returns {boolean}
@@ -138,7 +234,17 @@ class SipaSerializer {
     }
 
     /**
-     * Check if given string is a valid javascript object
+     * Check if given string is a valid javascript object.
+     *
+     * @example
+     *
+     * SipaSerializer.isObjectString("{a: 1, b: 2}"); // true
+     * SipaSerializer.isObjectString("{'a': 1, 'b': 2}"); // true
+     * SipaSerializer.isObjectString('{"a": 1, "b": 2}'); // true
+     * SipaSerializer.isObjectString("{a: 1, b: {c: 3}}"); // true
+     * SipaSerializer.isObjectString("[1, 2, 3]"); // false
+     * SipaSerializer.isObjectString("function() {}"); // false
+     * SipaSerializer.isObjectString("not an object"); // false
      *
      * @param {String} value
      * @returns {boolean}
@@ -159,7 +265,12 @@ class SipaSerializer {
     }
 
     /**
-     * Deserialize a valid javascript string into a callable function
+     * Deserialize a valid javascript string into a callable function.
+     *
+     * @example
+     *
+     * const fn1 = SipaSerializer.deserializeFunctionString("function(a, b) { return a + b; }");
+     * console.log(fn1(2, 3)); // 5
      *
      * @param {String} value
      * @returns {Function}
@@ -180,6 +291,37 @@ class SipaSerializer {
      * to be stored in JSON without data loss.
      *
      * Original Array or Object is cloned and will not be manipulated.
+     *
+     * @example
+     *
+     * const my_example_object = {
+     *   name: "My Object",
+     *   created: new Date(),
+     *   pattern: /abc/i,
+     *   doSomething: function(a, b) { return a + b; },
+     *   nothing: null,
+     *   not_defined: undefined,
+     *   not_a_number: NaN,
+     *   infinite: Infinity,
+     *   items: [1, 2, 3, 4]
+     * };
+     *
+     * delete my_example_object.items[2]; // create an empty entry in the array
+     * console.log(my_example_object.items); // [1, 2, empty, 4]
+     *
+     * const escaped = SipaSerializer.deepSerializeSpecialTypes(my_example_object);
+     * console.log(escaped);
+     * {
+     *   name: "My Object",
+     *   created: "::Date::2023-10-05T12:34:56.789Z",
+     *   pattern: "::RegExp::/abc/i",
+     *   doSomething: "function(a, b) { return a + b; }",
+     *   nothing: null,
+     *   not_defined: "::undefined::",
+     *   not_a_number: "::NaN::",
+     *   infinite: "::Infinity::",
+     *   items: [1, 2, "::empty::", 4]
+     * }
      *
      * @param {Array|Object} obj
      * @returns {Array|Object}
@@ -205,9 +347,37 @@ class SipaSerializer {
     }
 
     /**
-     * Deserializes (unescapes) all special types of the given Array or Object
+     * Deserializes (unescapes) all special types of the given Array or Object.
      *
      * Original Array or Object is cloned and will not be manipulated.
+     *
+     * @example
+     *
+     * const escaped = {
+     *   name: "My Object",
+     *   created: "::Date::2023-10-05T12:34:56.789Z",
+     *   pattern: "::RegExp::/abc/i",
+     *   doSomething: "function(a, b) { return a + b; }",
+     *   nothing: null,
+     *   not_defined: "::undefined::",
+     *   not_a_number: "::NaN::",
+     *   infinite: "::Infinity::",
+     *   items: [1, 2, "::empty::", 4]
+     * };
+     *
+     * const deserialized = SipaSerializer.deepDeserializeSpecialTypes(escaped);
+     * console.log(deserialized);
+     * {
+     *   name: "My Object",
+     *   created: Date, // actual Date object
+     *   pattern: RegExp, // actual RegExp object
+     *   doSomething: function(a, b) { return a + b; }, // actual function
+     *   nothing: null,
+     *   not_defined: undefined,
+     *   not_a_number: NaN,
+     *   infinite: Infinity,
+     *   items: [1, 2, empty, 4] // note the empty entry at index 2
+     * }
      *
      * @param {Array|Object} obj
      * @returns {Array|Object}
@@ -236,6 +406,16 @@ class SipaSerializer {
      * Serialize (escape) special type 'empty' inside the given Array.
      * Only on first dimension/level, nesting is ignored.
      *
+     * Original Array is manipulated (no clone).
+     *
+     * @example
+     *
+     * let arr = [1, 2, 3, 4];
+     * delete arr[2]; // create an empty entry in the array
+     * console.log(arr); // [1, 2, empty, 4]
+     * arr = SipaSerializer._serializeEmptyArrayValues(arr);
+     * console.log(arr); // [1, 2, "::empty::", 4]
+     *
      * @param {Array} array
      * @returns {Array}
      * @private
@@ -252,8 +432,17 @@ class SipaSerializer {
     }
 
     /**
-     * Deserialize (unescape) special type 'empty' inside given Array
+     * Deserialize (unescape) special type 'empty' inside given Array.
      * Only on first dimension/level, nesting is ignored.
+     *
+     * Original Array is manipulated (no clone).
+     *
+     * @example
+     *
+     * let arr = [1, 2, "::empty::", 4];
+     * console.log(arr); // [1, 2, "::empty::", 4]
+     * arr = SipaSerializer._deserializeEmptyArrayValues(arr);
+     * console.log(arr); // [1, 2, empty, 4]
      *
      * @param {Array} array
      * @returns {Array}
@@ -272,6 +461,20 @@ class SipaSerializer {
      * Check if given value is of special type that needs
      * to be escaped before parsing to JSON.
      *
+     * @example
+     *
+     * SipaSerializer._isSpecialType(undefined); // true
+     * SipaSerializer._isSpecialType(NaN); // true
+     * SipaSerializer._isSpecialType(Infinity); // true
+     * SipaSerializer._isSpecialType(new Date()); // true
+     * SipaSerializer._isSpecialType(/abc/i); // true
+     * SipaSerializer._isSpecialType(function() {}); // true
+     * SipaSerializer._isSpecialType(null); // false
+     * SipaSerializer._isSpecialType(123); // false
+     * SipaSerializer._isSpecialType("string"); // false
+     * SipaSerializer._isSpecialType([1, 2, 3]); // false
+     * SipaSerializer._isSpecialType({a: 1, b: 2}); // false
+     *
      * @param {any} value
      * @returns {boolean} true if special type
      * @private
@@ -285,7 +488,22 @@ class SipaSerializer {
     }
 
     /**
-     * Check if given value is an serialized (escaped) special type
+     * Check if given value is a serialized (escaped) special type.
+     *
+     * @example
+     *
+     * SipaSerializer._isSerializedSpecialType("::undefined::"); // true
+     * SipaSerializer._isSerializedSpecialType("::NaN::"); // true
+     * SipaSerializer._isSerializedSpecialType("::Infinity::"); // true
+     * SipaSerializer._isSerializedSpecialType("::Date::2023-10-05T12:34:56.789Z"); // true
+     * SipaSerializer._isSerializedSpecialType("::RegExp::/abc/i"); // true
+     * SipaSerializer._isSerializedSpecialType("function(a, b) { return a + b; }"); // true
+     * SipaSerializer._isSerializedSpecialType("not a special type"); // false
+     * SipaSerializer._isSerializedSpecialType(123); // false
+     * SipaSerializer._isSerializedSpecialType(null); // false
+     * SipaSerializer._isSerializedSpecialType(undefined); // false
+     * SipaSerializer._isSerializedSpecialType([1, 2, 3]); // false
+     * SipaSerializer._isSerializedSpecialType({a: 1, b: 2}); // false
      *
      * @param {any} value
      * @returns {boolean}
@@ -307,6 +525,17 @@ class SipaSerializer {
 
     /**
      * Clone the given Array or Object.
+     *
+     * Original Array or Object is not manipulated.
+     *
+     * @example
+     *
+     * const originalArray = [1, 2, 3];
+     * const clonedArray = SipaSerializer._cloneObject(originalArray);
+     * console.log(clonedArray); // [1, 2, 3]
+     * clonedArray[0] = 99;
+     * console.log(originalArray); // [1, 2, 3] - original
+     * console.log(clonedArray); // [99, 2, 3] - cloned
      *
      * @param {Array|Object} obj
      * @returns {Array|Object}
@@ -332,6 +561,12 @@ SipaSerializer.VALID_FUNCTION_WITHOUT_NAME_REGEX = /^(\s*function)(\s*)((\([^\)]
 // Regex to match valid function with name but without prefix 'function'
 SipaSerializer.VALID_FUNCTION_WITHOUT_PREFIX_REGEX = /^\s*((?!function).)\s*[^\s0-9]+[^\s]*\s*(\([^\)]*\))\s*\{.*\}\s*$/gms;
 
+/**
+ * Placeholders for special types when serialized.
+ * These placeholders are used to identify and restore the special types during deserialization.
+ *
+ * @type {{"::undefined::": undefined, "::NaN::": number, "::Infinity::": number, "::empty::": string, "::Date::": DateConstructor, "::RegExp::": RegExpConstructor}}
+ */
 SipaSerializer.STORAGE_PLACEHOLDERS = {
     '::undefined::': undefined,
     '::NaN::': NaN,
