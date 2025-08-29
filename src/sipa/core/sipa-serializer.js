@@ -4,10 +4,11 @@
  *
  * Includes support for
  * - Boolean, Number, String, Array, Object, null (native JS[SON] support)
- * And special type handling to support the following types
+ *
+ * And includes special type handling to support the following types:
  * - Functions
  * - RegExp, Date
- * - NaN, Infinity, undefined
+ * - NaN, Infinity, -Infinity, undefined
  * - empty (special type when deleting an item of an array)
  *
  * The special types are escaped by an internal escaping when serialized.
@@ -80,6 +81,8 @@ class SipaSerializer {
             return '::NaN::';
         } else if (Typifier.isInfinity(value)) {
             return '::Infinity::';
+        } else if (Typifier.isNegativeInfinity(value)) {
+            return '::-Infinity::';
         } else if (Typifier.isDate(value)) {
             return `::Date::${value.toISOString()}`;
         } else if (Typifier.isRegExp(value)) {
@@ -136,6 +139,8 @@ class SipaSerializer {
             return NaN;
         } else if (value === '::Infinity::') {
             return Infinity;
+        } else if (value === '::-Infinity::') {
+            return -Infinity;
         } else if (SipaSerializer.isFunctionString(value)) {
             return SipaSerializer.deserializeFunctionString(value);
         } else if (Typifier.isString(value) && value.startsWith('::Date::')) {
@@ -480,11 +485,14 @@ class SipaSerializer {
      * @private
      */
     static _isSpecialType(value) {
+        const self = SipaSerializer;
         return Typifier.isUndefined(value) ||
             Typifier.isNaN(value) ||
             Typifier.isInfinity(value) ||
+            Typifier.isNegativeInfinity(value) ||
             Typifier.isDate(value) ||
-            Typifier.isRegExp(value)
+            Typifier.isRegExp(value) ||
+            typeof value === 'function' && self.isFunctionString(value.toString());
     }
 
     /**
@@ -519,6 +527,10 @@ class SipaSerializer {
             if(value.startsWith(special_types[i])) {
                 return true;
             }
+        }
+        // special case for functions
+        if(self.isFunctionString(value)) {
+            return true;
         }
         return false;
     }
@@ -571,6 +583,7 @@ SipaSerializer.STORAGE_PLACEHOLDERS = {
     '::undefined::': undefined,
     '::NaN::': NaN,
     '::Infinity::': Infinity,
+    '::-Infinity::': -Infinity,
     '::empty::': 'SpecialCaseForDeletedArrayEntryThatBehavesSimilarLikeUndefined',
     '::Date::': Date,
     '::RegExp::': RegExp
