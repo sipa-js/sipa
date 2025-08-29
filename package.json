@@ -76,7 +76,7 @@
     "sass": "^1.32.0",
     "sipa-live-server": "^0.0.3",
     "terser": "^5.10.0",
-    "typifier": "^0.1.2"
+    "typifier": "^0.2.1"
   },
   "resolutions": {
     "colors": "1.4.0"

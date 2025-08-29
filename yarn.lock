@@ -2862,6 +2862,13 @@ typifier@^0.1.2:
   dependencies:
     lucky-case "^1.1.3"
 
+typifier@^0.2.1:
+  version "0.2.1"
+  resolved "https://registry.yarnpkg.com/typifier/-/typifier-0.2.1.tgz#69bebf6bae0966a29d7d600ed783b194f1219e94"
+  integrity sha512-j7e/hgDtSPS0LwDNJBa8cNaGn6ie1XttBKXNkoFOz+QQPkNj2NszR+TDq4p/01w3oc5L14ccvxqI9rsn0/0/vQ==
+  dependencies:
+    lucky-case "^1.1.3"
+
 ua-parser-js@^0.7.30:
   version "0.7.38"
   resolved "https://registry.yarnpkg.com/ua-parser-js/-/ua-parser-js-0.7.38.tgz#f497d8a4dc1fec6e854e5caa4b2f9913422ef054"
