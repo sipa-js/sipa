@@ -107,7 +107,7 @@ class SipaComponent {
      * You may for example call this method, before subscribing to children events, to ensure that the children are available.
      *
      * If the component has already been appended or rendered to the DOM, the template is of course already initialized implicitly.
-     * But in some cases you don't know, if it already happened or you know, that it couldn't have happened. E.g. in the constructor of your component.
+     * But in some cases you don't know if it already happened, or you know, that it couldn't have happened. E.g. in the constructor of your component.
      */
     initTemplate() {
         this.node();
@@ -115,6 +115,8 @@ class SipaComponent {
     }
 
     /**
+     * Render the HTML template with current data.
+     *
      * @param {Object} options
      * @param {boolean} options.cache=true use node cache
      * @returns {string} rendered HTML template() with current values of data
@@ -155,6 +157,8 @@ class SipaComponent {
     }
 
     /**
+     * Create a DOM node of the instances html() representation.
+     *
      * @param {Object} options
      * @param {boolean} options.cache=true use node cache
      * @returns {Element} element representation of html()
@@ -175,7 +179,12 @@ class SipaComponent {
     }
 
     /**
-     * Create a DOM node of the instance and append it to the given css query selector
+     * Create a DOM node of the instance and append it to the given css query selector.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
      *
      * @param {string} query_selector
      * @returns {SipaComponent}
@@ -192,7 +201,12 @@ class SipaComponent {
     }
 
     /**
-     * Create a DOM node of the instance and prepend it to the given css query selector
+     * Create a DOM node of the instance and prepend it to the given css query selector.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.prepend("#some-element-id");
      *
      * @param {string} query_selector
      * @return {SipaComponent}
@@ -209,7 +223,12 @@ class SipaComponent {
     }
 
     /**
-     * Create a DOM node of the instance and replace it to the given css query selector
+     * Create a DOM node of the instance and replace it to the given css query selector.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.replaceWith("#some-element-id");
      *
      * @param {string} query_selector
      * @return {SipaComponent}
@@ -226,7 +245,21 @@ class SipaComponent {
     }
 
     /**
-     * Get the sipa alias of the current instance
+     * Get the sipa alias of the current instance.
+     * If no alias is defined, undefined is returned.
+     *
+     * Please note: The alias is only relevant, if the instance is a child component of another component.
+     *
+     * @example
+     *
+     * <example-component>
+     *     <nested-component sipa-alias="my_nest_alias"></nested-component>
+     *     <other-nested-component sipa-alias="other_alias"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.children().my_nest.alias(); // => "my_nest_alias"
+     * my_instance.children().other.alias(); // => "other_alias"
      *
      * @returns {string}
      */
@@ -252,7 +285,28 @@ class SipaComponent {
     }
 
     /**
-     * Set cloned data of the current instance
+     * Set cloned data of the current instance.
+     *
+     * This will reset the current instance data to the given data objects copy,
+     * so no references to the original data object are kept.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent({
+     *    name: "Foo",
+     *    age: 45,
+     *    });
+     *
+     *    const new_data = {
+     *        name: "Bar",
+     *        age: 30,
+     *    };
+     *
+     *    my_instance.resetToData(new_data);
+     *
+     *    new_data.name = "Togo";
+     *    console.log(my_instance.cloneData().name);
+     *    // => "Bar", because the instance data is a copy of new_data and not a reference
      *
      * @param {Object} data
      * @param {Object} options
@@ -275,13 +329,23 @@ class SipaComponent {
 
     /**
      * Value representation of the component. Should be usually overwritten by the inherited component class.
+     *
+     * @return {*} value of the component
      */
     value() {
         return this._meta.sipa.id;
     }
 
     /**
-     * Get the (first) element of the current instance that is in the DOM
+     * Get the (first) element of the current instance that is in the DOM.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
+     *
+     * const instance = my_instance.element();
+     * // => <example-component sipa-id="1" class="template-class "></example-component>
      *
      * @return {Element|undefined}
      */
@@ -296,6 +360,15 @@ class SipaComponent {
     /**
      * Get all elements of the current instance that is in the DOM.
      *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
+     * my_instance.append("#some-other-element-id");
+     *
+     * const instances = my_instance.elements();
+     * // => [<example-component sipa-id="1" class="template-class "></example-component>, <example-component sipa-id="1" class="template-class "></example-component>]
+     *
      * @return {Array<Element>}
      */
     elements() {
@@ -309,7 +382,15 @@ class SipaComponent {
     }
 
     /**
-     * Get the unique css selector of the current instance(s) element(s)
+     * Get the unique css selector of the current instance(s) element(s).
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
+     *
+     * const selector = my_instance.selector();
+     * // => '[sipa-id="1"]'
      *
      * @returns {string} css selector
      */
@@ -319,8 +400,20 @@ class SipaComponent {
     }
 
     /**
-     * Destroy the components DOM representation and class data representation
+     * Destroy the components DOM representation and class data representation.
+     * This will also destroy all children components recursively.
      *
+     * Please note: After calling this method, the instance is no longer usable!
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
+     * my_instance.destroy();
+     * my_instance.isDestroyed(); // => true
+     * my_instance.update({name: "Foo"}); // => throws SipaComponent.InstanceAlreadyDestroyedError
+     *
+     * @throws {SipaComponent.InstanceAlreadyDestroyedError} if instance is already destroyed
      * @returns {SipaComponent}
      */
     destroy() {
@@ -369,7 +462,15 @@ class SipaComponent {
     }
 
     /**
-     * Check if the current instance is destroyed
+     * Check if the current instance is destroyed.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
+     * my_instance.isDestroyed(); // => false
+     * my_instance.destroy();
+     * my_instance.isDestroyed(); // => true
      *
      * @return {boolean} true if destroyed
      */
@@ -378,7 +479,18 @@ class SipaComponent {
     }
 
     /**
-     * Remove the DOM representation(s), but keep the class data representation
+     * Remove the DOM representation(s), but keep the class data representation (instance).
+     *
+     * Please note: After calling this method, the instance is still usable!
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.append("#some-element-id");
+     * my_instance.remove();
+     * my_instance.isDestroyed(); // => false
+     * my_instance.update({name: "Foo"}); // => works fine
+     * my_instance.append("#some-element-id"); // => works fine
      *
      * @param {Object} options
      * @param {boolean} options.console_warn_if_not_found=true warning on console if no element is found
@@ -402,32 +514,37 @@ class SipaComponent {
     /**
      * Update the data of the instance and its children by alias if available. Then rerender its view.
      *
+     * @example
+     *
+     * <example-component enabled="false">
+     *   <nested-component sipa-alias="my_nest" name="'foo'"></nested-component>
+     *   <other-nested-component sipa-alias="other" age="77"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     *
+     * my_instance.update({
+     *   enabled: true,
+     *   my_nest: {
+     *     name: "bar",
+     *   },
+     *   other: {
+     *     age: 111,
+     *   }
+     * });
+     *
+     * This will update the data of the current instance and also the nested children by their alias.
+     *
+     * The update is merged with the existing data, so only the given properties are updated.
+     *
+     * If you want to reset the data instead of merging, use the reset option.
+     *
      * @param {SipaComponent.Data} data
      * @param {Object} options
      * @param {boolean} options.render=true rerender DOM elements after data update
      * @param {boolean} options.reset=false if false, merge given data with existing, otherwise reset component data to given data
      * @param {boolean} options.cache=true use node cache or not on component and all(!) children and their children
      * @returns {SipaComponent}
-     *
-     * @example
-     *
-     * <example-component enabled="false">
-     *     <nested-component sipa-alias="my_nest" name="'foo'"></nested-component>
-     *     <other-nested-component sipa-alias="other" age="77"></nested-component>
-     * </example-component>
-     *
-     * const my_instance = new ExampleComponent();
-     *
-     * my_instance.update({
-     *     enabled: true,
-     *     my_nest: {
-     *         name: "bar",
-     *     },
-     *     other: {
-     *         age: 111,
-     *     }
-     * });
-     *
      */
     update(data = {}, options = {}) {
         this._checkDestroyed();
@@ -450,7 +567,7 @@ class SipaComponent {
     }
 
     /**
-     * Render component again
+     * Render component again.
      *
      * @param {Object} options
      * @param {boolean} options.cache=true use node cache or not on component and all(!) children and their children
@@ -481,7 +598,24 @@ class SipaComponent {
     }
 
     /**
-     * Add given class to the current instance tag element and store its state
+     * Add given class to the current instance tag element and store its state.
+     *
+     * Using this method, the state is also stored in the instance automatically, so that it is persistent on rerendering.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent(
+     *   {
+     *     name: "Foo",
+     *     age: 45,
+     *   },
+     *   {
+     *     sipa_classes: "dark-style",
+     *   }
+     * );
+     *   my_instance.addClass("active highlight");
+     *   my_instance.element().className;
+     *   // => "dark-style active highlight"
      *
      * @param {string} class_name one or more classes separated by space
      * @param {Object} options
@@ -508,10 +642,7 @@ class SipaComponent {
     }
 
     /**
-     * Check if current component instance has given class(es) in its class state
-     *
-     * @param class_name one or more classes that must be included
-     * @return {boolean} true if class is set
+     * Check if current component instance has given class(es) in its class state.
      *
      * @example
      *
@@ -525,6 +656,9 @@ class SipaComponent {
      * // => true
      * my_instance.hasClass("test togo");
      * // => false
+     *
+     * @param class_name one or more classes that must be included
+     * @return {boolean} true if class is set
      */
     hasClass(class_name) {
         let result = true;
@@ -538,7 +672,29 @@ class SipaComponent {
     }
 
     /**
-     * Remove given class from the current instance tag element and its state
+     * Remove given class from the current instance tag element and its state.
+     *
+     * Using this method, the state is also stored in the instance automatically, so that it is persistent on rerendering.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent(
+     *   {
+     *     name: "Foo",
+     *     age: 45,
+     *   },
+     *   {
+     *     sipa_classes: "dark-style active highlight",
+     *   }
+     * );
+     *
+     * my_instance.element().className;
+     * // => "dark-style active highlight"
+     *
+     * my_instance.removeClass("active highlight");
+     *
+     * my_instance.element().className;
+     * // => "dark-style"
      *
      * @param {string} class_name one or more classes separated by space
      * @param {Object} options
@@ -574,7 +730,27 @@ class SipaComponent {
     }
 
     /**
-     * Show current instance
+     * Show current instance.
+     *
+     * Makes the component visible again, if it was hidden before.
+     * This is an integrated feature, so that the hidden state is persistent on rerendering.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent(
+     *   {
+     *     name: "Foo",
+     *     age: 45,
+     *   },
+     *   {
+     *     sipa_hidden: true,
+     *   }
+     * );
+     *
+     * my_instance.isHidden(); // => true
+     * my_instance.show();
+     * my_instance.isVisible(); // => true
+     * my_instance.element().style.display; // => "block" (or original display style of template)
      *
      * @param {Object} options
      * @param {boolean} options.update=true
@@ -594,7 +770,19 @@ class SipaComponent {
     }
 
     /**
-     * Hide current instance
+     * Hide current instance.
+     *
+     * Hides the component, but keeps it in the DOM.
+     *
+     * This is an integrated feature, so that the hidden state is persistent on rerendering.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.isVisible(); // => true
+     * my_instance.hide();
+     * my_instance.isHidden(); // => true
+     * my_instance.element().style.display; // => "none"
      *
      * @param {Object} options
      * @param {boolean} options.update=true
@@ -614,7 +802,14 @@ class SipaComponent {
     }
 
     /**
-     * Check if current instance is hidden
+     * Check if current instance is hidden.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.isHidden(); // => false
+     * my_instance.hide();
+     * my_instance.isHidden(); // => true
      *
      * @return {boolean}
      */
@@ -624,7 +819,14 @@ class SipaComponent {
     }
 
     /**
-     * Check if current instance is visible
+     * Check if current instance is visible.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.isVisible(); // => true
+     * my_instance.hide();
+     * my_instance.isVisible(); // => false
      *
      * @return {boolean}
      */
@@ -637,19 +839,19 @@ class SipaComponent {
      *
      * To work, the instance must already have been rendered at least once. To ensure explicitly, call initTemplate() before, e.g. when accessing children() in the instances constructor.
      *
-     * @return  {Object<string, SipaComponent>} Object<alias, component>
-     *
      * @example
      *
      * <example-component>
-     *     <nested-component sipa-alias="my_nest"></nested-component>
-     *     <other-nested-component sipa-alias="other"></nested-component>
+     *   <nested-component sipa-alias="my_nest"></nested-component>
+     *   <other-nested-component sipa-alias="other"></nested-component>
      * </example-component>
      *
      * const my_instance = new ExampleComponent();
      *
      * my_instance.children();
      * // => { my_nest: NestedComponent, other: OtherNestedComponent }
+     *
+     * @return  {Object<string, SipaComponent>} Object<alias, component>
      */
     children() {
         let children = {};
@@ -662,7 +864,18 @@ class SipaComponent {
     }
 
     /**
-     * Return all keys for children aliases
+     * Return all keys for children aliases.
+     *
+     * @example
+     *
+     * <example-component>
+     *   <nested-component sipa-alias="my_nest"></nested-component>
+     *   <other-nested-component sipa-alias="other"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.childrenAliases();
+     * // => ["my_nest", "other"]
      *
      * @return {Array<string>}
      */
@@ -671,7 +884,18 @@ class SipaComponent {
     }
 
     /**
-     * Return all values of children
+     * Return all values of children.
+     *
+     * @example
+     *
+     * <example-component>
+     *   <nested-component sipa-alias="my_nest"></nested-component>
+     *   <other-nested-component sipa-alias="other"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.childrenValues();
+     * // => [NestedComponent, OtherNestedComponent]
      *
      * @return {Array<SipaComponent>}
      */
@@ -680,7 +904,25 @@ class SipaComponent {
     }
 
     /**
-     * Check if the component has any children or not
+     * Check if the component has any children or not.
+     *
+     * @example
+     *
+     * <example-component>
+     *   <nested-component sipa-alias="my_nest"></nested-component>
+     *   <other-nested-component sipa-alias="other"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.hasChildren(); // => true
+     *
+     *
+     * @example
+     *
+     * <another-component></another-component>
+     *
+     * const another_instance = new AnotherComponent();
+     * another_instance.hasChildren(); // => false
      *
      * @return {boolean}
      */
@@ -691,7 +933,30 @@ class SipaComponent {
     /**
      * Return all instantiated slot elements of the current instance by name.
      *
-     * To work, the instance must already have been rendered at least once. To ensure explicitly, call initTemplate() before, e.g. when accessing slots() in the instances constructor.
+     * To work, the instance must already have been rendered at least once. To ensure explicitly, call initTemplate() before, e.g. when accessing slots() in the instances' constructor.
+     *
+     * @example
+     *
+     * <example-component>
+     *   <div slot="header">Header Content</div>
+     *   <div slot="footer">Footer Content</div>
+     *   <nested-component sipa-alias="my_nest">
+     *     <div slot="inside_nest">Inside Nest Content</div>
+     *     <nested-inside-component sipa-alias="inside"></nested-inside-component>
+     *     <div slot="inside_nest_2">Inside Nest Content 2</div>
+     *     <nested-inside-component sipa-alias="inside_2"></nested-inside-component>
+     *     <div>No Slot Content</div>
+     *   </nested-component>
+     *   <div>No Slot Content</div>
+     *   <div slot="footer">Footer Content 2</div>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.slots();
+     * // => { header: <div slot="header">Header Content</div>, footer: <div slot="footer">Footer Content 2</div> }
+     *
+     * my_instance.children().my_nest.slots();
+     * // => { inside_nest: <div slot="inside_nest">Inside Nest Content</div>, inside_nest_2: <div slot="inside_nest_2">Inside Nest Content 2</div> }
      *
      * @return {Object<string,Element>}
      */
@@ -705,7 +970,32 @@ class SipaComponent {
     }
 
     /**
-     * Get parent component, if current component is a child component
+     * Get parent component, if current component is a child component.
+     *
+     * If no parent exists, undefined is returned.
+     *
+     * @example
+     *
+     * <example-component>
+     *   <nested-component sipa-alias="my_nest">
+     *     <other-nested-component sipa-alias="other"></other-nested-component>
+     *   </nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     *
+     * my_instance.children().my_nest.children().other.parent();
+     * // => NestedComponent
+     *
+     * my_instance.children().my_nest.parent();
+     * // => ExampleComponent
+     *
+     * my_instance.parent();
+     * // => undefined
+     *
+     * my_instance.children().my_nest.children().other.parent().parent();
+     * // => ExampleComponent
+     *
      *
      * @return {undefined|SipaComponent} component
      */
@@ -714,7 +1004,18 @@ class SipaComponent {
     }
 
     /**
-     * Check if the component has a parent or not
+     * Check if the component has a parent or not.
+     *
+     * @example
+     *
+     * <example-component>
+     *   <nested-component sipa-alias="my_nest"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     *
+     * my_instance.hasParent(); // => false
+     * my_instance.children().my_nest.hasParent(); // => true
      *
      * @return {boolean}
      */
@@ -725,8 +1026,6 @@ class SipaComponent {
     /**
      * Get the top level parent component, that has no parent component.
      * Will return the current component, if no parent exists.
-     *
-     * @return {SipaComponent} component
      *
      * @example
      *
@@ -740,6 +1039,14 @@ class SipaComponent {
      *
      * my_instance.children().my_nest.children().other.parentTop();
      * // => ExampleComponent
+     *
+     * my_instance.children().my_nest.parentTop();
+     * // => ExampleComponent
+     *
+     * my_instance.parentTop();
+     * // => ExampleComponent
+     *
+     * @return {SipaComponent} component
      */
     parentTop() {
         return this._meta.sipa.parent ? this._meta.sipa.parent.parentTop() : this;
@@ -753,6 +1060,29 @@ class SipaComponent {
      *
      * You may want to call this method, if you have a special case and modify the _data attribute manually.
      *
+     * @example
+     *
+     * <example-component>
+     *   <nested-component sipa-alias="my_nest"></nested-component>
+     * </example-component>
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.update({ some_data: 123 });
+     * my_instance.children().my_nest.update({ other_data: 456 });
+     * // now my_instance._data is { some_data: 123, my_nest: { other_data: 456 } }
+     *
+     * // but if you modify the data manually, e.g.:
+     * my_instance._data = { some_data: 789, my_nest: { other_data: 101 } };
+     * // then the nested component data is not updated automatically
+     * my_instance.children().my_nest.cloneData();
+     * // => { other_data: 456 }
+     *
+     * // so you need to call syncNestedReferences() to refresh all references
+     * my_instance.syncNestedReferences();
+     * // now the nested component data is updated
+     * my_instance.children().my_nest.cloneData();
+     * // => { other_data: 101 }
+     *
      * @param {Object} options
      * @param {Object} options.update_data update data if given
      */
@@ -762,7 +1092,29 @@ class SipaComponent {
     }
 
     /**
-     * Events of the component to subscribe, unsubscribe or trigger
+     * Events of the component to subscribe, unsubscribe or trigger.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.events().on("before_update", (component, data, options) => {
+     *  console.log("Component is about to be updated:", component, data, options);
+     * });
+     *
+     * my_instance.update({ name: "Foo" });
+     * // => Console: Component is about to be updated: ExampleComponent { ... } { name: "Foo" } { render: true, reset: false, cache: true }
+     *
+     * my_instance.events().off("before_update");
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.events().on("after_destroy", (component) => {
+     *   console.log("Component was destroyed:", component);
+     * });
+     *
+     * my_instance.destroy();
+     * // => Console: Component was destroyed: ExampleComponent { ... }
      *
      * @return {SipaEvents}
      */
@@ -777,7 +1129,7 @@ class SipaComponent {
     }
 
     /**
-     * Recreate a instance, based on the given instance.
+     * Recreate an instance, based on the given instance.
      *
      * This feature is needed for hot reloading. First the class will be overwritten by the live webserver.
      * Then all classes need to be reinstantiated to be an instance of the new, overwritten, reloaded component class.
@@ -794,7 +1146,18 @@ class SipaComponent {
     }
 
     /**
-     * Return all instances of the component
+     * Return all instances of the component.
+     *
+     * To get all instances of all components, call SipaComponent.all().
+     *
+     * @example
+     *
+     * const instance1 = new ExampleComponent();
+     * const instance2 = new ExampleComponent();
+     * const instance3 = new AnotherComponent();
+     *
+     * ExampleComponent.all();
+     * // => [ExampleComponent, ExampleComponent]
      *
      * @param {Object} options
      * @param {boolean} options.include_children=false include embedded children components
@@ -820,7 +1183,7 @@ class SipaComponent {
     }
 
     /**
-     * Get instance of current component class by sipa-id
+     * Get instance of current component class by sipa-id.
      *
      * @example
      *
@@ -843,7 +1206,7 @@ class SipaComponent {
     }
 
     /**
-     * Get instance of current component class by id attribute
+     * Get instance of current component class by id attribute.
      *
      * @example
      *
@@ -866,7 +1229,18 @@ class SipaComponent {
     }
 
     /**
-     * Destroy all instances of current component class
+     * Destroy all instances of current component class.
+     *
+     * To destroy all instances of all components, call SipaComponent.destroyAll().
+     *
+     * @example
+     *
+     * const instance1 = new ExampleComponent();
+     * const instance2 = new ExampleComponent();
+     * const instance3 = new AnotherComponent();
+     *
+     * ExampleComponent.destroyAll();
+     * // => destroys instance1 and instance2
      */
     static destroyAll() {
         const self = SipaComponent;
@@ -881,7 +1255,42 @@ class SipaComponent {
     }
 
     /**
-     * Initialize all uninitialized components of the current component class in the DOM inside the given css selector automatically.
+     * Initialize all uninitialized components of the current component class in the DOM inside
+     * the given css selector automatically.
+     *
+     * If called by the base component SipaComponent, all uninitialized components of all registered component classes are initialized.
+     *
+     * @example
+     *
+     * // Initialize all uninitialized components of all registered component classes in the whole body
+     * SipaComponent.init();
+     *
+     * // Initialize all uninitialized components of all registered component classes inside the element with id "main-content"
+     * SipaComponent.init("#main-content");
+     *
+     * // Initialize all uninitialized components of the ExampleComponent class in the whole body
+     * ExampleComponent.init();
+     *
+     * // Initialize all uninitialized components of the ExampleComponent class inside the element with id "main-content"
+     * ExampleComponent.init("#main-content");
+     *
+     * @example
+     *
+     * // HTML body
+     * <body>
+     *   <example-component sipa-id="1">Initialized component</example-component>
+     *   <example-component>Uninitialized component</example-component>
+     *   <div id="main-content">
+     *     <example-component>Uninitialized component in main content</example-component>
+     *     <another-component>Uninitialized another component in main content</another-component>
+     *   </div>
+     * </body>
+     *
+     * // JavaScript
+     * SipaComponent.init();
+     * // => Initializes the three uninitialized components in the body
+     * SipaComponent.all();
+     * // => [ExampleComponent, ExampleComponent, ExampleComponent, AnotherComponent]
      *
      * @param {string} css_selector='body'
      * @return {Array<SipaComponent>}
@@ -909,7 +1318,31 @@ class SipaComponent {
     }
 
     /**
-     * Init given element as the current component class
+     * Init given element as the current component class.
+     *
+     * If called by the base component SipaComponent, the element is initialized as the according registered component class by its tag name.
+     *
+     * @example
+     *
+     * // HTML body
+     * <body>
+     *   <example-component>Uninitialized component</example-component>
+     *   <another-component>Uninitialized another component</another-component>
+     * </body>
+     *
+     * // JavaScript
+     * const el = document.querySelector("example-component");
+     * SipaComponent.initElement(el);
+     * // => Initializes the uninitialized example-component as ExampleComponent
+     * SipaComponent.all();
+     * // => [ExampleComponent]
+     *
+     * const el2 = document.querySelector("another-component");
+     * AnotherComponent.initElement(el2);
+     * // => Initializes the uninitialized another-component as AnotherComponent
+     *
+     * SipaComponent.all();
+     * // => [ExampleComponent, AnotherComponent]
      *
      * @param {Element} element
      * @param {Object} options
@@ -1004,9 +1437,17 @@ class SipaComponent {
     }
 
     /**
-     * Init child components of the given component if available
+     * Init child components of the given component if available.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     *
+     * SipaComponent.initChildComponents(my_instance);
+     * // => initializes nested-component and another-nested-component as child components of my_instance
      *
      * @param {SipaComponent} component
+     * @throws {Error} when no registered components are found inside the component
      * @returns {Element}
      */
 
@@ -1039,9 +1480,7 @@ class SipaComponent {
     }
 
     /**
-     * Get tag name of current component class
-     *
-     * @return {string}
+     * Get tag name of current component class.
      *
      * @example
      *
@@ -1051,6 +1490,8 @@ class SipaComponent {
      *
      * my_instance.tagName();
      * // => "example-component"
+     *
+     * @return {string}
      */
     static tagName() {
         return LuckyCase.toDashCase(this.prototype.constructor.name);
@@ -1062,12 +1503,6 @@ class SipaComponent {
          *
          * Be aware, that SipaComponent.instanceOfElement can find any component,
          * while ExampleComponent.instanceOfElement can only find ExampleComponent instances but not find a OtherComponent instance.
-         *
-         * @param {HTMLElement} element
-         * @param {Object} options
-         * @param {string} options.component_tag_name=null when called from another static class method, needs to be passed to only consider given tags
-         * @param {boolean} options.console_error_if_not_found=true
-         * @returns {SipaComponent|undefined} returns undefined if no instance is found
          *
          * @example
          *
@@ -1085,6 +1520,12 @@ class SipaComponent {
          * const top_span = document.getElementById("top_span");
          * SipaComponent.instanceOfElement(top_span);
          * // => ExampleComponent
+         *
+         * @param {HTMLElement} element
+         * @param {Object} options
+         * @param {string} options.component_tag_name=null when called from another static class method, needs to be passed to only consider given tags
+         * @param {boolean} options.console_error_if_not_found=true
+         * @returns {SipaComponent|undefined} returns undefined if no instance is found
          */
         const self = SipaComponent;
         options ??= {};
@@ -1126,8 +1567,7 @@ class SipaComponent {
      * Register given component class.
      *
      * You need to register every new component that extends by SipaComponent to make it available.
-     *
-     * @param {SipaComponent} component
+     * Otherwise, it is not known to the base class and cannot be initialized automatically.
      *
      * @example
      *
@@ -1137,6 +1577,7 @@ class SipaComponent {
      *
      * SipaComponent.registerComponent(MyComponent);
      *
+     * @param {SipaComponent} component
      */
     static registerComponent(component) {
         const self = SipaComponent;
@@ -1146,7 +1587,34 @@ class SipaComponent {
     }
 
     /**
-     * Update the data of the component and its children by alias if available
+     * Update the data of the component and its children by alias if available.
+     *
+     * The data is merged by default. To reset the data, use options.reset = true.
+     * By default, the given data is cloned deeply to avoid reference issues. To disable this, use options.clone = false.
+     *
+     * After updating the data, the changes are synchronized to all direct children and the parent component.
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent({ name: "Initial", nested: { value: 123 } });
+     * my_instance.data();
+     * // => { name: "Initial", nested: { value: 123 } }
+     * my_instance.children().nested.data();
+     * // => { value: 123 }
+     *
+     * my_instance.update({ name: "Updated", new_value: 456 });
+     * my_instance.data();
+     * // => { name: "Updated", nested: { value: 123 }, new_value: 456 }
+     *
+     * my_instance.children().nested.data();
+     * // => { value: 123 }
+     *
+     * my_instance.update({ nested: { value: 789, another: 101 } });
+     * my_instance.data();
+     * // => { name: "Updated", nested: { value: 789, another: 101 }, new_value: 456 }
+     *
+     * my_instance.children().nested.data();
+     * // => { value: 789, another: 101 }
      *
      * @param {Object} data
      * @param {Object} options
@@ -1186,19 +1654,39 @@ class SipaComponent {
     }
 
     /**
-     * Get inherited class
+     * Get inherited class.
+     *
+     * @example
+     *
+     * class MyComponent extends SipaComponent {
+     *    ...
+     * }
+     *
+     * const my_instance = new MyComponent();
+     * my_instance._inheritedClass();
+     * // => MyComponent
      *
      * @return {SipaComponent}
+     * @private
      */
     _inheritedClass() {
         return this.constructor;
     }
 
     /**
-     * Add sipa-id attribute to given template html
+     * Add sipa-id attribute to given template html.
+     *
+     * For performance reasons, this method works with raw html string.
+     *
+     * @example
+     *
+     * const some_instance = new ExampleComponent();
+     * some_instance._applyTemplateId('<example-component></example-component>');
+     * // => '<example-component sipa-id="1"></example-component>'
      *
      * @param {string} html
      * @returns {string}
+     * @private
      */
     _applyTemplateId(html) {
         const COMPONENT_TAG_REGEX = /^<([a-zA-Z\-\_0-9]+)/gm;
@@ -1206,11 +1694,14 @@ class SipaComponent {
     }
 
     /**
-     * Replace slots to given parsed template
+     * Replace slots to given parsed template.
+     *
+     * For performance reasons, this method works with parsed ChildNode and raw html string.
      *
      * @param {ChildNode} parsed
      * @param {string} html raw for performance reasons
      * @returns {string}
+     * @private
      */
     _applySlots(parsed, html) {
         const self = SipaComponent;
@@ -1247,6 +1738,7 @@ class SipaComponent {
      * @param {string} args.html
      * @param {ChildNode} args.parsed
      * @returns {string|ChildNode}
+     * @private
      */
     _applyTemplateClasses(args) {
         const self = SipaComponent;
@@ -1268,6 +1760,7 @@ class SipaComponent {
      * @param {string} args.html
      * @param {ChildNode} args.parsed
      * @returns {string|ChildNode}
+     * @private
      */
     _applyTemplateHiddenState(args) {
         const self = SipaComponent;
@@ -1294,6 +1787,7 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.cache=true use node cache
      * @returns {string|ChildNode}
+     * @private
      */
     _applyTemplateChildrenComponents(args, options) {
         const self = SipaComponent;
@@ -1344,6 +1838,7 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.cache=true use node cache
      * @returns {string|ChildNode}
+     * @private
      */
     _applyTemplateSipaList(args, options) {
         const self = SipaComponent;
@@ -1393,6 +1888,7 @@ class SipaComponent {
      * @param {string} args.html
      * @param {ChildNode} args.parsed
      * @returns {string|ChildNode}
+     * @private
      */
     _applyTemplateCustomAttributes(args) {
         const self = SipaComponent;
@@ -1420,6 +1916,7 @@ class SipaComponent {
      *
      * @param html
      * @returns {ChildNode}
+     * @private
      */
     static _parseHtml(html) {
         return document.createRange().createContextualFragment(html).firstElementChild;
@@ -1428,7 +1925,15 @@ class SipaComponent {
     /**
      * Generate unique component id (auto increment)
      *
+     * @example
+     *
+     * SipaComponent._generateUniqueId();
+     * // => 1
+     * SipaComponent._generateUniqueId();
+     * // => 2
+     *
      * @return {number}
+     * @private
      */
     static _generateUniqueId() {
         const self = SipaComponent;
@@ -1441,6 +1946,7 @@ class SipaComponent {
      * @param {Object} options
      * @param {boolean} options.recursive=false synchronize through all children trees
      * @param {Object} options.update_data update data if given
+     * @private
      */
     _synchronizeDataToChildren(options = {}) {
         options ??= {};
@@ -1468,6 +1974,10 @@ class SipaComponent {
 
     /**
      * Refresh data reference from current instance to its parent
+     *
+     * Called automatically after every render update.
+     *
+     * @private
      */
     _synchronizeDataToParent() {
         if (this.hasParent()) {
@@ -1479,13 +1989,14 @@ class SipaComponent {
      * Add component child class instance to list of current instance children
      *
      * @param {SipaComponent} child
+     * @private
      */
     _addChild(child) {
         this._meta.sipa.children.push(child);
     }
 
     /**
-     * Check if the component is already destroyed, and if, throw an specific error.
+     * Check if the component is already destroyed, and if, throw a specific error.
      * @throws {SipaComponent.InstanceAlreadyDestroyedError}
      * @private
      */
