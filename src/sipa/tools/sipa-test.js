@@ -15,7 +15,7 @@ class SipaTest {
 
         It will prepare the Sipa environment for testing.
 
-        For example it will:
+        For example, it will:
         - SipaComponent: disable performance optimized render limits per period, to ensure instant renderings for instant test runs
      */
     static enableTestingMode() {

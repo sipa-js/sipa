@@ -6,9 +6,10 @@
  */
 class SipaUrl {
     /**
-     * Get the current address of the website
+     * Get the current URL of the address bar
      *
      * @example
+     *
      * SipaUrl.getUrl();
      * // => https://my-website.com/web/?page=abc&param=ok
      *
@@ -22,8 +23,14 @@ class SipaUrl {
      * Get the protocol of the current url (without colon)
      *
      * @example
+     *
+     * // URL: https://my-business.com/some-param
      * SipaUrl.getProtocol();
      * // => 'https'
+     *
+     * // URL: http://my-insecure-business.com/other-param
+     * SipaUrl.getProtocol();
+     * // => 'http'
      *
      * @returns {'http'|'https'}
      */
@@ -32,13 +39,33 @@ class SipaUrl {
     }
 
     /**
-     * Get the host name of the current url
+     * Get the host name of the current url.
      *
      * @example
-     *      localhost
-     *      127.0.0.1
-     *      localhost:7000
-     *      my-domain.com
+     *
+     * // URL: https://my-business.com/some-param
+     * SipaUrl.getHostName();
+     * // => 'my-business.com'
+     *
+     * // URL https://www.my-business.com/some-param
+     * SipaUrl.getHostName();
+     * // => 'www.my-business.com'
+     *
+     * // URL: https://subdomain.my-business.com/some-param
+     * SipaUrl.getHostName();
+     * // => 'subdomain.my-business.com'
+     *
+     * // URL: http://localhost:7000/other-param
+     * SipaUrl.getHostName();
+     * // => 'localhost'
+     *
+     * // URL: http://127.0.0.1/foo
+     * SipaUrl.getHostName();
+     * // => '127.0.0.1'
+     *
+     * // URL: http://localhost/foo
+     * SipaUrl.getHostName();
+     * // => 'localhost'
      *
      * @returns {string}
      */
@@ -47,9 +74,10 @@ class SipaUrl {
     }
 
     /**
-     * Get all params of the current URL
+     * Get all params of the current URL.
      *
      * @example
+     *
      * // URL: https://my-business.com/?one=1&stat=true
      * SipaUrl.getParams();
      * // => { "one": "1", "stat": "true" }
@@ -62,9 +90,10 @@ class SipaUrl {
     }
 
     /**
-     * Set or overwrite given parameters of the current url
+     * Set or overwrite given parameters of the current url.
      *
      * @example
+     *
      * // URL: https://my-business.com/?one=1&stat=true&that=cool
      * SipaUrl.setParams({ "more": "better", "stat": "false"});
      * // URL: https://my-business.com/?one=1&stat=false&that=cool&more=better
@@ -79,9 +108,10 @@ class SipaUrl {
     }
 
     /**
-     * Set or overwrite one specific parameter of the current url
+     * Set or overwrite one specific parameter of the current url.
      *
      * @example
+     *
      * // URL: https://my-business.com/?super=banana&coca=cola
      * SipaUrl.setParam("pepsi","coke");
      * // URL: https://my-business.com/?super=banana&coca=cola&pepsi=coke
@@ -98,9 +128,10 @@ class SipaUrl {
     }
 
     /**
-     * Remove given params of the current url
+     * Remove given params of the current url.
      *
      * @example
+     *
      * // URL: https://my-business.com/?some=stuff&foo=bar&more=power
      * SipaUrl.removeParams(["some","more"]);
      * // URL: https://my-business.com/?foo=bar
@@ -115,12 +146,14 @@ class SipaUrl {
     }
 
     /**
-     * Remove given param of the current url
+     * Remove given param of the current url.
      *
      * @example
+     *
      * // URL: https://my-business.com/?some=stuff&foo=bar
      * SipaUrl.removeParam("foo");
      * // URL: https://my-business.com/?some=stuff
+     *
      * @param {string} param_key
      */
     static removeParam(param_key) {
@@ -130,7 +163,17 @@ class SipaUrl {
     }
 
     /**
-     * Set or overwrite given anchor of the current url
+     * Set or overwrite given anchor of the current url.
+     *
+     * @example
+     *
+     * // URL: https://my-business.com/?some=stuff#my-anchor
+     * SipaUrl.setAnchor("new-anchor");
+     * // URL: https://my-business.com/?some=stuff#new-anchor
+     *
+     * // URL: https://my-business.com/?without=anchor
+     * SipaUrl.setAnchor("added-anchor");
+     * // URL: https://my-business.com/?without=anchor#added-anchor
      *
      * @param {string} anchor without leading # character
      * @param {boolean} jump jump to anchor
@@ -159,9 +202,10 @@ class SipaUrl {
     }
 
     /**
-     * Remove the anchor of the current URL
+     * Remove the anchor of the current URL.
      *
      * @example
+     *
      * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
      * SipaUrl.removeAnchor();
      * // URL: https://my-business.com/?some=stuff&foo=bar
@@ -174,9 +218,19 @@ class SipaUrl {
     }
 
     /**
-     * Get the anchor of the current URL without leading #
+     * Get the anchor of the current URL without leading #.
      *
-     * @returns {string}
+     * @example
+     *
+     * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl.getAnchor();
+     * // => 'my-anchor'
+     *
+     * // URL: https://my-business.com/?some=stuff&foo=bar
+     * SipaUrl.getAnchor();
+     * // => undefined
+     *
+     * @returns {string|undefined}
      */
     static getAnchor() {
         const self = SipaUrl;
@@ -184,12 +238,12 @@ class SipaUrl {
     }
 
     /**
-     * Creates an url query string based on the given key<->value object
+     * Creates a URL query string based on the given key<->value object.
      *
      * @example
-     *  { a: 1, b: [1,2,3], c: "test space" }
-     *  =>
-     *  'a=1&b=1&b=2&b=3&c=test%20space'
+     *
+     * SipaUrl.createUrlParams({ a: 1, b: [1,2,3], c: "test space" })
+     * // => 'a=1&b=1&b=2&b=3&c=test%20space'
      *
      * @param {Object<string, string>} params in format { param1: value1, param2: value2, ... }
      * @param {Object} options
@@ -229,9 +283,10 @@ class SipaUrl {
     }
 
     /**
-     * Create a JSON, containing the parameters of the given url
+     * Create a JSON, containing the parameters of the given url.
      *
      * @example
+     *
      * SipaUrl.getParamsOfUrl("https://my-business.com/?some=stuff&foo=bar");
      * // => { "some": "stuff", "foo": "bar" }
      *
@@ -305,7 +360,13 @@ class SipaUrl {
     }
 
     /**
-     * Remove the given parameters from the given url
+     * Remove the given parameters from the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?some=stuff&foo=bar&more=power";
+     * SipaUrl.removeParamsOfUrl(url, ["some","more"]);
+     * // => https://my-business.com/?foo=bar
      *
      * @param {string} url to remove the params from
      * @param {Array<String>} param_keys array of keys to remove from the given url, e.g. ['key1','key2'}
@@ -335,7 +396,13 @@ class SipaUrl {
     }
 
     /**
-     * Remove the given one parameter from the given url
+     * Remove the given one parameter from the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?some=stuff&foo=bar";
+     * SipaUrl.removeParamOfUrl(url, "foo");
+     * // => https://my-business.com/?some=stuff
      *
      * @param {string} url
      * @param {string} param_key name of the param
@@ -350,7 +417,13 @@ class SipaUrl {
     }
 
     /**
-     * Set/overwrite the parameters of the given url
+     * Set/overwrite the parameters of the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?one=1&stat=true&that=cool"
+     * SipaUrl.setParamsOfUrl(url, { "more": "better", "stat": "false"});
+     * // => https://my-business.com/?one=1&stat=false&that=cool&more=better
      *
      * @param {string} url
      * @param {Object<string, string>} params in format { param1: value1, param2: value2, ... }
@@ -375,7 +448,17 @@ class SipaUrl {
 
 
     /**
-     * Set/overwrite the anchor of the given url
+     * Set/overwrite the anchor of the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?some=stuff#my-anchor";
+     * SipaUrl.setAnchorOfUrl(url, "new-anchor");
+     * // => https://my-business.com/?some=stuff#new-anchor
+     *
+     * const url2 = "https://my-business.com/?without=anchor";
+     * SipaUrl.setAnchorOfUrl(url2, "added-anchor");
+     * // => https://my-business.com/?without=anchor#added-anchor
      *
      * @param {string} url
      * @param {string} anchor as string, without leading #
@@ -399,12 +482,22 @@ class SipaUrl {
     }
 
     /**
-     * Get the anchor of the given url
+     * Get the anchor of the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?some=stuff&foo=bar#my-anchor";
+     * SipaUrl.getAnchorOfUrl(url);
+     * // => 'my-anchor'
+     *
+     * const url2 = "https://my-business.com/?some=stuff&foo=bar";
+     * SipaUrl.getAnchorOfUrl(url2);
+     * // => undefined
      *
      * @param {string} url
      * @param {object} options
      * @param {boolean} options.return_prefixed_hash return the prefixed hash
-     * @returns {string} the anchor of the given url
+     * @returns {string|undefined} the anchor of the given url
      */
     static getAnchorOfUrl(url, options = {}) {
         SipaHelper.validateParams([
@@ -427,7 +520,13 @@ class SipaUrl {
     }
 
     /**
-     * Remove the anchor of the given url
+     * Remove the anchor of the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?some=stuff&foo=bar#my-anchor";
+     * SipaUrl.removeAnchorOfUrl(url);
+     * // => https://my-business.com/?some=stuff&foo=bar
      *
      * @param {string} url
      * @returns {string} without anchor
@@ -444,7 +543,13 @@ class SipaUrl {
     }
 
     /**
-     * Get the given url without query parameters
+     * Get the given url without query parameters, but preserve the anchor.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/?some=stuff&foo=bar#my-anchor";
+     * SipaUrl._getUrlWithoutParams(url);
+     * // => https://my-business.com/#my-anchor
      *
      * @param {string} url
      * @returns {string} url without parameters
@@ -454,15 +559,22 @@ class SipaUrl {
         SipaHelper.validateParams([
             {param_value: url, param_name: 'url', expected_type: 'string'}
         ]);
+        const original_anchor = SipaUrl.getAnchorOfUrl(url, {return_prefixed_hash: true});
         if (url.indexOf('?') !== -1) {
-            return url.substr(0, url.indexOf('?'));
+            return url.substr(0, url.indexOf('?')) + (original_anchor ? original_anchor : '');
         } else {
             return url;
         }
     }
 
     /**
-     * Overwrite the current url with the given url
+     * Overwrite the current url with the given url in the address bar without reloading the page.
+     *
+     * @example
+     *
+     * // Current URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl._setUrl("https://my-business.com/?other=param#new-anchor");
+     * // New URL: https://my-business.com/?other=param#new-anchor
      *
      * @param {string} url
      * @private

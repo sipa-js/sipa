@@ -35,7 +35,7 @@ class SipaHelper {
     }
 
     /**
-     * Check if given value is a array (slice) of size 1 and contains type empty
+     * Check if given value is an array (slice) of size 1 and contains type empty
      *
      * @example
      * let arr = ["one"];
@@ -64,7 +64,7 @@ class SipaHelper {
 
     /**
      * Check the given parameter to be of the expected type.
-     * If is is not valid, throw an exception.
+     * If it is not valid, throw an exception.
      *
      * @example
      * function Example(param_one, other_param) {
@@ -92,12 +92,24 @@ class SipaHelper {
         }
     }
 
+    /**
+     * Throw an exception for invalid parameter
+     *
+     * @example
+     * SipaHelper.throwParamError('param_one', "one", 'Object');
+     * // => Invalid parameter 'param_one' given. Expected type 'Object' but got type 'string'!
+     *
+     * @param {string} param_name
+     * @param {any} param
+     * @param {string} expected_type e.g. 'Object', 'string, 'Array', 'number', ...
+     * @throws {Error} always throws an error
+     */
     static throwParamError(param_name, param, expected_type) {
         throw `Invalid parameter '${param_name}' given. Expected type '${expected_type}' but got type '${Typifier.getType(param)}'!`;
     }
 
     /**
-     * Cut leading characters (string) from given text
+     * Cut leading characters (string) from given text.
      *
      * @example
      *  .cutLeadingCharacters('/some/path/is/that','/')
@@ -106,6 +118,7 @@ class SipaHelper {
      * @param {string} text to cut
      * @param {string} leading_characters to cut from text
      * @returns {string}
+     * @throws {Error} when text or leading_characters are not strings
      */
     static cutLeadingCharacters(text, leading_characters) {
         const self = SipaHelper;
@@ -121,7 +134,7 @@ class SipaHelper {
     }
 
     /**
-     * Cut trailing characters (string) from given text
+     * Cut trailing characters (string) from given text.
      *
      * @example
      *  .cutLeadingCharacters('/some/path/file.ext','.ext')
@@ -130,6 +143,7 @@ class SipaHelper {
      * @param {string} text to cut
      * @param {string} trailing_characters to cut from text
      * @returns {string}
+     * @throws {Error} when text or trailing_characters are not strings
      */
     static cutTrailingCharacters(text, trailing_characters) {
         const self = SipaHelper;

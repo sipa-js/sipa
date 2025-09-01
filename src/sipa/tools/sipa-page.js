@@ -16,6 +16,20 @@ class SipaPage {
     /**
      * Load given page by page_id
      *
+     * @example
+     *
+     * SipaPage.load('home', {
+     *   layout_id: 'default', // optional, default layout is used if not given
+     *   force_load: false, // optional, default false
+     *   fade_effect: true, // optional, default true
+     *   stack_page: true, // optional, default true
+     *   params: { lang: 'de' }, // optional, default null
+     *   keep_params: true, // optional, default true
+     *   success: (data, text, response) => { console.log("page loaded successfully"); },
+     *   error: (response, text, data) => { console.error("error loading page"); },
+     *   always: (data, text, response) => { console.log("page load finished"); }
+     * });
+     *
      * @param {string} page_id to load
      * @param {Object} options
      * @param {string} options.layout_id specify custom layout, overwrite default layout
@@ -137,7 +151,18 @@ class SipaPage {
     }
 
     /**
-     * Get the id only of the given template
+     * Get the id only of the given template.
+     *
+     * @example
+     *
+     * SipaPage.extractIdOfTemplate('views/pages/home/home.html');
+     * // => 'home'
+     *
+     * SipaPage.extractIdOfTemplate('views/pages/home');
+     * // => 'home'
+     *
+     * SipaPage.extractIdOfTemplate('views/pages/some/nested/nested.html');
+     * // => 'some/nested'
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
@@ -175,7 +200,18 @@ class SipaPage {
     }
 
     /**
-     * Get the class name of the given template
+     * Get the class name of the given template.
+     *
+     * @example
+     *
+     * SipaPage.getClassNameOfTemplate('views/pages/home/home.html');
+     * // => 'HomePage'
+     *
+     * SipaPage.getClassNameOfTemplate('views/pages/home');
+     * // => 'HomePage'
+     *
+     * SipaPage.getClassNameOfTemplate('views/pages/some/nested/nested.html');
+     * // => 'SomeNestedPage'
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
@@ -197,7 +233,15 @@ class SipaPage {
     }
 
     /**
-     * Get the options of the given type
+     * Get the options of the given type.
+     *
+     * @example
+     *
+     * SipaPage.typeOptions('page')
+     * // => { prefix: 'views/pages/', file_ext: '.html' }
+     *
+     * SipaPage.typeOptions('layout')
+     * // => { prefix: 'views/layouts/', file_ext: '.html' }
      *
      * @param {SipaPage.PageType} type
      * @returns {TypeOptionsType} type options
@@ -220,7 +264,17 @@ class SipaPage {
     }
 
     /**
-     * Get page id of current loaded page
+     * Get page id of current loaded page.
+     *
+     * @example
+     *
+     * // 'views/pages/home/home.html' is loaded
+     * SipaPage.currentPageId()
+     * // => 'home'
+     *
+     * // 'views/pages/some/nested/nested.html' is loaded
+     * SipaPage.currentPageId()
+     * // => 'some/nested'
      *
      * @returns {string} page id
      */
@@ -229,7 +283,17 @@ class SipaPage {
     }
 
     /**
-     * Get current page class
+     * Get current page class.
+     *
+     * @example
+     *
+     * // 'views/pages/home/home.html' is loaded
+     * SipaPage.currentPageClass()
+     * // => HomePage
+     *
+     * // 'views/pages/some/nested/nested.html' is loaded
+     * SipaPage.currentPageClass()
+     * // => SomeNestedPage
      *
      * @return {SipaBasicView}
      */
@@ -239,7 +303,17 @@ class SipaPage {
     }
 
     /**
-     * Get layout id of current loaded layout
+     * Get layout id of current loaded layout.
+     *
+     * @example
+     *
+     * // 'views/layouts/default/default.html' is loaded
+     * SipaPage.currentLayoutId()
+     * // => 'default'
+     *
+     * // 'views/layouts/mini-dialog/mini-dialog.html' is loaded
+     * SipaPage.currentLayoutId()
+     * // => 'mini-dialog'
      *
      * @returns {string}
      */
@@ -248,7 +322,16 @@ class SipaPage {
     }
 
     /**
-     * Load the given layout
+     * Load the given layout.
+     *
+     * @example
+     *
+     * SipaPage.loadLayout('default', {
+     *   fade_effect: true, // optional, default true
+     *   success: (data, text, response) => { console.log("layout loaded successfully"); },
+     *   error: (response, text, data) => { console.error("error loading layout"); },
+     *   always: (data, text, response) => { console.log("layout load finished"); }
+     * });
      *
      * @param {string} layout_id to load
      * @param {Object} options
@@ -319,7 +402,18 @@ class SipaPage {
     }
 
     /**
-     * Call the given method of the given page with given parameters (optional)
+     * Call the given method of the given page with given (optional) parameters.
+     *
+     * @example
+     *
+     * class HomePage extends SipaBasicView {
+     *   static someMethod(param1, param2) {
+     *     console.log("someMethod called with", param1, param2);
+     *   }
+     * }
+     *
+     * SipaPage.callMethodOfPage('home', 'someMethod', ['hello', 42]);
+     * // => "someMethod called with hello 42"
      *
      * @param {string} page_id
      * @param {string} method_name
@@ -343,7 +437,18 @@ class SipaPage {
     }
 
     /**
-     * Call the given method of the given layout with given parameters (optional)
+     * Call the given method of the given layout with given (optional) parameters.
+     *
+     * @example
+     *
+     * class DefaultLayout extends SipaBasicView {
+     *  static someMethod(param1, param2) {
+     *     console.log("someMethod called with", param1, param2);
+     *   }
+     * }
+     *
+     * SipaPage.callMethodOfLayout('default', 'someMethod', ['hello', 42]);
+     * // => "someMethod called with hello 42"
      *
      * @param {string} layout_id
      * @param {string} method_name
@@ -367,7 +472,18 @@ class SipaPage {
     }
 
     /**
-     * Ensure full path of given template
+     * Ensure full path of given template.
+     *
+     * @example
+     *
+     * SipaPage._makeFullPath('home');
+     * // => 'views/pages/home/home.html'
+     *
+     * SipaPage._makeFullPath('some/nested');
+     * // => 'views/pages/some/nested/nested.html'
+     *
+     * SipaPage._makeFullPath('default', {type: 'layout'});
+     * // => 'views/layouts/default/default.html'
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
@@ -398,7 +514,9 @@ class SipaPage {
     }
 
     /**
-     * Initialize the router for single page app browser history
+     * Initialize the router for single page app browser history.
+     *
+     * This method is called automatically when setting the config of SipaPage.
      */
     static initHistoryState() {
         const self = SipaPage;
@@ -417,7 +535,16 @@ class SipaPage {
     }
 
     /**
-     * Stack the current page and layout state to the browser history
+     * Stack the current page and layout state to the browser history.
+     *
+     * @example
+     *
+     * SipaPage.stackHistoryState({
+     *   page_id: 'home',
+     *   layout_id: 'default',
+     *   options: { fade_effect: true, stack_page: true }
+     * });
+     *
      *
      * @param {Object} state
      * @param {string} state.page_id
@@ -468,6 +595,11 @@ class SipaPage {
         }
     }
 
+    /**
+     * Check if SipaPage was initialized with a config.
+     *
+     * @returns {boolean}
+     */
     static isInitialized() {
         const self = SipaPage;
         return self.config !== null;
@@ -480,15 +612,15 @@ class SipaPage {
      *
      */
     static reset() {
-        $('body').removeAttr('data-page-id');
-        $('body').removeAttr('data-layout-id');
+        $("body").removeAttr('data-page-id');
+        $("body").removeAttr('data-layout-id');
     }
 }
 
 SipaPage.page_container_css_selector = '#page-container';
 
 /**
- * @type {SipaPageConfig}
+ * @type {SipaPage.Config}
  */
 SipaPage.config = null;
 

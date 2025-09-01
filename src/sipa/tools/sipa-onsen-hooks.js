@@ -1,13 +1,19 @@
 /**
  * SipaOnsenHooks
  *
- * App hook manager extending SipaHooks with additional hooks for OnsenUI.
+ * App hook manager extending SipaHooks with additional hooks for OnsenUI (mobile).
  */
 
 class SipaOnsenHooks extends SipaHooks {
 
     /**
-     * Set, remove or trigger event 'beforeShowPage'
+     * Set, remove or trigger event 'beforeShowPage'.
+     *
+     * @example
+     *
+     * SipaOnsenHooks.beforeShowPage('on', () => {
+     *   console.log("This is run before onShow() of any page is executed!");
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
@@ -31,7 +37,13 @@ class SipaOnsenHooks extends SipaHooks {
     }
 
     /**
-     * Set, remove or trigger event 'beforeHidePage'
+     * Set, remove or trigger event 'beforeHidePage'.
+     *
+     * @example
+     *
+     * SipaOnsenHooks.beforeHidePage('on', () => {
+     *  console.log("This is run before onHide() of any page is executed!");
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'

@@ -1,11 +1,29 @@
 /**
  * SipaOnsenPage
  *
- * Tool class with page loader with included router for OnsenUI
+ * Tool class with page loader with included router for OnsenUI (mobile).
  */
 class SipaOnsenPage {
     /**
      * Load given page by page_id
+     *
+     * @example
+     *
+     * SipaOnsenPage.load('home', {
+     *   reset: true,
+     *   params: { user_id: 123 },
+     *   anchor: 'section2',
+     *   keep_params: false,
+     *   keep_anchor: false,
+     *   fade_effect: true,
+     *   onsen: { animation: 'fade' },
+     *   success: (data, text, response) => {
+     *     console.log("Page loaded successfully");
+     *   },
+     *   error: (response, text, data) => {
+     *     console.error("Error loading page");
+     *   }
+     * });
      *
      * @param {string} page_id to load
      * @param {Object} options
@@ -130,13 +148,26 @@ class SipaOnsenPage {
         });
     }
 
+    /**
+     * Get the OnsenUI navigator element.
+     *
+     * @returns {Element}
+     */
     static getOnsenNavigator() {
         const self = SipaOnsenPage;
         return document.querySelector(self.page_container_css_selector);
     }
 
     /**
-     * Get the id only of the given template
+     * Get the id only of the given template.
+     *
+     * @example
+     *
+     * SipaOnsenPage.extractIdOfTemplate('views/pages/test/test.html');
+     * // => 'test'
+     *
+     * SipaOnsenPage.extractIdOfTemplate('views/pages/group/children.html');
+     * // => 'group/children'
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
@@ -149,7 +180,18 @@ class SipaOnsenPage {
     }
 
     /**
-     * Get the class name of the given template
+     * Get the class name of the given template.
+     *
+     * @example
+     *
+     * SipaOnsenPage.getClassNameOfTemplate('views/pages/test/test.html');
+     * // => 'TestPage'
+     *
+     * SipaOnsenPage.getClassNameOfTemplate('views/pages/group/children/children.html');
+     * // => 'GroupChildrenPage'
+     *
+     * SipaOnsenPage.getClassNameOfTemplate('views/layouts/main/main.html', {type: 'layout'});
+     * // => 'MainLayout'
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
@@ -162,7 +204,15 @@ class SipaOnsenPage {
     }
 
     /**
-     * Get the options of the given type
+     * Get the options of the given type.
+     *
+     * @example
+     *
+     * SipaOnsenPage.typeOptions('page');
+     * // => { prefix: 'views/pages/', file_ext: '.html' }
+     *
+     * SipaOnsenPage.typeOptions('layout');
+     * // => { prefix: 'views/layouts/', file_ext: '.html' }
      *
      * @param {SipaPage.PageType} type
      * @returns {TypeOptionsType} type options
@@ -172,9 +222,17 @@ class SipaOnsenPage {
     }
 
     /**
-     * Get page id of current loaded page
+     * Get page id of current loaded page.
      *
-     * @returns {string} page id
+     * If no page is loaded, return undefined.
+     *
+     * @example
+     *
+     * // page 'HomePage' is loaded
+     * SipaOnsenPage.currentPageId();
+     * // => 'home'
+     *
+     * @returns {string|undefined} page id
      */
     static currentPageId() {
         const self = SipaOnsenPage;
@@ -191,9 +249,17 @@ class SipaOnsenPage {
     }
 
     /**
-     * Get current page class
+     * Get current page class.
      *
-     * @return {SipaBasicView}
+     * If no page is loaded, return undefined.
+     *
+     * @example
+     *
+     * // page with id 'home' is loaded
+     * SipaOnsenPage.currentPageClass();
+     * // => HomePage
+     *
+     * @return {SipaBasicView|undefined}
      */
     static currentPageClass() {
         const self = SipaPage;
@@ -201,7 +267,13 @@ class SipaOnsenPage {
     }
 
     /**
-     * Get layout id of current loaded layout
+     * Get layout id of current loaded layout.
+     *
+     * @example
+     *
+     * // layout 'DefaultLayout' is loaded
+     * SipaOnsenPage.currentLayoutId();
+     * // => 'default-layout'
      *
      * @returns {string}
      */
@@ -210,7 +282,7 @@ class SipaOnsenPage {
     }
 
     /**
-     * Load the given layout
+     * Load the given layout.
      *
      * @param {string} layout_id to load
      * @param {Object} options
@@ -290,7 +362,11 @@ class SipaOnsenPage {
     }
 
     /**
-     * Call the given method of the given page with given parameters (optional)
+     * Call the given method of the given page with given (optional) parameters.
+     *
+     * @example
+     *
+     * SipaOnsenPage.callMethodOfPage('home', 'myCustomMethod', [param1, param2]);
      *
      * @param {string} page_id
      * @param {string} method_name
@@ -302,7 +378,11 @@ class SipaOnsenPage {
     }
 
     /**
-     * Call the given method of the given layout with given parameters (optional)
+     * Call the given method of the given layout with given (optional) parameters.
+     *
+     * @example
+     *
+     * SipaOnsenPage.callMethodOfLayout('default-layout', 'myCustomMethod', [param1, param2]);
      *
      * @param {string} layout_id
      * @param {string} method_name
@@ -314,7 +394,7 @@ class SipaOnsenPage {
     }
 
     /**
-     * Set the configuration of pages and layouts
+     * Set the configuration of pages and layouts.
      *
      * @example
      *   SipaOnsenPage.setConfig({
@@ -345,6 +425,19 @@ class SipaOnsenPage {
     }
 
     /**
+     * Pop the current page from the stack.
+     *
+     * @example
+     *
+     * SipaOnsenPage.load("home");
+     * // some user interaction later
+     *
+     * SipaOnsenPage.load("details");
+     * // some user interaction later
+     *
+     * SipaOnsenPage.popPage();
+     * // now back to 'home'
+     *
      * @param {Object} options
      * @param {SipaOnsenPage.OnsenOptions} options.onsen options passed to original OnsenUI popPage
      * @returns {Promise}
@@ -371,7 +464,12 @@ class SipaOnsenPage {
     }
 
     /**
-     * Add a status bar mock to the app
+     * Add a status bar mock to the app at the top.
+     *
+     * @example
+     *
+     * SipaOnsenPage.addStatusBarMock();
+     *
      */
     static addStatusBarMock() {
         const self = SipaOnsenPage;
@@ -385,7 +483,11 @@ class SipaOnsenPage {
     }
 
     /**
-     * Remove status bar mock of the app
+     * Remove status bar mock of the app at the top if available.
+     *
+     * @example
+     *
+     * SipaOnsenPage.removeStatusBarMock();
      */
     static removeStatusBarMock() {
         if (document.querySelector('div.ons-status-bar-mock')) {
@@ -398,7 +500,7 @@ class SipaOnsenPage {
     }
 
     /**
-     * Initialize status bar mock - do not run before first page is loaded!
+     * Initialize status bar mock - do NOT run before first page is loaded!
      */
     static _initStatusBarMock() {
         const self = SipaOnsenPage;
@@ -411,12 +513,23 @@ class SipaOnsenPage {
         }
     }
 
+    /**
+     * Get the current page stack of ons-navigator.
+     *
+     * @returns {*[]}
+     * @private
+     */
     static _getPageStack() {
         return [...document.querySelectorAll('ons-navigator ons-page')];
     }
 
     /**
-     * Ensure full path of given template
+     * Ensure full path of given template.
+     *
+     * @example
+     *
+     * SipaOnsenPage._makeFullPath('home');
+     * // => 'views/pages/home/home.html'
      *
      * @param {string} template id or path of page or layout
      * @param {Object} options
@@ -428,6 +541,13 @@ class SipaOnsenPage {
         return SipaPage._makeFullPath(template, options);
     }
 
+    /**
+     * Connect OnsenUI page events with SipaOnsenPage methods.
+     *
+     * This method is called automatically on first page load.
+     *
+     * @private
+     */
     static _connectOnsenHooks() {
         const self = SipaOnsenPage;
         if (!self._onsen_hooks_connected) {
@@ -509,6 +629,15 @@ class SipaOnsenPage {
         }
     }
 
+    /**
+     * On first load, initialize the history tree if configured.
+     *
+     * This will load pages into the stack, so that the user can navigate back,
+     * for example if you landed on a details page from an external link.
+     *
+     * @param {boolean} force
+     * @private
+     */
     static _initHistoryTree(force = false) {
         const self = SipaOnsenPage;
         if (!self._history_tree_loaded || force) {
@@ -553,6 +682,12 @@ class SipaOnsenPage {
         }
     }
 
+    /**
+     * Initialize all ons-back-button elements on the current page if any.
+     * Overrides their default behavior to use SipaOnsenPage.popPage()
+     *
+     * @private
+     */
     static _initializeBackButton() {
         const self = SipaOnsenPage;
         const back_buttons = [...document.querySelectorAll('ons-back-button')];
@@ -598,6 +733,12 @@ class SipaOnsenPage {
         return false;
     }
 
+    /**
+     * Check if the previous page in the stack is uninitialized and has a history tree attribute.
+     *
+     * @returns {boolean}
+     * @private
+     */
     static _hasUninitializedHistoryPage() {
         const self = SipaOnsenPage;
         const page_stack = self._getPageStack();
@@ -605,6 +746,16 @@ class SipaOnsenPage {
         return new_page && new_page.getAttribute('data-history-tree');
     }
 
+    /**
+     * Initialize the given page by calling its onInit method and setting url params and anchor.
+     *
+     * @param {string} page_id
+     * @param {string} last_page_id
+     * @param {Object} params
+     * @param {string} anchor
+     * @param {Element} element
+     * @private
+     */
     static _initPage(page_id, last_page_id, params = {}, anchor, element) {
         const self = SipaOnsenPage;
         if (!params) {
@@ -632,19 +783,19 @@ class SipaOnsenPage {
     /**
      * Reset all states
      *
-     * Useful for unit testing
+     * Useful for unit testing.
      *
      */
     static reset() {
-        $('body').removeAttr('data-page-id');
-        $('body').removeAttr('data-layout-id');
+        $("body").removeAttr('data-page-id');
+        $("body").removeAttr('data-layout-id');
     }
 }
 
 SipaOnsenPage.page_container_css_selector = 'ons-navigator';
 
 /**
- * @type {SipaOnsenPageConfig}
+ * @type {SipaOnsenPage.Config}
  */
 SipaOnsenPage.config = null;
 SipaOnsenPage._onsen_hooks_connected = false;
@@ -661,7 +812,7 @@ SipaOnsenPage._page_stack_history = [];
  */
 
 /**
- * @typedef {Object} SipaOnsenPageConfig
+ * @typedef {Object} SipaOnsenPage.Config
  * @param {string} default_layout
  * @param {Object} default_layouts
  *

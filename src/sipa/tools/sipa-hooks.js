@@ -10,9 +10,10 @@ class SipaHooks {
      * Set, remove or trigger event 'beforeInitPage'
      *
      * @example
+     *
      * SipaHooks.beforeInitPage('on', () => {
      *     console.log("This is run before onInit() of any page is executed!");
-     * }
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
@@ -37,7 +38,13 @@ class SipaHooks {
 
 
     /**
-     * Set, remove or trigger event 'beforeShowPage'
+     * Set, remove or trigger event 'beforeShowPage'.
+     *
+     * @example
+     *
+     * SipaHooks.beforeShowPage('on', () => {
+     *   console.log("This is run before onShow() of any page is executed!");
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
@@ -61,12 +68,13 @@ class SipaHooks {
     }
 
     /**
-     * Set, remove or trigger event 'beforeDestroyPage'
+     * Set, remove or trigger event 'beforeDestroyPage'.
      *
      * @example
+     *
      * SipaHooks.beforeDestroyPage('on', () => {
      *     console.log("This is run before onDestroy() of any page is executed!");
-     * }
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
@@ -90,12 +98,13 @@ class SipaHooks {
     }
 
     /**
-     * Set, remove or trigger event 'beforeInitLayout'
+     * Set, remove or trigger event 'beforeInitLayout'.
      *
      * @example
+     *
      * SipaHooks.beforeInitLayout('on', () => {
      *     console.log("This is run before onInit() of any layout is executed!");
-     * }
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
@@ -119,12 +128,13 @@ class SipaHooks {
     }
 
     /**
-     * Set, remove or trigger event 'beforeDestroyLayout'
+     * Set, remove or trigger event 'beforeDestroyLayout'.
      *
      * @example
+     *
      * SipaHooks.beforeDestroyLayout('on', () => {
-     *     console.log("This is run before onDestroy) of any layout is executed!");
-     * }
+     *     console.log("This is run before onDestroy() of any layout is executed!");
+     * });
      *
      * @param {SipaHooks.HookType} type
      * @param {function} func function to set or remove, ignored if parameter type is 'trigger'
@@ -149,6 +159,9 @@ class SipaHooks {
 
     // ------------ reset ------------
 
+    /**
+     * Reset all hooks
+     */
     static reset() {
         const self = SipaHooks;
         self._before_init_page_functions = [];
