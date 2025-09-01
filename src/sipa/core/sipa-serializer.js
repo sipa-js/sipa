@@ -76,7 +76,7 @@ class SipaSerializer {
         } else if (value === null) {
             return null;
         } else if (typeof value === 'function') {
-            return value.toString();
+            return JSON.stringify(value.toString());
         } else if (Typifier.isNaN(value)) {
             return '::NaN::';
         } else if (Typifier.isInfinity(value)) {
@@ -141,19 +141,19 @@ class SipaSerializer {
             return Infinity;
         } else if (value === '::-Infinity::') {
             return -Infinity;
-        } else if (SipaSerializer.isFunctionString(value)) {
-            return SipaSerializer.deserializeFunctionString(value);
         } else if (Typifier.isString(value) && value.startsWith('::Date::')) {
-            return new Date(value.replace('::Date::',''));
+            return new Date(value.replace('::Date::', ''));
         } else if (Typifier.isString(value) && value.startsWith('::RegExp::')) {
-            let full_regex_string = value.replace('::RegExp::','');
-            let regex_source = full_regex_string.substring(1,full_regex_string.lastIndexOf('/'));
-            let regex_flags = full_regex_string.substring(full_regex_string.lastIndexOf('/')+1,full_regex_string.length);
+            let full_regex_string = value.replace('::RegExp::', '');
+            let regex_source = full_regex_string.substring(1, full_regex_string.lastIndexOf('/'));
+            let regex_flags = full_regex_string.substring(full_regex_string.lastIndexOf('/') + 1, full_regex_string.length);
             return new RegExp(regex_source, regex_flags);
         } else {
             try {
                 let parsed = JSON.parse(value);
-                if (Typifier.isArray(parsed) || Typifier.isObject(parsed)) {
+                if (SipaSerializer.isFunctionString(parsed)) {
+                    return SipaSerializer.deserializeFunctionString(parsed);
+                } else if (Typifier.isArray(parsed) || Typifier.isObject(parsed)) {
                     return self.deepDeserializeSpecialTypes(parsed);
                 } else {
                     return parsed;
@@ -225,13 +225,13 @@ class SipaSerializer {
      */
     static isArrayString(value) {
         const self = SipaSerializer;
-        if(Typifier.isString(value)) {
+        if (Typifier.isString(value)) {
             let trimmed = value.trim();
-            if(trimmed.startsWith('[') && trimmed.endsWith(']')) {
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
                 try {
                     let array = JSON.parse(trimmed);
                     return Typifier.isArray(array);
-                } catch(e) {
+                } catch (e) {
                 }
             }
         }
@@ -256,13 +256,13 @@ class SipaSerializer {
      */
     static isObjectString(value) {
         const self = SipaSerializer;
-        if(Typifier.isString(value)) {
+        if (Typifier.isString(value)) {
             let trimmed = value.trim();
-            if(trimmed.startsWith('{') && trimmed.endsWith('}')) {
+            if (trimmed.startsWith('{') && trimmed.endsWith('}')) {
                 try {
                     let object = JSON.parse(trimmed);
                     return Typifier.isObject(object);
-                } catch(e) {
+                } catch (e) {
                 }
             }
         }
@@ -519,18 +519,22 @@ class SipaSerializer {
      */
     static _isSerializedSpecialType(value) {
         const self = SipaSerializer;
-        if(!Typifier.isString(value)) {
+        if (!Typifier.isString(value)) {
             return false;
         }
         const special_types = Object.keys(self.STORAGE_PLACEHOLDERS);
-        for(let i = 0; i < special_types.length; ++i) {
-            if(value.startsWith(special_types[i])) {
+        for (let i = 0; i < special_types.length; ++i) {
+            if (value.startsWith(special_types[i])) {
                 return true;
             }
         }
         // special case for functions
-        if(self.isFunctionString(value)) {
-            return true;
+        try {
+            if (self.isFunctionString(JSON.parse(value))) {
+                return true;
+            }
+        } catch (e) {
+            // is no valid JSON, ignore
         }
         return false;
     }
@@ -555,9 +559,9 @@ class SipaSerializer {
      */
     static _cloneObject(obj) {
         let clone = null;
-        if(Typifier.isArray(obj)) {
+        if (Typifier.isArray(obj)) {
             clone = obj.slice();
-        } else if(Typifier.isObject(obj)) {
+        } else if (Typifier.isObject(obj)) {
             clone = Object.assign({}, obj);
         } else {
             throw `Parameter must be of type 'Array' or 'Object'! Given type: '${Typifier.getType(obj)}'`;
