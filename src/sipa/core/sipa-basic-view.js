@@ -2,14 +2,49 @@
  * Basic class for pages and layouts
  */
 class SipaBasicView {
+    /**
+     * Called when the view is initialized
+     *
+     * @example
+     *
+     * class MyPage extends SipaBasicView {
+     *   static onInit() {
+     *     console.log("MyPage initialized");
+     *   }
+     * }
+     *
+     * SipaPage.load('my-page');
+     * // => "MyPage initialized"
+     *
+     */
     static onInit() {
         // called when page has been loaded, before fade animation
     }
 
+    /**
+     * Called when the view is destroyed, when leaving the page.
+     *
+     * @example
+     *
+     * class MyPage extends SipaBasicView {
+     *   static onDestroy() {
+     *     console.log("MyPage destroyed");
+     *   }
+     * }
+     *
+     * SipaPage.load('my-page');
+     * // => "MyPage initialized"
+     * SipaPage.load('another-page');
+     * // => "MyPage destroyed"
+     *
+     */
     static onDestroy() {
         // called when leaving page, before next page will be loaded
     }
 
+    /**
+     * Shortcut to reinitialize the view (calls onDestroy and onInit)
+     */
     static reinit() {
         this.onDestroy();
         this.onInit();
@@ -19,7 +54,7 @@ class SipaBasicView {
      * Check if the current view is loaded
      *
      * @example
-     * // ImprintPage is loaded
+     * // Given ImprintPage is loaded
      * LoginPage.isLoaded();
      * // => false
      *
@@ -67,6 +102,13 @@ class SipaBasicView {
      *
      * MyLayout.type()
      * // => 'layout'
+     *
+     * @example
+     * class MyPage extends SipaBasicView {
+     * }
+     *
+     * MyPage.type()
+     * // => 'page'
      *
      * @returns {'page'|'layout'}
      */
