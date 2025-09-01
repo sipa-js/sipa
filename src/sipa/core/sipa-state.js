@@ -15,6 +15,18 @@ class SipaState {
     /**
      * Set a value with the given persistence level, by default SipaState.LEVEL.SESSION
      *
+     * @example
+     *
+     * // Set a variable that will be lost after reload
+     * SipaState.set("my_var", {a:1, b:2}, {level: SipaState.LEVEL.VARIABLE});
+     *
+     * // Set a session value that will be lost after closing the browser
+     * SipaState.set("my_sess", {a:1, b:2}, {level: SipaState.LEVEL.SESSION});
+     * SipaState.set("my_sess", {a:1, b:2});
+     *
+     * // Set a storage value that
+     * SipaState.set("my_store", {a:1, b:2}, {level: SipaState.LEVEL.STORAGE});
+     *
      * @param {string} key
      * @param {any} value
      * @param {object} options
@@ -42,7 +54,12 @@ class SipaState {
     }
 
     /**
-     * Set value in persistence level 1 (variable)
+     * Set value in persistence level 1 (variable).
+     *
+     * @example
+     *
+     * // Set a variable that will be lost after reload
+     * SipaState.setVariable("my_var", {a:1, b:2});
      *
      * @param {string} key
      * @param {any} value
@@ -57,7 +74,12 @@ class SipaState {
     }
 
     /**
-     * Set value in persistence level 2 (session)
+     * Set value in persistence level 2 (session).
+     *
+     * @example
+     *
+     * // Set a session value that will be lost after closing the browser
+     * SipaState.setSession("my_sess", {a:1, b:2});
      *
      * @param {string} key
      * @param {any} value
@@ -74,6 +96,11 @@ class SipaState {
     /**
      * Set value in persistence level 3 (storage)
      *
+     * @example
+     *
+     * // Set a storage value that will be lost when clearing browser cache only
+     * SipaState.setStorage("my_store", {a:1, b:2});
+     *
      * @param {string} key
      * @param {any} value
      * @param {object} options
@@ -89,6 +116,33 @@ class SipaState {
     /**
      * Get the persistence level of the value stored at the given key.
      * If key is not set at any level, returns null.
+     *
+     * @example
+     *
+     * SipaState.setSession("my_sess", {a:1, b:2});
+     * SipaState.getLevel("my_sess"); // returns 'session'
+     *
+     * SipaState.setVariable("my_var", {a:1, b:2});
+     * SipaState.getLevel("my_var"); // returns 'variable'
+     *
+     * SipaState.setStorage("my_store", {a:1, b:2});
+     * SipaState.getLevel("my_store"); // returns 'storage'
+     *
+     * SipaState.getLevel("not_existing_key"); // returns null
+     *
+     * // If key is set at multiple levels, the highest level is returned (storage > session > variable)
+     * SipaState.setStorage("my_key", {a:1, b:2});
+     * SipaState.setSession("my_key", {a:1, b:2});
+     * SipaState.setVariable("my_key", {a:1, b:2});
+     * SipaState.getLevel("my_key"); // returns 'storage'
+     *
+     * SipaState.remove("my_key");
+     * SipaState.setSession("my_key", {a:1, b:2});
+     * SipaState.setVariable("my_key", {a:1, b:2});
+     * SipaState.getLevel("my_key"); // returns 'session'
+     *
+     * SipaState.set("my_key", {a:1, b:2}, {level: SipaState.LEVEL.VARIABLE, force: true});
+     * SipaState.getLevel("my_key"); // returns 'variable'
      *
      * @param {string} key
      * @returns {SipaState.LEVEL|null}
@@ -107,7 +161,17 @@ class SipaState {
     }
 
     /**
-     * Check if key is set already at any persistence level
+     * Check if key is set already at any persistence level.
+     *
+     * @example
+     *
+     * SipaState.setSession("my_sess", {a:1, b:2});
+     * SipaState.hasKey("my_sess"); // returns true
+     *
+     * SipaState.hasKey("not_existing_key"); // returns false
+     *
+     * SipaState.setStorage("my_store", {a:1, b:2});
+     * SipaState.hasKey("my_store"); // returns true
      *
      * @param {string} key
      * @returns {boolean}
@@ -119,8 +183,17 @@ class SipaState {
 
     /**
      * Get the value of the given key. Persistence level does not matter and is implicit.
+     * The priority is storage > session > variable.
+     *
+     * @example
+     *
+     * SipaState.setSession("my_sess", {a:1, b:2});
+     * SipaState.get("my_sess"); // returns {a:1, b:2}
+     *
+     * SipaState.get("not_existing_key"); // returns undefined
      *
      * @param {string} key
+     * @returns {any|undefined} value or undefined if key does not exist
      */
     static get(key) {
         const self = SipaState;
@@ -128,7 +201,16 @@ class SipaState {
     }
 
     /**
-     * Get all entries of persistence level 1 (variables)
+     * Get all entries of persistence level 1 (variables).
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setVariable("var2", 2);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.getVariables(); // returns {var1: 1, var2: 2}
      *
      * @returns {Object<String, any>}
      */
@@ -138,7 +220,16 @@ class SipaState {
     }
 
     /**
-     * Get all entries of persistence level 2 (session)
+     * Get all entries of persistence level 2 (session).
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setSession("sess2", 2);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.getSession(); // returns {sess1: 1, sess2: 2}
      *
      * @returns {Object<String, any>}
      */
@@ -148,7 +239,16 @@ class SipaState {
     }
 
     /**
-     * Get all entries of persistence level 3 (storage)
+     * Get all entries of persistence level 3 (storage).
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     * SipaState.setStorage("store2", 2);
+     *
+     * SipaState.getStorage(); // returns {store1: 1, store2: 2}
      *
      * @returns {Object<String, any>}
      */
@@ -158,7 +258,15 @@ class SipaState {
     }
 
     /**
-     * Get all stored entries
+     * Get all stored entries.
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.getAll(); // returns {var1: 1, sess1: 1, store1: 1}
      *
      * @returns {Object<String, any>}
      */
@@ -168,7 +276,16 @@ class SipaState {
     }
 
     /**
-     * Get all keys
+     * Get all keys.
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.getKeys(); // returns ['var1', 'sess1', 'store1']
+     *
      * @returns {Array<String>}
      */
     static getKeys() {
@@ -177,7 +294,20 @@ class SipaState {
     }
 
     /**
-     * Remove the stored value of the given key(s)
+     * Remove the stored value of the given key(s).
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.remove("sess1"); // returns true
+     * SipaState.getKeys(); // returns ['var1', 'store1']
+     *
+     * SipaState.remove("not_existing"); // returns false
+     *
+     * SipaState.remove(["var1", "store1"]); // returns true
      *
      * @param {string|Array} key key or keys to remove
      * @returns {boolean} true if value of any key was set and has been removed. False if no key did exist.
@@ -214,7 +344,16 @@ class SipaState {
     }
 
     /**
-     * Delete all stored data - alias method for reset()
+     * Delete all stored data - alias method for reset().
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.removeAll(); // returns true
+     * SipaState.getKeys(); // returns []
      *
      * @returns {boolean} true if one or more entries have been deleted
      */
@@ -224,7 +363,16 @@ class SipaState {
     }
 
     /**
-     * Delete all stored data
+     * Delete all stored data.
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState.reset(); // returns true
+     * SipaState.getKeys(); // returns []
      *
      * @returns {boolean} true if one or more entries have been deleted
      */
@@ -235,6 +383,16 @@ class SipaState {
     }
 
     /**
+     * Get all entries by level
+     *
+     * @example
+     *
+     * SipaState.setVariable("var1", 1);
+     * SipaState.setVariable("var2", 2);
+     * SipaState.setSession("sess1", 1);
+     * SipaState.setStorage("store1", 1);
+     *
+     * SipaState._getAllBy(SipaState.LEVEL.VARIABLE); // returns {var1: 1, var2: 2}
      *
      * @param {SipaState.Level} level
      * @return {Object<string, any>}
@@ -254,7 +412,13 @@ class SipaState {
     }
 
     /**
-     * Get store by level
+     * Get store by level.
+     *
+     * @example
+     *
+     * SipaState._getStoreByLevel(SipaState.LEVEL.VARIABLE); // returns SipaState._variables
+     * SipaState._getStoreByLevel(SipaState.LEVEL.SESSION); // returns sessionStorage
+     * SipaState._getStoreByLevel(SipaState.LEVEL.STORAGE); // returns localStorage
      *
      * @param {SipaState.Level} level
      * @returns {Storage|object}
@@ -275,7 +439,12 @@ class SipaState {
     }
 
     /**
-     * Ensure key is prefixed
+     * Ensure key is prefixed.
+     *
+     * @example
+     *
+     * SipaState._makeFinalKey("my_key"); // returns "SipaState_my_key"
+     * SipaState._makeFinalKey("SipaState_my_key"); // returns "SipaState_my_key"
      *
      * @param {string} key
      * @returns {string}
@@ -291,7 +460,12 @@ class SipaState {
     }
 
     /**
-     * Get key without prefix
+     * Get key without prefix.
+     *
+     * @example
+     *
+     * SipaState._reduceKey("my_key"); // returns "my_key"
+     * SipaState._reduceKey("SipaState_my_key"); // returns "my_key"
      *
      * @param key
      * @private
@@ -316,14 +490,30 @@ class SipaState {
     }
 }
 
+/**
+ * Persistence levels
+ *
+ * @type {{VARIABLE: string, SESSION: string, STORAGE: string}}
+ */
 SipaState.LEVEL = {
     VARIABLE: 'variable',
     SESSION: 'session',
     STORAGE: 'storage',
 }
 
+/**
+ * Prefix for all keys to avoid conflicts with other data in sessionStorage or localStorage.
+ *
+ * @type {string}
+ */
 SipaState.PERSISTENCE_PREFIX = 'SipaState_';
 
+/**
+ * In-memory storage for level 1 persistence (variables).
+ *
+ * @type {{}}
+ * @private
+ */
 SipaState._variables = {}; // Level 1 persistence
 
 /**
