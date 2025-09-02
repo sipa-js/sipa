@@ -40,6 +40,14 @@ class SipaTest {
         const self = SipaTest;
         return self._is_testing_mode;
     }
+
+    /**
+     * Reset all Sipa states to initial state.
+     */
+    static reset() {
+        const self = SipaTest;
+        self._is_testing_mode = false;
+    }
 }
 
 /**
