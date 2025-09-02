@@ -3,8 +3,20 @@
  *
  * Tool class to access and manipulate
  * the current or given URLs
+ *
+ * All non getter methods return the class itself for chaining.
+ *
+ * @example
+ *
+ * SipaUrl.setParam("new","param").setHostName("new-host.com").setAnchor("new-anchor").load();
+ *
  */
 class SipaUrl {
+
+    //-------------------------------------------------------------------------------------------------
+    // Url
+    //-------------------------------------------------------------------------------------------------
+
     /**
      * Get the current URL of the address bar
      *
@@ -20,6 +32,134 @@ class SipaUrl {
     }
 
     /**
+     * Get the given url without query parameters and without anchors.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/post?some=stuff&foo=bar#my-anchor";
+     * SipaUrl.getUrlWithoutParamsAndAnchor(url);
+     * // => https://my-business.com/post
+     *
+     * @param {string} url
+     * @returns {string} url without parameters
+     */
+    static getUrlWithoutParamsAndAnchor(url) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: url, param_name: 'url', expected_type: 'string'}
+        ]);
+        if (url.indexOf('?') !== -1) {
+            return url.substr(0, url.indexOf('?'));
+        } else {
+            return self.removeAnchorOfUrl(url);
+        }
+    }
+
+    /**
+     * Overwrite the current url with the given url in the address bar,
+     * by default without reloading the page, if the hostname did not change.
+     *
+     * @example
+     *
+     * // Current URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl.setUrl("https://my-business.com/?other=param#new-anchor");
+     * // New URL: https://my-business.com/?other=param#new-anchor
+     *
+     * @param {string} url
+     * @param {Object} [options]
+     * @param {boolean} [options.force_load=false] if true, the given url will be (re)loaded, default: false
+     * @returns {SipaUrl} for chaining
+     */
+    static setUrl(url, options = {}) {
+        const self = SipaUrl;
+        options.force_load ??= false;
+        SipaHelper.validateParams([
+            {param_value: url, param_name: 'url', expected_type: 'string'}
+        ]);
+        if (options.force_load) {
+            window.location.href = url;
+        } else {
+            try {
+                // Check if URLs have the same origin
+                const current_origin = new URL(window.location.href).origin;
+                const new_origin = new URL(url, window.location.href).origin;
+
+                if (current_origin === new_origin) {
+                    window.history.replaceState(window.history.state, '', url);
+                } else {
+                    // Different origin - fall back to full page load
+                    window.location.href = url;
+                }
+            } catch (e) {
+                // If there's any error in origin checking or replaceState, try direct change
+                try {
+                    window.history.replaceState(window.history.state, '', url);
+                } catch (historyError) {
+                    // If replaceState fails, fall back to full page load
+                    window.location.href = url;
+                }
+            }
+        }
+        return self;
+    }
+
+    /**
+     * Reload the current URL in the address bar.
+     *
+     * Typically used, when the URL was changed by other URL
+     * manipulation methods, that do not reload the page by default.
+     *
+     * @example
+     *
+     * // Current URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl.setParam("new","param");
+     * SipaUrl.setHostName("new-host.com");
+     * SipaUrl.setAnchor("new-anchor");
+     * SipaUrl.loadCurrentUrl();
+     *
+     * @returns {SipaUrl} for chaining
+     */
+    static loadCurrentUrl() {
+        const self = SipaUrl;
+        self.loadUrl(self.getUrl());
+        return self;
+    }
+
+    /**
+     * Alias for SipaUrl.loadCurrentUrl()
+     *
+     * @returns {SipaUrl} for chaining
+     */
+    static load() {
+        const self = SipaUrl;
+        self.loadCurrentUrl();
+        return self;
+    }
+
+    /**
+     * Load the given URL in the address bar.
+     *
+     * @example
+     *
+     * SipaUrl.loadUrl("https://my-business.com/?some=stuff&foo=bar#my-anchor");
+     *
+     * @param {string} url
+     * @returns {SipaUrl} for chaining
+     */
+    static loadUrl(url) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: url, param_name: 'url', expected_type: 'string'}
+        ]);
+        window.location.href = url;
+        return self;
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    // Protocol
+    //-------------------------------------------------------------------------------------------------
+
+    /**
      * Get the protocol of the current url (without colon)
      *
      * @example
@@ -32,11 +172,72 @@ class SipaUrl {
      * SipaUrl.getProtocol();
      * // => 'http'
      *
-     * @returns {'http'|'https'}
+     * @returns {string}
      */
     static getProtocol() {
         return window.location.protocol.replace(':', '');
     }
+
+    /**
+     * Set the protocol of the current url without reloading the page.
+     *
+     * @example
+     *
+     * // URL: http://my-insecure-business.com/other-param
+     * SipaUrl.setProtocol("https");
+     * // URL: https://my-insecure-business.com/other-param
+     * SipaUrl.load();
+     *
+     * @param {string} protocol
+     * @returns {SipaUrl} for chaining
+     * @throws {Error} if given protocol is not supported
+     */
+    static setProtocol(protocol) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: protocol, param_name: 'protocol', expected_type: 'string'}
+        ]);
+        self.setUrl(self.setProtocolOfUrl(self.getUrl(), protocol));
+        return self;
+    }
+
+    /**
+     * Set the protocol of the given url.
+     *
+     * @example
+     *
+     * const url = "http://my-insecure-business.com/other-param";
+     * SipaUrl.setProtocolOfUrl(url, "https");
+     * // => "https://my-insecure-business.com/other-param"
+     *
+     * @param {string} url
+     * @param {string} protocol
+     * @returns {string} with given protocol
+     * @throws {Error} if given protocol is not supported
+     */
+    static setProtocolOfUrl(url, protocol) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: url, param_name: 'url', expected_type: 'string'},
+            {param_value: protocol, param_name: 'protocol', expected_type: 'string'}
+        ]);
+        if (!self.SUPPORTED_PROTOCOLS.includes(protocol.toLowerCase())) {
+            throw new Error("Given protocol '" + protocol + "' is not supported. Supported protocols are: " + supported_protocols.join(', '));
+        }
+        // check if url starts with supported protocol
+        const supported_protocols_regex = new RegExp('^(' + self.SUPPORTED_PROTOCOLS.join('|') + '):\/\/', 'i');
+        if (url.match(supported_protocols_regex)) {
+            return url.replace(supported_protocols_regex, protocol + '://');
+        } else if (url.startsWith(("//"))) {
+            return protocol + ':' + url;
+        } else {
+            return url;
+        }
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    // HostName
+    //-------------------------------------------------------------------------------------------------
 
     /**
      * Get the host name of the current url.
@@ -70,8 +271,148 @@ class SipaUrl {
      * @returns {string}
      */
     static getHostName() {
-        return window.location.hostname;
+        const self = SipaUrl;
+        return self.getHostNameOfUrl(self.getUrl());
     }
+
+
+    /**
+     * Get the host name of the given url.
+     *
+     * Returns an empty string if the given url is not valid or no hostname could be extracted.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/some-param";
+     * SipaUrl.getHostNameOfUrl(url);
+     * // => 'my-business.com'
+     *
+     * const url2 = "https://www.my-business.com/some-param";
+     * SipaUrl.getHostNameOfUrl(url2);
+     * // => 'www.my-business.com'
+     *
+     * const url3 = "https://subdomain.my-business.com/some-param";
+     * SipaUrl.getHostNameOfUrl(url3);
+     * // => 'subdomain.my-business.com'
+     *
+     * @param {string} url
+     * @returns {string}
+     */
+    static getHostNameOfUrl(url) {
+        SipaHelper.validateParams([
+            {param_value: url, param_name: 'url', expected_type: 'string'}
+        ]);
+        try {
+            // Support file:// protocol
+            if (url.startsWith('file://')) {
+                // file://hostname/path or file:///path (no hostname)
+                const match = url.match(/^file:\/\/([^\/]*)/);
+                return match && match[1] ? match[1] : '';
+            }
+            // Support protocol-relative URLs: //example.com/path
+            if (url.startsWith('//')) {
+                url = 'http:' + url;
+            }
+            // Repair URLs with pattern like "http:/example.com"
+            url = url.replace(/^(https?:)\/([^\/])/, '$1//$2');
+            // Repair URLs with pattern like "http:/example.com" or "http//:example.com" to "http://example.com"
+            url = url.replace(/^(https?)\/{1,2}:/, '$1://');
+            let u = new URL(url);
+            return u.hostname;
+        } catch (e) {
+            // Support Windows UNC paths: \\hostname\share\path
+            const uncMatch = url.match(/^\\\\([^\\\/]+)[\\\/]/);
+            if (uncMatch && uncMatch[1]) {
+                return uncMatch[1];
+            }
+            // Fallback: extract hostname from http(s) or protocol-relative URLs
+            const hostname_extract_regex = /^(https?:\/\/|\/\/)?([^\/]+)/;
+            const match = url.match(hostname_extract_regex);
+            if (match && match.length >= 3) {
+                const hostname = match[2];
+                if (/^[a-zA-Z0-9.\-]+$/.test(hostname)) {
+                    return hostname;
+                } else {
+                    return "";
+                }
+            } else {
+                return "";
+            }
+        }
+    }
+
+    /**
+     * Set the host name of the current url without reloading the page.
+     *
+     * @example
+     *
+     * // URL: https://my-business.com/some-param
+     * SipaUrl.setHostName("new-host.com");
+     * // URL: https://new-host.com/some-param
+     *
+     * @param {string} hostname
+     * @returns {SipaUrl}
+     */
+    static setHostName(hostname) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: hostname, param_name: 'hostname', expected_type: 'string'}
+        ]);
+        self.setUrl(self.setHostNameOfUrl(self.getUrl(), hostname));
+        return self;
+    }
+
+    /**
+     * Set/overwrite the host name of the given url.
+     *
+     * @example
+     *
+     * const url = "https://my-business.com/some-param";
+     * SipaUrl.setHostNameOfUrl(url, "new-host.com");
+     * // => https://new-host.com/some-param
+     *
+     * const url2 = "https://www.my-business.com/some-param";
+     * SipaUrl.setHostNameOfUrl(url2, "other-host.org");
+     * // => https://other-host.org/some-param
+     *
+     * const url3 = "https://subdomain.my-business.com/some-param";
+     * SipaUrl.setHostNameOfUrl(url3, "127.0.0.1");
+     * // => https://127.0.0.1/some-param
+     *
+     * @param {string} url
+     * @param {string} hostname
+     * @returns {string}
+     */
+    static setHostNameOfUrl(url, hostname) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: url, param_name: 'url', expected_type: 'string'},
+            {param_value: hostname, param_name: 'hostname', expected_type: 'string'}
+        ]);
+        // check if hostname is valid
+        const hostname_regex = /^(?!:\/\/)([a-zA-Z0-9-_\.]+)$/;
+        if (!hostname.match(hostname_regex)) {
+            throw `Given hostname is not valid: '${hostname}'`;
+        }
+        try {
+            let u = new URL(url);
+            u.hostname = hostname;
+            return u.toString();
+        } catch (e) {
+            let h = self.getHostNameOfUrl(url);
+            if (h) {
+                return url.replace(h, hostname);
+            } else if (url.trim() === "") {
+                return hostname;
+            } else {
+                throw `Given URL is not valid: ${url}`;
+            }
+        }
+    }
+
+    //-------------------------------------------------------------------------------------------------
+    // Params
+    //-------------------------------------------------------------------------------------------------
 
     /**
      * Get all params of the current URL.
@@ -99,12 +440,14 @@ class SipaUrl {
      * // URL: https://my-business.com/?one=1&stat=false&that=cool&more=better
      *
      * @param {Object<string, string>} params in format { param1: value1, param2: value2, ... }
+     * @returns {SipaUrl} for chaining
      */
     static setParams(params) {
         const self = SipaUrl;
         SipaHelper.validateParams([{param_value: params, param_name: 'params', expected_type: 'Object'}]);
         const new_url = self.setParamsOfUrl(self.getUrl(), params);
-        self._setUrl(new_url);
+        self.setUrl(new_url);
+        return self;
     }
 
     /**
@@ -118,6 +461,7 @@ class SipaUrl {
      *
      * @param {string} param_key
      * @param {string} value
+     * @returns {SipaUrl} for chaining
      */
     static setParam(param_key, value) {
         const self = SipaUrl;
@@ -125,6 +469,7 @@ class SipaUrl {
         let param = {};
         param[param_key] = value;
         self.setParams(param);
+        return self;
     }
 
     /**
@@ -137,12 +482,14 @@ class SipaUrl {
      * // URL: https://my-business.com/?foo=bar
      *
      * @param {Array<String>} param_keys
+     * @returns {SipaUrl} for chaining
      */
     static removeParams(param_keys) {
         const self = SipaUrl;
         SipaHelper.validateParams([{param_value: param_keys, param_name: 'param_keys', expected_type: 'Array'}]);
         const new_url = self.removeParamsOfUrl(self.getUrl(), param_keys);
-        self._setUrl(new_url);
+        self.setUrl(new_url);
+        return self;
     }
 
     /**
@@ -155,11 +502,13 @@ class SipaUrl {
      * // URL: https://my-business.com/?some=stuff
      *
      * @param {string} param_key
+     * @returns {SipaUrl} for chaining
      */
     static removeParam(param_key) {
         const self = SipaUrl;
         SipaHelper.validateParams([{param_value: param_key, param_name: 'param_key', expected_type: 'string'}]);
         self.removeParams([param_key]);
+        return self;
     }
 
     /**
@@ -173,11 +522,13 @@ class SipaUrl {
      * SipaUrl.resetParams();
      * // URL: https://my-business.com/#my-anchor
      *
+     * @returns {SipaUrl} for chaining
      */
     static resetParams() {
         const self = SipaUrl;
         const new_url = self.removeParamsOfUrl(self.getUrl(), Object.keys(self.getParams()));
-        self._setUrl(new_url);
+        self.setUrl(new_url);
+        return self;
     }
 
     /**
@@ -196,80 +547,6 @@ class SipaUrl {
         return typeof params[param_key] !== "undefined";
     }
 
-    /**
-     * Set or overwrite given anchor of the current url.
-     *
-     * @example
-     *
-     * // URL: https://my-business.com/?some=stuff#my-anchor
-     * SipaUrl.setAnchor("new-anchor");
-     * // URL: https://my-business.com/?some=stuff#new-anchor
-     *
-     * // URL: https://my-business.com/?without=anchor
-     * SipaUrl.setAnchor("added-anchor");
-     * // URL: https://my-business.com/?without=anchor#added-anchor
-     *
-     * @param {string} anchor without leading # character
-     * @param {boolean} jump jump to anchor
-     */
-    static setAnchor(anchor, jump = false) {
-        const self = SipaUrl;
-        if (typeof anchor === "undefined") {
-            self.removeAnchor();
-        }
-        if (jump) {
-            let state = {};
-            if (window.history.state) {
-                state = window.history.state;
-            }
-            let params = {page: state.page_id};
-            if (typeof anchor !== "undefined") {
-                window.location.href = window.location.href + '#' + anchor;
-            } else {
-                window.location.href = self.removeAnchorOfUrl(window.location.href);
-            }
-            window.history.replaceState(state, '', SipaUrl.setParamsOfUrl(SipaUrl.getUrl(), params));
-        } else {
-            const new_url = self.setAnchorOfUrl(self.getUrl(), anchor);
-            self._setUrl(new_url);
-        }
-    }
-
-    /**
-     * Remove the anchor of the current URL.
-     *
-     * @example
-     *
-     * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
-     * SipaUrl.removeAnchor();
-     * // URL: https://my-business.com/?some=stuff&foo=bar
-     *
-     */
-    static removeAnchor() {
-        const self = SipaUrl;
-        const new_url = self.removeAnchorOfUrl(self.getUrl());
-        self._setUrl(new_url);
-    }
-
-    /**
-     * Get the anchor of the current URL without leading #.
-     *
-     * @example
-     *
-     * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
-     * SipaUrl.getAnchor();
-     * // => 'my-anchor'
-     *
-     * // URL: https://my-business.com/?some=stuff&foo=bar
-     * SipaUrl.getAnchor();
-     * // => undefined
-     *
-     * @returns {string|undefined}
-     */
-    static getAnchor() {
-        const self = SipaUrl;
-        return self.getAnchorOfUrl(self.getUrl());
-    }
 
     /**
      * Creates a URL query string based on the given key<->value object.
@@ -426,7 +703,7 @@ class SipaUrl {
         if (typeof anchor === "undefined") {
             anchor = "";
         }
-        return self._getUrlWithoutParamsAndAnchor(url) + query_params + anchor;
+        return self.getUrlWithoutParamsAndAnchor(url) + query_params + anchor;
     }
 
     /**
@@ -440,6 +717,7 @@ class SipaUrl {
      *
      * @param {string} url
      * @param {string} param_key name of the param
+     * @returns {string} with given parameter removed
      */
     static removeParamOfUrl(url, param_key) {
         const self = SipaUrl;
@@ -447,7 +725,7 @@ class SipaUrl {
             {param_value: param_key, param_name: 'param_key', expected_type: 'string'},
             {param_value: url, param_name: 'url', expected_type: 'string'},
         ]);
-        self.removeParamsOfUrl(url, [param_key]);
+        return self.removeParamsOfUrl(url, [param_key]);
     }
 
     /**
@@ -477,9 +755,94 @@ class SipaUrl {
         for (let key of Object.keys(params)) {
             curr_params[key] = params[key];
         }
-        return self.removeAnchorOfUrl(self._getUrlWithoutParamsAndAnchor(url)) + '?' + self.createUrlParams(curr_params) + anchor;
+        return self.removeAnchorOfUrl(self.getUrlWithoutParamsAndAnchor(url)) + '?' + self.createUrlParams(curr_params) + anchor;
     }
 
+    //-------------------------------------------------------------------------------------------------
+    // Anchor
+    //-------------------------------------------------------------------------------------------------
+
+    /**
+     * Set or overwrite given anchor of the current url.
+     *
+     * @example
+     *
+     * // URL: https://my-business.com/?some=stuff#my-anchor
+     * SipaUrl.setAnchor("new-anchor");
+     * // URL: https://my-business.com/?some=stuff#new-anchor
+     *
+     * // URL: https://my-business.com/?without=anchor
+     * SipaUrl.setAnchor("added-anchor");
+     * // URL: https://my-business.com/?without=anchor#added-anchor
+     *
+     * @param {string} anchor without leading # character
+     * @param {boolean} jump jump to anchor
+     * @returns {SipaUrl} for chaining
+     */
+    static setAnchor(anchor, jump = false) {
+        const self = SipaUrl;
+        SipaHelper.validateParams([
+            {param_value: anchor, param_name: 'anchor', expected_type: 'string'},
+            {param_value: jump, param_name: 'jump', expected_type: 'boolean'}
+        ]);
+        if (jump) {
+            let state = {};
+            if (window.history.state) {
+                state = window.history.state;
+            }
+            let params = {page: state.page_id};
+            if (typeof anchor !== "undefined") {
+                window.location.href = window.location.href + '#' + anchor;
+            } else {
+                window.location.href = self.removeAnchorOfUrl(window.location.href);
+            }
+            window.history.replaceState(state, '', SipaUrl.setParamsOfUrl(SipaUrl.getUrl(), params));
+        } else {
+            const new_url = self.setAnchorOfUrl(self.getUrl(), anchor);
+            self.setUrl(new_url);
+        }
+        return self;
+    }
+
+    /**
+     * Remove the anchor of the current URL.
+     *
+     * @example
+     *
+     * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl.removeAnchor();
+     * // URL: https://my-business.com/?some=stuff&foo=bar
+     *
+     * @returns {SipaUrl} for chaining
+     */
+    static removeAnchor() {
+        const self = SipaUrl;
+        const new_url = self.removeAnchorOfUrl(self.getUrl());
+        self.setUrl(new_url);
+        return self;
+    }
+
+    /**
+     * Get the anchor of the current URL without leading #.
+     *
+     * Returns undefined if there is no anchor.
+     *
+     * @example
+     *
+     * // URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
+     * SipaUrl.getAnchor();
+     * // => 'my-anchor'
+     *
+     * // URL: https://my-business.com/?some=stuff&foo=bar
+     * SipaUrl.getAnchor();
+     * // => undefined
+     *
+     * @returns {string|undefined}
+     */
+    static getAnchor() {
+        const self = SipaUrl;
+        return self.getAnchorOfUrl(self.getUrl());
+    }
 
     /**
      * Set/overwrite the anchor of the given url.
@@ -508,7 +871,7 @@ class SipaUrl {
             {param_value: url, param_name: 'url', expected_type: 'string'},
         ]);
         let curr_params = self.getParamsOfUrl(url);
-        let final_url = self._getUrlWithoutParamsAndAnchor(url);
+        let final_url = self.getUrlWithoutParamsAndAnchor(url);
         if (Object.keys(curr_params).length > 0) {
             final_url += '?';
         }
@@ -575,161 +938,19 @@ class SipaUrl {
             return url;
         }
     }
-
-    /**
-     * Get the host name of the given url.
-     *
-     * Returns an empty string if the given url is not valid or no hostname could be extracted.
-     *
-     * @example
-     *
-     * const url = "https://my-business.com/some-param";
-     * SipaUrl.getHostNameOfUrl(url);
-     * // => 'my-business.com'
-     *
-     * const url2 = "https://www.my-business.com/some-param";
-     * SipaUrl.getHostNameOfUrl(url2);
-     * // => 'www.my-business.com'
-     *
-     * const url3 = "https://subdomain.my-business.com/some-param";
-     * SipaUrl.getHostNameOfUrl(url3);
-     * // => 'subdomain.my-business.com'
-     *
-     * @param {string} url
-     * @returns {string}
-     */
-    static getHostNameOfUrl(url) {
-        SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'string'}
-        ]);
-        try {
-            // Support file:// protocol
-            if (url.startsWith('file://')) {
-                // file://hostname/path or file:///path (no hostname)
-                const match = url.match(/^file:\/\/([^\/]*)/);
-                return match && match[1] ? match[1] : '';
-            }
-            // Support protocol-relative URLs: //example.com/path
-            if (url.startsWith('//')) {
-                url = 'http:' + url;
-            }
-            // Repair URLs with pattern like "http:/example.com"
-            url = url.replace(/^(https?:)\/([^\/])/, '$1//$2');
-            // Repair URLs with pattern like "http:/example.com" or "http//:example.com" to "http://example.com"
-            url = url.replace(/^(https?)\/{1,2}:/, '$1://');
-            let u = new URL(url);
-            return u.hostname;
-        } catch (e) {
-            // Support Windows UNC paths: \\hostname\share\path
-            const uncMatch = url.match(/^\\\\([^\\\/]+)[\\\/]/);
-            if (uncMatch && uncMatch[1]) {
-                return uncMatch[1];
-            }
-            // Fallback: extract hostname from http(s) or protocol-relative URLs
-            const hostname_extract_regex = /^(https?:\/\/|\/\/)?([^\/]+)/;
-            const match = url.match(hostname_extract_regex);
-            if (match && match.length >= 3) {
-                const hostname = match[2];
-                if (/^[a-zA-Z0-9.\-]+$/.test(hostname)) {
-                    return hostname;
-                } else {
-                    return "";
-                }
-            } else {
-                return "";
-            }
-        }
-    }
-
-    /**
-     * Set/overwrite the host name of the given url.
-     *
-     * @example
-     *
-     * const url = "https://my-business.com/some-param";
-     * SipaUrl.setHostNameOfUrl(url, "new-host.com");
-     * // => https://new-host.com/some-param
-     *
-     * const url2 = "https://www.my-business.com/some-param";
-     * SipaUrl.setHostNameOfUrl(url2, "other-host.org");
-     * // => https://other-host.org/some-param
-     *
-     * const url3 = "https://subdomain.my-business.com/some-param";
-     * SipaUrl.setHostNameOfUrl(url3, "127.0.0.1");
-     * // => https://127.0.0.1/some-param
-     *
-     * @param {string} url
-     * @param {string} hostname
-     * @returns {string}
-     */
-    static setHostNameOfUrl(url, hostname) {
-        const self = SipaUrl;
-        SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'string'},
-            {param_value: hostname, param_name: 'hostname', expected_type: 'string'}
-        ]);
-        // check if hostname is valid
-        const hostname_regex = /^(?!:\/\/)([a-zA-Z0-9-_\.]+)$/;
-        if (!hostname.match(hostname_regex)) {
-            throw `Given hostname is not valid: '${hostname}'`;
-        }
-        try {
-            let u = new URL(url);
-            u.hostname = hostname;
-            return u.toString();
-        } catch (e) {
-            let h = self.getHostNameOfUrl(url);
-            if (h) {
-                return url.replace(h, hostname);
-            } else if (url.trim() === "") {
-                return hostname;
-            } else {
-                throw `Given URL is not valid: ${url}`;
-            }
-        }
-    }
-
-    /**
-     * Get the given url without query parameters and without anchors.
-     *
-     * @example
-     *
-     * const url = "https://my-business.com/post?some=stuff&foo=bar#my-anchor";
-     * SipaUrl._getUrlWithoutParamsAndAnchor(url);
-     * // => https://my-business.com/post
-     *
-     * @param {string} url
-     * @returns {string} url without parameters
-     * @private
-     */
-    static _getUrlWithoutParamsAndAnchor(url) {
-        const self = SipaUrl;
-        SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'string'}
-        ]);
-        if (url.indexOf('?') !== -1) {
-            return url.substr(0, url.indexOf('?'));
-        } else {
-            return self.removeAnchorOfUrl(url);
-        }
-    }
-
-    /**
-     * Overwrite the current url with the given url in the address bar without reloading the page.
-     *
-     * @example
-     *
-     * // Current URL: https://my-business.com/?some=stuff&foo=bar#my-anchor
-     * SipaUrl._setUrl("https://my-business.com/?other=param#new-anchor");
-     * // New URL: https://my-business.com/?other=param#new-anchor
-     *
-     * @param {string} url
-     * @private
-     */
-    static _setUrl(url) {
-        SipaHelper.validateParams([
-            {param_value: url, param_name: 'url', expected_type: 'string'}
-        ]);
-        window.history.replaceState(window.history.state, '', url);
-    }
 }
+
+SipaUrl.SUPPORTED_PROTOCOLS = [
+    "http",
+    "https",
+    "ftp",
+    "file",
+    "data",
+    "blob",
+    "mailto",
+    "tel",
+    "sms",
+    "geo",
+    "intent",
+    "about"
+];

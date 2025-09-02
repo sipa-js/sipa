@@ -7,6 +7,7 @@ SipaTestSpec.options = {};
 
 describe('SipaTest', () => {
     beforeEach(() => {
+        SipaTest.reset();
     });
     describe('testing mode', () => {
         it('should be disabled by default', () => {

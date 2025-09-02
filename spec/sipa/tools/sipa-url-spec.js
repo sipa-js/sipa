@@ -321,24 +321,24 @@ describe('SipaUrl', () => {
             expect(SipaUrl.getAnchor()).toEqual("my_anchor");
         });
     });
-    describe('._getUrlWithoutParamsAndAnchor', function () {
+    describe('.getUrlWithoutParamsAndAnchor', function () {
         beforeEach(() => {
         });
         it('gets a url with query params', function () {
             const url = "https://example.com/path?param=value";
-            expect(SipaUrl._getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
+            expect(SipaUrl.getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
         });
         it('gets a url without query params', function () {
             const url = "https://example.com/path";
-            expect(SipaUrl._getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
+            expect(SipaUrl.getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
         });
         it('gets a url with anchor and query params', function () {
             const url = "https://example.com/path?param=value#hash";
-            expect(SipaUrl._getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
+            expect(SipaUrl.getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
         });
         it('gets a url with anchor but without query params', function () {
             const url = "https://example.com/path#hash";
-            expect(SipaUrl._getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
+            expect(SipaUrl.getUrlWithoutParamsAndAnchor(url)).toEqual("https://example.com/path");
         });
     });
     describe('.getAnchor / .setAnchor / .removeAnchor', () => {

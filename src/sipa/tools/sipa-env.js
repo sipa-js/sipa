@@ -41,7 +41,7 @@ class SipaEnv {
         const obj = {
             "name": "Name", "unique_id": "SipaEnv.name.selector"
         }
-        return obj.version;
+        return obj.name;
     }
 
 
@@ -61,9 +61,9 @@ class SipaEnv {
      */
     static description() {
         const obj = {
-            "description": "Description", "unique_id": "SipaEnv.description.selector"
+            "description": "Description of my app", "unique_id": "SipaEnv.description.selector"
         }
-        return obj.version;
+        return obj.description;
     }
 
     /**
@@ -82,9 +82,40 @@ class SipaEnv {
      * // => false
      *
      * @returns {boolean} true if localhost, otherwise false
+     * @deprecated use SipaEnv.isLocalhost() instead
      */
     static isRunningLocalHost() {
-        const host = window.location.hostname;
+        const self = SipaEnv;
+        return self.isLocalhost();
+    }
+
+    /**
+     * Check if the given URL is a localhost URL.
+     * If no URL is given, the current URL will be used.
+     *
+     * @example
+     *
+     * // check a specific URL
+     * SipaEnv.isLocalhost('http://localhost:8000') // => true
+     * SipaEnv.isLocalhost('http://127.0.0.1/path') // => true
+     * SipaEnv.isLocalhost('http://example.com') // => false
+     * SipaEnv.isLocalhost('http://mysite.local') // => false
+     *
+     * // check the current URL
+     * // running local at localhost
+     * SipaEnv.isLocalhost() // => true
+     * // running online at example.com
+     * SipaEnv.isLocalhost() // => false
+     *
+     * @param url
+     * @return {boolean}
+     */
+    static isLocalhost(url = null) {
+        const self = SipaEnv;
+        if(!url) {
+            url = SipaUrl.getUrl();
+        }
+        const host = SipaUrl.getHostNameOfUrl(url);
         return host.indexOf('localhost') !== -1 || host.indexOf('127.0.0.1') !== -1;
     }
 
