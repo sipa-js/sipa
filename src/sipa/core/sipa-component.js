@@ -1134,6 +1134,8 @@ class SipaComponent {
      * This feature is needed for hot reloading. First the class will be overwritten by the live webserver.
      * Then all classes need to be reinstantiated to be an instance of the new, overwritten, reloaded component class.
      *
+     * All data and meta information as well as events will be kept.
+     *
      * @param {SipaComponent} component
      * @return {SipaComponent} recreated component instance
      * @private
@@ -1142,7 +1144,10 @@ class SipaComponent {
         let new_instance = new (component.constructor)();
         new_instance._meta = component._meta;
         new_instance._data = component._data;
-        // TODO: iterate over properties of all ancestor classes recursively and get their values
+        new_instance._events = component._events;
+        // TODO: implement
+        throw new Error("Not implemented yet.");
+        return new_instance;
     }
 
     /**
