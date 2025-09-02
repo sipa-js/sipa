@@ -152,7 +152,7 @@ class SipaHelper {
             {param_name: 'trailing_characters', param_value: trailing_characters, expected_type: 'string'},
         ]);
         if (text.endsWith(trailing_characters)) {
-            return text.substr(0,text.indexOf(trailing_characters));
+            return text.substr(0, text.lastIndexOf(trailing_characters));
         } else {
             return text;
         }
@@ -160,6 +160,8 @@ class SipaHelper {
 
     /**
      * Transform the given string into its constant representation.
+     *
+     * If the representation does not exist, an exception is thrown.
      *
      * @example
      * class Foo {
@@ -171,13 +173,18 @@ class SipaHelper {
      *
      * @param {string} constant
      * @returns {*}
+     * @throws {Error} when constant does not exist or name is invalid
      */
     static constantizeString(constant) {
         const self = SipaHelper;
         if (!self._constant_cache[constant]) {
             // check for valid constant name
-            if (constant.match(/^[a-zA-Z0-9_]+$/)) {
-                self._constant_cache[constant] = eval(constant);
+            if (constant.match(/^[a-zA-Z0-9_.]+$/)) {
+                try {
+                    self._constant_cache[constant] = eval(constant);
+                } catch(e) {
+                    throw new Error(`Constant '${constant}' is not defined`);
+                }
             } else {
                 throw new Error(`Invalid constant '${constant}'`);
             }
