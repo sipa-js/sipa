@@ -1,4 +1,13 @@
 # 0.9.44
+## Migration steps from to 0.9.44
+In your `sipa.json`, add the following line in the `development_server` block:
+```json
+    "open": true,
+```
+to continue to automatically open the browser when starting the development server with `sipa s`.
+Without this line, the browser will not open automatically anymore, as the default, if not set, is now `false`.
+This is to avoid opening the browser automatically on servers, where you do not want that, for example when using SIPA with Electron or Tauri.
+
 ## Added support for BigInt in attributes
 Attributes were restricted to numbers with 16 digits (long), but now support BigIntegers as well.
 

@@ -4,6 +4,7 @@
     "host": "0.0.0.0",
     "port": "7000",
     "mount": "/",
+    "open": true,
     "sass_watch_paths": [
       "assets/style",
       "assets/components",
