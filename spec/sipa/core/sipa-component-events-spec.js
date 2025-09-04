@@ -10,7 +10,7 @@ SipaComponentEventsSpec.options = {};
 //
 //----------------------------------------------------------------------------------------------------
 
-class ChildListComponent extends SipaComponent {
+class ParentListComponent extends SipaComponent {
 
     constructor(data, options) {
         data ??= {};
@@ -30,7 +30,7 @@ class ChildListComponent extends SipaComponent {
 
     addItem(name = "NewItem") {
         this._counter ??= 1;
-        const item = new MiniListItemComponent({ name: name }, { sipa_alias: "item_" + this._counter++ });
+        const item = new ChildItemComponent({ name: name }, { sipa_alias: "item_" + this._counter++ });
         item.events().subscribe("trigger_item_button", (instance, data, options) => {
            console.log("Item button triggered in item:", instance, data, options);
               this.events().trigger("trigger_list_item");
@@ -41,14 +41,14 @@ class ChildListComponent extends SipaComponent {
     }
 
     static template = () => {
-        return `<child-list-component><%= title %><div sipa-list="list"></div></child-list-component>`;
+        return `<parent-list-component><%= title %><div sipa-list="list"></div></parent-list-component>`;
     }
 }
-SipaComponent.registerComponent(ChildListComponent);
+SipaComponent.registerComponent(ParentListComponent);
 
 //----------------------------------------------------------------------------------------------------
 
-class MiniListItemComponent extends SipaComponent {
+class ChildItemComponent extends SipaComponent {
 
     constructor(data, options) {
         data ??= {};
@@ -70,10 +70,10 @@ class MiniListItemComponent extends SipaComponent {
     }
 
     static template = () => {
-        return `<mini-list-item-component><%= name %> elemento!<button onclick="instance(this).triggerItemButton();">TRIGGER</button></mini-list-item-component>`;
+        return `<child-item-component><%= name %> elemento!<button onclick="instance(this).triggerItemButton();">TRIGGER</button></child-item-component>`;
     }
 }
-SipaComponent.registerComponent(MiniListItemComponent);
+SipaComponent.registerComponent(ChildItemComponent);
 
 //----------------------------------------------------------------------------------------------------
 
@@ -92,7 +92,7 @@ describe('SipaComponent', () => {
             $("body").append($("<playground></playground>")[0]);
         });
         it('parent can subscribe child items events to trigger parent event', function () {
-            const comp = new ChildListComponent({ title: "List 1" });
+            const comp = new ParentListComponent({ title: "List 1" });
             comp.append("playground");
 
             let li1 = comp.addItem("Item 1");
@@ -105,6 +105,7 @@ describe('SipaComponent', () => {
             $(li1.selector()).find("button")[0].click();
             expect(li1.itemClickCounter()).toEqual(1);
             expect(comp.listClickCounter()).toEqual(1);
+
             comp.update({ title: "List 2"});
             li1.update({ name: "Item 1 updated" });
             li2.update({ name: "Item 2 updated" });
@@ -112,6 +113,37 @@ describe('SipaComponent', () => {
             $(li2.selector()).find("button")[0].click();
             expect(li1.itemClickCounter()).toEqual(2);
             expect(comp.listClickCounter()).toEqual(3);
+
+            comp.update({ title: "List 3", item_1: { name: "Item 1 updated again" }, item_2: { name: "Item 2 updated again" }  });
+            expect(comp.children().item_1).toEqual(li1);
+            expect(comp.children().item_2).toEqual(li2);
+            expect(li1.parent()).toEqual(comp);
+            expect(li2.parent()).toEqual(comp);
+
+            let li1_sel = SipaComponent.bySipaId(li1._meta.sipa.id);
+            let li2_sel = SipaComponent.bySipaId(li2._meta.sipa.id);
+            expect(li1_sel).toEqual(li1);
+            expect(li2_sel).toEqual(li2);
+            $(li1.selector()).find("button")[0].click();
+            expect(li1_sel.itemClickCounter()).toEqual(3);
+            $(li2.selector()).find("button")[0].click();
+            expect(li2_sel.itemClickCounter()).toEqual(2);
+            expect(comp.listClickCounter()).toEqual(5);
+            expect(li1_sel.parent()).toEqual(comp);
+            expect(li2_sel.parent()).toEqual(comp);
+            comp.update();
+            li1_sel.update({ name: "Item 1 updated again and again"});
+            li2_sel.update({ name: "Item 2 updated again and again"});
+            expect(comp.children().item_1).toEqual(li1);
+            expect(comp.children().item_2).toEqual(li2);
+            expect(li1.parent()).toEqual(comp);
+            expect(li2.parent()).toEqual(comp);
+            expect(li1_sel.parent()).toEqual(comp);
+            expect(li2_sel.parent()).toEqual(comp);
+            expect(li1_sel).toEqual(li1);
+            expect(li2_sel).toEqual(li2);
+            expect(li1.cloneData().name).toEqual("Item 1 updated again and again");
+            expect(li2.cloneData().name).toEqual("Item 2 updated again and again");
         });
     });
 });
