@@ -556,6 +556,11 @@ class SipaComponent {
         this.events().trigger("before_update", [this, data, options], {validate: false});
         this._updateData(data, {reset: options.reset, update_data: data});
         this._meta.sipa._data_changed = true;
+        // reset cache of parent component, because when the child changed,
+        // the parent cached node is not valid anymore
+        if(this.parent()) {
+            this.parent()._meta.sipa._cached_node = null;
+        }
         if (options.render) {
             this.render(options);
         } // if no render, then sync at least
