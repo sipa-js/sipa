@@ -1,0 +1,16 @@
+tree-component {
+    display: block;
+    width: 480px;
+    border: 1px solid gray;
+    padding: 4px;
+}
+
+tree-component ons-list  {
+    position: relative;
+    width: 100%;
+}
+
+tree-component .tree-component-search-input  {
+    text-align: center;
+    margin-top: 10px;
+}

@@ -1,0 +1,4 @@
+editable-label-component > input {
+    display: inline-block;
+    width: 100%;
+}

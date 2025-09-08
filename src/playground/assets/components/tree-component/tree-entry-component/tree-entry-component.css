@@ -1,0 +1,73 @@
+tree-entry-component {
+    display: block;
+    border: 1px dotted green;
+    width: 320px;
+    margin-top: 2px;
+    padding: 4px;
+    min-height: 24px;
+}
+
+/* get only next included tree-entry-component */
+tree-entry-component tree-entry-component {
+    margin-top: 6px;
+}
+
+/**/
+tree-entry-component .selected-tree-entry {
+    /*border: 1px solid #005aaa;*/
+    background: #ddeaf7 !important;
+}
+
+/* padding left for tree structure */
+tree-entry-component ons-list-item {
+    padding-left: 10px !important;
+}
+tree-entry-component ons-list-item .left {
+    padding-left: 10px;
+    padding-right: 5px;
+}
+tree-entry-component .tree-center-content {
+    padding-left: 5px;
+}
+
+/* center context */
+tree-entry-component .expandable-content  {
+    padding: 0;
+}
+
+tree-entry-component .tree-center-content {
+    display: block !important;
+    overflow: hidden;
+}
+
+tree-entry-component .tree-entry-center-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+tree-entry-component .tree-entry-center-text-content {
+    overflow: hidden;
+}
+
+tree-entry-component .tree-entry-center-text-content .item-sub,
+tree-entry-component .tree-entry-center-text-content .item-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: pre;
+}
+
+/* left icon */
+tree-entry-component .process-state-icons {
+    display: flex;
+}
+
+/* expand icon */
+tree-entry-component .list-item--expandable > .list-item__top .expand-icon {
+    transition: rotate .4s ;
+    rotate: 0deg;
+}
+
+tree-entry-component .list-item--expandable.list-item--expanded > .list-item__top .expand-icon {
+    rotate: 180deg;
+}
