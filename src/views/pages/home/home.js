@@ -1,6 +1,7 @@
 class HomePage extends SipaBasicView {
     static onInit() {
-        // called when page has been loaded, before fade animation
+        const self = HomePage;
+        self.initTreeComponent();
     }
 
     static onShow() {
@@ -9,5 +10,10 @@ class HomePage extends SipaBasicView {
 
     static onDestroy() {
         // called when leaving page, before next page will be loaded
+    }
+
+    static initTreeComponent() {
+        const component = new TreeComponent();
+        component.prepend("body");
     }
 }
