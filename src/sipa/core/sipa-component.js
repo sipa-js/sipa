@@ -1736,6 +1736,16 @@ class SipaComponent {
             }
             // replace remaining slots with their own (default) content
             parsed.querySelectorAll('slot:not(slot slot)').forEach(el => el.replaceWith(...el.childNodes));
+        } else if (this._meta.sipa.body_nodes?.length > 0) {
+            // If no explicit slots but there are body nodes, append them to the component
+            // This allows nested components to be properly initialized
+            // Only append component elements (registered component tag names)
+            const registered_tag_names = self._registered_components.map(x => x.tagName().toLowerCase());
+            [...this._meta.sipa.body_nodes].forEach((node) => {
+                if (node.nodeType === Node.ELEMENT_NODE && registered_tag_names.includes(node.tagName.toLowerCase())) {
+                    parsed.appendChild(node.cloneNode(true));
+                }
+            });
         }
         return parsed;
     }
