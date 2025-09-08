@@ -32,8 +32,9 @@ class SipaCliServer {
     static _runLiveServerAndSass() {
         const self = SipaCliServer;
         (async function run() {
-            const host = SipaCliTools.readProjectSipaConfig().development_server?.host || '0.0.0.0';
-            const port = SipaCliTools.readProjectSipaConfig().development_server?.port || '7000';
+            const config = SipaCliTools.readProjectSipaConfig();
+            const host = config?.development_server?.host || '0.0.0.0';
+            const port = config?.development_server?.port || '7000';
             const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/sipa-live-server/bin/sipa-live-server.js`;
             const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/sipa-live-server/bin/sipa-live-server.js`);
             let live_server_js_path = null;
@@ -46,10 +47,16 @@ class SipaCliServer {
             } else {
                 throw new Error(`Could not locate sipa-live-server.js`);
             }
-            const config = SipaCliTools.readProjectSipaConfig();
+            // configure mount point
             let mount = config?.development_server?.mount?.trim() || '/';
             if (!mount.endsWith('/')) mount += '/';
-            const server_command = `node "${live_server_js_path}" --port=${port} --host=${host} --ignore=lang --mount="${mount}":./app --open="${mount}"`;
+            // open only if configured
+            let open_param = '';
+            if(config?.development_server?.open === true) {
+                open_param = '--open="${mount}"';
+            }
+            // final server command to start server
+            const server_command = `node "${live_server_js_path}" --port=${port} --host=${host} --ignore=lang --mount="${mount}":./app ${open_param}`;
             let server_process = exec(server_command);
             server_process.stdout.on('data', function (data) {
                 console.log(data.toString('utf8'));
