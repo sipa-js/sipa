@@ -47,7 +47,7 @@ TreeComponent.template = () => {
 <tree-component>    
     <h3> <%=title%> (<%= click_counter %> clicks)</h3>
     <button onclick="instance(this).addElement();">Add Entry</button>
-    <%if(entries.length) {%>
+    <%if(entries_list.length) {%>
     <div sipa-list="entries_list"></div>
     <%} else {%>
     <p>No entries!</p>
