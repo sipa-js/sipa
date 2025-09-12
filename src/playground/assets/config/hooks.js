@@ -28,4 +28,5 @@ SipaHooks.beforeDestroyLayout('on', () => {
     // put some custom stuff here that is execute on
     // every layout before it will be destroyed
     //alert("destroy layout");
+    SipaComponent.destroyAll();
 });
