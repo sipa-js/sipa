@@ -35,6 +35,14 @@ class TreeEntryComponent extends SipaComponent {
     enableEditMode() {
         this._data.edit_mode = true;
     }
+
+    changeItem() {
+        this.update({ name: "Changed!" });
+    }
+
+    changeLabel() {
+        this.update({ label: { text: "Lupi!"}});
+    }
 }
 
 TreeEntryComponent.template = () => {
@@ -46,6 +54,8 @@ TreeEntryComponent.template = () => {
         <div style="float: right;">
             <button onclick="instance(this).addElement();">+</button>
             <button onclick="instance(this).deleteItem();">DEL</button>
+            <button onclick="instance(this).changeItem();">C</button>
+            <button onclick="instance(this).changeLabel();">L</button>
             <button onclick="instance(this).rightButtonClick();">?</button>
         </div>
     </div>    

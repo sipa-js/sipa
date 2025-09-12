@@ -2,6 +2,7 @@
 if (typeof require === 'function' && typeof module !== 'undefined' && module.exports) {
     SipaTest = require('./../tools/sipa-test');
 }
+
 //<!-- /MODULE -->//
 
 /**
@@ -418,6 +419,11 @@ class SipaComponent {
      */
     destroy() {
         const self = SipaComponent;
+        this._checkDestroyed();
+        // call onDestroy event method optionally if defined in derived class
+        if(typeof this.onDestroy === "function") {
+            this.onDestroy();
+        }
         this.events().trigger("before_destroy", [this], {validate: false});
         const parent = this.parent();
         if (this.hasChildren()) {
@@ -431,7 +437,7 @@ class SipaComponent {
             this.parent()._meta.sipa.children = this.parent()._meta.sipa.children.filter(x => x); // remove empty entries
         }
         const index = self._component_instances.indexOf(this);
-        this.remove({ console_warn_if_not_found: false });
+        this.remove({console_warn_if_not_found: false});
         if (index !== -1) {
             delete self._component_instances[index];
             self._component_instances = self._component_instances.filter(x => x);
@@ -496,14 +502,14 @@ class SipaComponent {
      * @param {boolean} options.console_warn_if_not_found=true warning on console if no element is found
      * @returns {SipaComponent}
      */
-    remove(options = { console_warn_if_not_found: true }) {
+    remove(options = {console_warn_if_not_found: true}) {
         const self = SipaComponent;
         options ??= {};
         options.console_warn_if_not_found ??= true;
         const elements = this.elements();
         if (elements.length === 0 && options.console_warn_if_not_found) {
             console.warn(`Tried to remove() ${this.constructor.name} with sipa-id '${this._meta.sipa.id}', but it does not exist in DOM.`);
-        } else if(elements.length > 0) {
+        } else if (elements.length > 0) {
             elements.eachWithIndex((el) => {
                 el.remove();
             });
@@ -558,7 +564,7 @@ class SipaComponent {
         this._meta.sipa._data_changed = true;
         // reset cache of parent component, because when the child changed,
         // the parent cached node is not valid anymore
-        if(this.parent()) {
+        if (this.parent()) {
             this.parent()._meta.sipa._cached_node = null;
         }
         if (options.render) {
@@ -905,7 +911,7 @@ class SipaComponent {
      * @return {Array<SipaComponent>}
      */
     childrenValues() {
-        return Object.values(this.children());
+        return this._meta.sipa.children;
     }
 
     /**
@@ -1036,7 +1042,9 @@ class SipaComponent {
      *
      * <example-component>
      *     <nested-component sipa-alias="my_nest">
-     *         <other-nested-component sipa-alias="other"></nested-component>
+     *         <other-nested-component sipa-alias="other">
+     *             <micro-nested-component sipa-alias="micro"></micro-nested-component>
+     *         </other-nested-component>
      *     </nested-component>
      * </example-component>
      *
@@ -1051,10 +1059,28 @@ class SipaComponent {
      * my_instance.parentTop();
      * // => ExampleComponent
      *
+     *
+     * @example
+     *
+     * const my_instance = new ExampleComponent();
+     * my_instance.children().my_nest.children().other.children().micro.parentTop({ target_component: NestedComponent });
+     * // => NestedComponent
+     *
+     * my_instance.children().my_nest.children().other.children().micro.parentTop({ target_component: NotIncludedComponent });
+     * // => ExampleComponent, because NotIncludedComponent is not in the parent chain
+     *
+     * @param {Object} options
+     * @param {SipaComponent|null} options.target_component if given, will return the first parent that matches the given component instance, otherwise the top parent without parent is returned
      * @return {SipaComponent} component
      */
-    parentTop() {
-        return this._meta.sipa.parent ? this._meta.sipa.parent.parentTop() : this;
+    parentTop(options = {target_component: null}) {
+        options ??= {};
+        options.target_component ??= null;
+        if (options.target_component && this === options.target_component) {
+            return this;
+        } else {
+            return this._meta.sipa.parent ? this._meta.sipa.parent.parentTop() : this;
+        }
     }
 
     /**
@@ -1230,12 +1256,15 @@ class SipaComponent {
      * @param {boolean} options.console_error_if_not_found=true
      * @return {undefined|SipaComponent}
      */
-    static byId(id, options = { console_error_if_not_found: true }) {
+    static byId(id, options = {console_error_if_not_found: true}) {
         const self = SipaComponent;
         options ??= {};
         options.console_error_if_not_found ??= true;
         const component_tag_name = LuckyCase.toUpperDashCase(`${this.name}`); // e.g. SipaComponent or ancestor class
-        return SipaComponent.instanceOfElement(document.getElementById(id), { component_tag_name, console_error_if_not_found: options.console_error_if_not_found });
+        return SipaComponent.instanceOfElement(document.getElementById(id), {
+            component_tag_name,
+            console_error_if_not_found: options.console_error_if_not_found
+        });
     }
 
     /**
@@ -1507,7 +1536,7 @@ class SipaComponent {
         return LuckyCase.toDashCase(this.prototype.constructor.name);
     }
 
-    static instanceOfElement(element, options = { component_tag_name: null, console_error_if_not_found: true }) {
+    static instanceOfElement(element, options = {component_tag_name: null, console_error_if_not_found: true}) {
         /**
          * Get the component instance of the given element or one of its parent.
          *
@@ -1542,17 +1571,17 @@ class SipaComponent {
         options.component_tag_name ??= null;
         options.console_error_if_not_found ??= true;
         let ctag_name = options.component_tag_name;
-        if(ctag_name === null) {
+        if (ctag_name === null) {
             ctag_name = LuckyCase.toUpperDashCase(`${this.name}`);
         }
         // get component main element
         let component = element;
         // component will be null when reaching parent of html
         while (component !== null) {
-            if(component.getAttribute('sipa-id') === null) {
+            if (component.getAttribute('sipa-id') === null) {
                 component = component.parentElement;
             } else {
-                if(ctag_name === "SIPA-COMPONENT" || component?.tagName === ctag_name) {
+                if (ctag_name === "SIPA-COMPONENT" || component?.tagName === ctag_name) {
                     break;
                 } else {
                     component = component.parentElement;
@@ -1568,7 +1597,7 @@ class SipaComponent {
         }
         if (instance) {
             return instance;
-        } else if(options.console_error_if_not_found && !SipaTest.isTestingMode()) {
+        } else if (options.console_error_if_not_found && !SipaTest.isTestingMode()) {
             console.error(`Instance of type '${LuckyCase.toPascalCase(ctag_name)}' for element could not be retrieved.`, element);
         }
     }
@@ -1809,7 +1838,9 @@ class SipaComponent {
         if (!children_selector) {
             throw new Error(`No registered components found! Ensure, to register your component class after definition with SipaComponent.registerComponent(MyComponent);`);
         }
-        // do not get nested / slot components
+        // do not get nested / slot components:
+        // - add sc attribute to all
+        // - then query again with CSS selector, that does not include nested [sc]'s
         uninitialized_children = parsed.querySelectorAll(children_selector);
         uninitialized_children.forEach(x => x.setAttribute("sc", ""));
         uninitialized_children = parsed.querySelectorAll(children_selector);
@@ -2111,7 +2142,7 @@ SipaComponent.template = () => {
  *     `;
  * }
  */
-function instance(element, options = { console_error_if_not_found: true }) {
+function instance(element, options = {console_error_if_not_found: true}) {
     options ??= {};
     options.console_error_if_not_found ??= true;
     return SipaComponent.instanceOfElement(element, options);
