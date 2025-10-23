@@ -36,8 +36,8 @@
   "hooks": {
     "before_all": "",
     "after_all": "",
-    "before_build": "npm version patch",
-    "after_build": "",
+    "before_build": "yarn && yarn test:prepare && yarn test:karma && npm version patch",
+    "after_build": "yarn test:karma:dist",
     "before_generate": "",
     "after_generate": "",
     "before_indexer": "",

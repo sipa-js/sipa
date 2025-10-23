@@ -8,6 +8,42 @@ to continue to automatically open the browser when starting the development serv
 Without this line, the browser will not open automatically anymore, as the default, if not set, is now `false`.
 This is to avoid opening the browser automatically on servers, where you do not want that, for example when using SIPA with Electron or Tauri.
 
+Jasmine has been extended with Karma support to run tests in real browsers and full IDE debugging support as well.
+
+Copy this files from the repo `lib/templates/project/desktop/...` into your project:
+```bash
+# dir including sub folders
+/bin
+/spec
+karma.conf.js
+karma.conf.dist.js
+```
+
+and then you may edit your `sipa.json`, to ensure tests are run before and after build:
+```json
+  // ...
+  "hooks": {
+    // ...
+    "before_build": "yarn && yarn test:prepare && yarn test:karma && npm version patch",
+    "after_build": "yarn test:karma:dist",
+    // ...
+  }
+```
+
+In addition add these scripts to your `package.json`
+```json
+  "scripts": {
+    // ...
+    "test": "npm run test:karma",
+    "test:watch": "npm run test:karma:watch",
+    "test:prepare": "node bin/jasmine/prepare-jasmine-browser.js",
+    "test:karma": "karma start --single-run",
+    "test:karma:dist": "karma start karma.conf.dist.js --single-run",
+    "test:karma:watch": "karma start --no-single-run --auto-watch",
+    // ...
+  }
+```:
+
 ## Added support for BigInt in attributes
 Attributes were restricted to numbers with 16 digits (long), but now support BigIntegers as well.
 

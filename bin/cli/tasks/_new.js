@@ -67,7 +67,22 @@ class SipaCliNew {
             name: LuckyCase.toDashCase(self.options.project_name),
             description: self.options.project_name,
             version: self.options.project_version,
-            author: {name: self.options.author, email: self.options.email}
+            author: {name: self.options.author, email: self.options.email},
+            scripts: {
+                "test": "npm run test:karma",
+                "test:watch": "npm run test:karma:watch",
+                "test:prepare": "node bin/jasmine/prepare-jasmine-browser.js",
+                "test:karma": "karma start --single-run",
+                "test:karma:dist": "karma start karma.conf.dist.js --single-run",
+                "test:karma:watch": "karma start --no-single-run --auto-watch",
+            },
+            devDependencies: {
+                "karma": "^6.4.4",
+                "karma-chrome-launcher": "^3.2.0",
+                "karma-jasmine": "^5.1.0",
+                "ruby-nice": "^0.3.3",
+                "sipa": "^0.9.37"
+            }
         };
         const final_json = JSON.stringify(package_json, null, 2);
         SipaCliTools.writeFile(project_dir + '/package.json', final_json);

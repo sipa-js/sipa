@@ -1,0 +1,18 @@
+{
+  "specDir": "spec",
+  "specFiles": [
+    "tests/browser/**/*[sS]pec.js"
+  ],
+  "helpers": [
+    "helpers/browser/**/*.?(m)js"
+  ],
+  "browser": "headlessChrome",
+  "env": {
+    "random": false,
+    "stopSpecOnExpectationFailure": false
+  },
+  "srcDir": "app",
+  "srcFiles": [
+    "will be filled automatically at first run"
+  ]
+}
