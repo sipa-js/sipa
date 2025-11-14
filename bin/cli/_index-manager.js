@@ -62,7 +62,7 @@ class SipaCliIndexManager {
      */
     static getJsFiles() {
         const self = SipaCliIndexManager;
-        const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
+        const dir_prefix = SipaCliTools.projectBaseAppPath() + '/';
         let files = glob.sync(dir_prefix + '**/*.js', {});
         // make paths relative to index.html
         return files.map((e) => {
@@ -102,7 +102,7 @@ class SipaCliIndexManager {
      */
     static getStyleFiles() {
         const self = SipaCliIndexManager;
-        const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
+        const dir_prefix = SipaCliTools.projectBaseAppPath() + '/';
         let files = glob.sync(dir_prefix + '**/*.css', {});
         // make paths relative to index.html
         return files.map((e) => {
@@ -217,8 +217,8 @@ class SipaCliIndexManager {
         };
 
         options = SipaHelper.mergeOptions(default_options, options);
-        const app_prefix = 'app/';
-        const absolute_prefix = SipaCliTools.projectRootPath() + '/' + app_prefix;
+        const app_prefix = `${SipaCliTools.projectBaseAppDir()}/`;
+        const absolute_prefix = SipaCliTools.projectBaseAppPath();
         let relative_prefix = null;
         switch (options.type) {
             case 'page':
@@ -301,7 +301,7 @@ class SipaCliIndexManager {
     }
 
     static _getSectionByPath(path) {
-        const dir_prefix = SipaCliTools.projectRootPath() + '/app/';
+        const dir_prefix = SipaCliTools.projectBaseAppPath() + '/';
         const rel_path = path.replace(dir_prefix, '');
         if (rel_path.startsWith('views/pages') && rel_path.endsWith('.js')) {
             return 'PAGE-JS';

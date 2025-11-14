@@ -28,8 +28,8 @@ class SipaCliBuild {
             return;
         }
         console.log(commandLineUsage(self.SECTIONS.build));
-        SipaCliTools.removePath(self.paths.dist_base_dir);
-        SipaCliTools.makeDir(self.paths.dist_base_dir);
+        SipaCliTools.removePath(SipaCliTools.projectDefaultDistPath());
+        SipaCliTools.makeDir(SipaCliTools.projectDefaultDistPath());
         self.createDistIndexHtml();
         self.updateProjectVersion();
         self.createMinifiedJsFile();
@@ -41,14 +41,14 @@ class SipaCliBuild {
 
     static createDistIndexHtml() {
         const self = SipaCliBuild;
-        const target_path = self.paths.dist_base_dir + '/index.html';
+        const target_path = SipaCliTools.projectDefaultDistPath() + '/index.html';
         SipaCliTools.printLine(`→ building ${chalk.green('index.html')} ...`);
         SipaCliTools.writeFile(target_path, self._generateDistIndexHtml());
     }
 
     static updateProjectVersion() {
         const self = SipaCliBuild;
-        const sipa_js_path = Dir.glob(self.paths.app_base_dir + '/**/sipa.js')[0];
+        const sipa_js_path = Dir.glob(SipaCliTools.projectBaseAppPath() + '/**/sipa.js')[0];
         if(!sipa_js_path) {
             console.error(`Could not update project version. Could not find file 'sipa.js' in your projects app directory.`);
         }
@@ -61,7 +61,7 @@ class SipaCliBuild {
         fs.writeFileSync(sipa_js_path, sipa_js, 'utf8');
         // manifest.json if available
         const version = package_json.version;
-        const manifest_path = SipaCliTools.projectRootPath() + '/app/manifest.json';
+        const manifest_path = SipaCliTools.projectBaseAppPath() + '/manifest.json';
         if(File.isExisting(manifest_path)) {
             let manifest_json = fs.readFileSync(manifest_path,'utf8');
             manifest_json = manifest_json.replace(/\"version\"\: \"[0-9]+.[0-9]+.[0-9]+\"/, `"version": "${version}"`);
@@ -76,10 +76,10 @@ class SipaCliBuild {
         SipaCliTools.printLine(`→ merge javascript files to minify ...`);
         index_js_files.forEach((file) => {
             SipaCliTools.printLine(`  - ${file} ... `);
-            let file_content = SipaCliTools.readFile(self.paths.app_base_dir + '/' + file);
+            let file_content = SipaCliTools.readFile(SipaCliTools.projectBaseAppPath() + '/' + file);
             final_js_file_content += "\n" + file_content;
         });
-        const final_file_path = self.paths.dist_base_dir + '/' + self.paths.dist_index_minified_js;
+        const final_file_path = SipaCliTools.projectDefaultDistPath() + '/' + self.paths.dist_index_minified_js;
         if(SipaCliTools.readProjectSipaConfig().build?.minify?.js?.remove_comments) {
             // remove any single line comments
             final_js_file_content = final_js_file_content.replace(/^\s*\/\/[^\n]*$/gms, '');
@@ -122,7 +122,7 @@ class SipaCliBuild {
         SipaCliTools.printLine(`→ merge stylesheet files to minify ...`);
         index_css_files.forEach((file) => {
             SipaCliTools.printLine(`  - ${file} ... `);
-            let file_content = SipaCliTools.readFile(self.paths.app_base_dir + '/' + file);
+            let file_content = SipaCliTools.readFile(SipaCliTools.projectBaseAppPath() + '/' + file);
             final_css_file_content += "\n" + file_content;
         });
         if(SipaCliTools.readProjectSipaConfig().build?.minify?.css?.remove_comments) {
@@ -150,7 +150,7 @@ class SipaCliBuild {
     static processFonts() {
         const self = SipaCliBuild;
         const fonts_in_css = self._cssFontFilesBaseNames();
-        const app_fonts_pattern = SipaCliTools.projectRootPath() + `/app/assets/**/*.{${self.supported_font_types.join(',')}}`;
+        const app_fonts_pattern = SipaCliTools.projectBaseAppPath() + `/assets/**/*.{${self.supported_font_types.join(',')}}`;
         const fonts_in_app_font_folder = glob.sync(app_fonts_pattern);
         const used_fonts_in_app_folder = fonts_in_app_font_folder.filter((font) => {
             for (let i = 0; i < fonts_in_css.length; ++i) {
@@ -160,14 +160,14 @@ class SipaCliBuild {
         });
         SipaCliTools.printLine(`→ copy fonts used inside css ...`);
         used_fonts_in_app_folder.forEach((used_font) => {
-            const dest_file = self.paths.dist_base_dir + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font);
+            const dest_file = SipaCliTools.projectDefaultDistPath() + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font);
             SipaCliTools.copyFile(used_font, dest_file);
             SipaCliTools.printLine(`  - ${chalk.green(self.paths.fonts_base_dir + '/' + path.basename(used_font))} ...`);
         });
         if(SipaCliTools.readProjectSipaConfig().build?.auto_fix_font_paths_in_css) {
             SipaCliTools.printLine(`→ auto fix font paths in css ...`);
             let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
-            const copied_fonts = glob.sync(self.paths.dist_base_dir + '/assets/fonts/*');
+            const copied_fonts = glob.sync(SipaCliTools.projectDefaultDistPath() + '/assets/fonts/*');
             copied_fonts.forEach((font) => {
                const font_regex = new RegExp(`url\\s*\\(\\s*['"]([^\\)]+${SipaCliTools.escapeRegExp(path.basename(font))})([#?][^)]*)*['"]\\s*\\)`,'gms');
                css_file_content = css_file_content.replace(font_regex, `url("${self.paths.fonts_production_style_dir}/${path.basename(font)}` + '$2")');
@@ -181,11 +181,11 @@ class SipaCliBuild {
     static copyViews() {
         const self = SipaCliBuild;
         SipaCliTools.printLine(`→ copy views ...`);
-        const static_files_to_copy = glob.sync(self.paths.app_base_dir + '/views/**/*.html');
+        const static_files_to_copy = glob.sync(SipaCliTools.projectBaseAppPath() + '/views/**/*.html');
         static_files_to_copy.forEach((src_file, index) => {
-            self.paths.app_base_dir = self.paths.app_base_dir.replace(/\\/g,'/') // ensure ms win compatibility
-            const dest_relative_path = src_file.replace(self.paths.app_base_dir + '/','');
-            const dest_path = self.paths.dist_base_dir + '/' + dest_relative_path;
+            let base_dir = SipaCliTools.projectBaseAppPath().replace(/\\/g,'/') // ensure ms win compatibility
+            const dest_relative_path = src_file.replace(base_dir + '/','');
+            const dest_path = SipaCliTools.projectDefaultDistPath() + '/' + dest_relative_path;
             SipaCliTools.printLine(`  - ${chalk.green(dest_relative_path)} ...`);
             SipaCliTools.makeDirOfFile(dest_path);
             SipaCliTools.copyFile(src_file, dest_path);
@@ -198,17 +198,17 @@ class SipaCliBuild {
         const static_files_to_copy = SipaCliTools.readProjectSipaConfig().build?.static_files_to_copy;
         Object.keys(static_files_to_copy).forEach((from_path, index) => {
             const to_path = static_files_to_copy[from_path];
-            if(SipaCliTools.pathExists(self.paths.app_base_dir + '/' + from_path)) {
+            if(SipaCliTools.pathExists(SipaCliTools.projectBaseAppPath() + '/' + from_path)) {
                 SipaCliTools.printLine(`  - ${from_path} > ${chalk.green(to_path)} ...`);
-                if(SipaCliTools.isDir(self.paths.app_base_dir + '/' + from_path)) {
-                    SipaCliTools.makeDir(self.paths.dist_base_dir + '/' + to_path);
-                } else if(SipaCliTools.isFile(self.paths.app_base_dir + '/' + from_path)) {
-                    SipaCliTools.makeDirOfFile(self.paths.dist_base_dir + '/' + to_path);
+                if(SipaCliTools.isDir(SipaCliTools.projectBaseAppPath() + '/' + from_path)) {
+                    SipaCliTools.makeDir(SipaCliTools.projectDefaultDistPath() + '/' + to_path);
+                } else if(SipaCliTools.isFile(SipaCliTools.projectBaseAppPath() + '/' + from_path)) {
+                    SipaCliTools.makeDirOfFile(SipaCliTools.projectDefaultDistPath() + '/' + to_path);
                 }
-                SipaCliTools.copy(self.paths.app_base_dir + '/' + from_path, self.paths.dist_base_dir + '/' + to_path);
+                SipaCliTools.copy(SipaCliTools.projectBaseAppPath() + '/' + from_path, SipaCliTools.projectDefaultDistPath() + '/' + to_path);
             } else {
                 SipaCliTools.printLine(`  - ${chalk.red(from_path)} > ${to_path}`);
-                throw chalk.red(`Invalid path! Path does not exist: '${self.paths.app_base_dir + '/' + from_path}'`)
+                throw chalk.red(`Invalid path! Path does not exist: '${SipaCliTools.projectBaseAppPath() + '/' + from_path}'`)
             }
         });
     }
@@ -291,7 +291,7 @@ ${doc_body_open_tag}
 
     static _finalDistCssStylePath() {
         const self = SipaCliBuild;
-        return self.paths.dist_base_dir + '/' + self.paths.dist_index_minified_css;
+        return SipaCliTools.projectDefaultDistPath() + '/' + self.paths.dist_index_minified_css;
     }
 }
 
@@ -318,8 +318,6 @@ SipaCliBuild.SECTIONS.unresolved_files = [
 ];
 
 SipaCliBuild.paths = {
-    app_base_dir: SipaCliTools.projectRootPath() + '/app',
-    dist_base_dir: SipaCliTools.projectRootPath() + '/dist/default',
     dist_index_minified_js: 'assets/js/app.min.js',
     dist_index_minified_css: 'assets/style/app.min.css',
     fonts_base_dir: 'assets/fonts',

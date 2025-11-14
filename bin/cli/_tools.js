@@ -20,12 +20,12 @@ class SipaCliTools {
         // ASCII-Font: Calvin S
         // Sub title font: Source Code Pro Bold
         return chalk.yellow.bgBlack.bold("\n                                        \n" +
-                "             ┏━┓ ┳ ┏━┓ ┏━┓              \n" +
-                "             ┗━┓ ┃ ┣━┛ ┣━┫              \n" +
-                "             ┗━┛ ┻ ┻   ┻ ┻              \n" +  chalk.bold.white.bgBlack(
+            "             ┏━┓ ┳ ┏━┓ ┏━┓              \n" +
+            "             ┗━┓ ┃ ┣━┛ ┣━┫              \n" +
+            "             ┗━┛ ┻ ┻   ┻ ┻              \n" + chalk.bold.white.bgBlack(
                 "          PARTICULARLY SIMPLE           \n") + chalk.bold.green.bgBlack(
                 "             WEB FRAMEWORK              \n") + chalk.reset.yellow.bgBlack(version_line) + "\n" +
-                "                                        "
+            "                                        "
         );
     }
 
@@ -145,23 +145,38 @@ class SipaCliTools {
         return [...new Set(array)];
     }
 
+    /**
+     * Check if current working directory is a valid sipa project,
+     * by checking for existence of sipa.json file.
+     *
+     * @returns {boolean}
+     */
     static isRunningInsideValidSipaProject() {
         const self = SipaCliTools;
-        return fs.existsSync(self.SIPA_CONFIG_FILE_PATH);
+        return fs.existsSync(self.sipaConfigFilePath());
     }
 
+    /**
+     * Print error message that current working directory is not a valid sipa project
+     */
     static errorNotInsideValidSipaProject() {
         const self = SipaCliTools;
         const usage = commandLineUsage(self.SECTIONS.not_inside_valid_project);
         console.log(usage);
     }
 
+    /**
+     * Check if the "sass_watch_paths" defined in sipa.json are valid
+     * and return invalid ones as array.
+     *
+     * @returns {Array<string>}
+     */
     static invalidConfigPaths() {
         const self = SipaCliTools;
         const config = self.readProjectSipaConfig();
         let paths = [];
         if (config.development_server?.sass_watch_paths?.length || 0 > 0) {
-            paths = paths.concat(config.development_server.sass_watch_paths.map(e => `app/${e}`));
+            paths = paths.concat(config.development_server.sass_watch_paths.map(e => `${self.projectBaseAppDir()}/${e}`));
         }
         let invalid_paths = [];
         paths.forEach((path) => {
@@ -172,6 +187,9 @@ class SipaCliTools {
         return invalid_paths;
     }
 
+    /**
+     * Print error message that invalid paths were found in sipa.json
+     */
     static errorInvalidConfigPaths() {
         const self = SipaCliTools;
         const usage = commandLineUsage(self.SECTIONS.invalid_config_paths);
@@ -180,6 +198,21 @@ class SipaCliTools {
 
     /**
      * Get only the deepest dirs, without dirs between
+     *
+     * @example
+     *
+     * filterDeepDirsOnly([
+     *  'a/b/c',
+     *  'a/b',
+     *  'a/b/c/d',
+     *  'e/f',
+     *  'e/f/g/h'
+     *  ])
+     *  // returns [
+     *  //  'a/b/c/d',
+     *  //  'e/f/g/h'
+     *  // ]
+     *
      * @param {Array<String>} dirs to filter
      */
     static filterDeepDirsOnly(dirs) {
@@ -194,14 +227,92 @@ class SipaCliTools {
         return filtered;
     }
 
+    /**
+     * Get root path of the sipa framework installation
+     *
+     * @returns {string}
+     */
     static sipaRootPath() {
         const self = SipaCliTools;
         return self.normalizePath(path.resolve(__dirname + '/../../'));
     }
 
+    /**
+     * Get project root path of the current sipa project
+     *
+     * @returns {string}
+     */
     static projectRootPath() {
         const self = SipaCliTools;
         return self.normalizePath(process.cwd());
+    }
+
+    /**
+     * Get project app folder name inside the current sipa project.
+     *
+     * Default is 'app' unless configured otherwise in sipa.json "base_app_dir".
+     *
+     * @returns {string}
+     */
+    static projectBaseAppDir() {
+        const self = SipaCliTools;
+        const config = self.readProjectSipaConfig();
+        if (config?.base_app_dir) {
+            if (Typifier.isString(config.base_app_dir)) {
+                // remove leading and trailing slashes
+                return self.normalizePath(config.base_app_dir).replaceAll(/\/$|^\//g, '')
+            } else {
+                console.error(`sipa.json "base_app_dir" must be of type string, but was of type ${Typifier.getType(config.base_app_dir)}`);
+                process.exit(1);
+            }
+        } else {
+            return self.DEFAULT_PROJECT_BASE_APP_DIR;
+        }
+    }
+
+    /**
+     * Get absolute path of project app folder path inside the current sipa project.
+     *
+     * @returns {string}
+     */
+    static projectBaseAppPath() {
+        const self = SipaCliTools;
+        return self.projectRootPath() + '/' + self.projectBaseAppDir();
+    }
+
+    static projectDefaultDistPath() {
+        const self = SipaCliTools;
+        return self.projectRootPath() + '/dist/default';
+    }
+
+    /**
+     * Get sipa.json file path of the current sipa project
+     *
+     * @returns {string}
+     */
+    static sipaConfigFilePath() {
+        const self = SipaCliTools;
+        SipaCliTools.projectRootPath() + '/sipa.json'
+    }
+
+    /**
+     * Get package.json file path of the current sipa project
+     *
+     * @returns {string}
+     */
+    static packageJsonFilePath() {
+        const self = SipaCliTools;
+        SipaCliTools.projectRootPath() + '/package.json'
+    }
+
+    /**
+     * Get index.html file path of the current sipa project
+     *
+     * @returns {string}
+     */
+    static projectIndexFilePath() {
+        const self = SipaCliTools;
+        SipaCliTools.projectRootPath() + '/' + self.projectBaseAppDir() + '/index.html'
     }
 
     static projectName() {
@@ -231,7 +342,7 @@ class SipaCliTools {
         const self = SipaCliTools;
         let config = null;
         if (!self.cached_config || use_cache === false) {
-            config = JSON.parse(self.readFile(self.SIPA_CONFIG_FILE_PATH));
+            config = JSON.parse(self.readFile(self.sipaConfigFilePath()));
             self.cached_config = Object.assign({}, config);
         } else {
             config = self.cached_config;
@@ -244,27 +355,27 @@ class SipaCliTools {
 
     static writeProjectSipaConfig(content) {
         const self = SipaCliTools;
-        return self.writeFile(self.SIPA_CONFIG_FILE_PATH, JSON.stringify(content, null, 2));
+        return self.writeFile(self.sipaConfigFilePath(), JSON.stringify(content, null, 2));
     }
 
     static readProjectPackageJson() {
         const self = SipaCliTools;
-        return JSON.parse(self.readFile(self.PACKAGE_JSON_FILE_PATH));
+        return JSON.parse(self.readFile(self.packageJsonFilePath()));
     }
 
     static writeProjectPackageJson(content) {
         const self = SipaCliTools;
-        return self.writeFile(self.PACKAGE_JSON_FILE_PATH, JSON.stringify(content, null, 2));
+        return self.writeFile(self.packageJsonFilePath(), JSON.stringify(content, null, 2));
     }
 
     static readProjectIndexFile() {
         const self = SipaCliTools;
-        return self.readFile(self.PROJECT_INDEX_FILE_PATH);
+        return self.readFile(self.projectIndexFilePath());
     }
 
     static writeProjectIndexFile(content) {
         const self = SipaCliTools;
-        return self.writeFile(self.PROJECT_INDEX_FILE_PATH, content);
+        return self.writeFile(self.projectIndexFilePath(), content);
     }
 
     static makeDir(dir) {
@@ -355,10 +466,6 @@ class SipaCliTools {
     }
 }
 
-SipaCliTools.SIPA_CONFIG_FILE_PATH = SipaCliTools.projectRootPath() + '/sipa.json';
-SipaCliTools.PACKAGE_JSON_FILE_PATH = SipaCliTools.projectRootPath() + '/package.json';
-SipaCliTools.PROJECT_INDEX_FILE_PATH = SipaCliTools.projectRootPath() + '/app/index.html';
-
 SipaCliTools.SIPA_CONFIG_DEFAULTS = {
     type: 'desktop',
     development_server: {
@@ -374,6 +481,8 @@ SipaCliTools.SIPA_CONFIG_DEFAULTS = {
         ignored_files: []
     }
 }
+
+SipaCliTools.DEFAULT_PROJECT_BASE_APP_DIR = "app";
 
 SipaCliTools.first_question = true;
 SipaCliTools.cached_config = null;

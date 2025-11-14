@@ -1,5 +1,6 @@
 # 0.9.44
 ## Migration steps from to 0.9.44
+### New option to automatically open browser on `sipa s`
 In your `sipa.json`, add the following line in the `development_server` block:
 ```json
     "open": true,
@@ -8,6 +9,13 @@ to continue to automatically open the browser when starting the development serv
 Without this line, the browser will not open automatically anymore, as the default, if not set, is now `false`.
 This is to avoid opening the browser automatically on servers, where you do not want that, for example when using SIPA with Electron or Tauri.
 
+### Base app dir configurable
+In your `sipa.json`, add the following default line in the root block:
+```json
+  "base_app_dir": "app",
+```
+
+### Added Karma test support
 Jasmine has been extended with Karma support to run tests in real browsers and full IDE debugging support as well.
 
 Copy this files from the repo `lib/templates/project/desktop/...` into your project:

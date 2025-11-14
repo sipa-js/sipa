@@ -56,7 +56,7 @@ class SipaCliServer {
                 open_param = '--open="${mount}"';
             }
             // final server command to start server
-            const server_command = `node "${live_server_js_path}" --port=${port} --host=${host} --ignore=lang --mount="${mount}":./app ${open_param}`;
+            const server_command = `node "${live_server_js_path}" --port=${port} --host=${host} --ignore=lang --mount="${mount}":./${SipaCliTools.projectBaseAppDir()} ${open_param}`;
             let server_process = exec(server_command);
             server_process.stdout.on('data', function (data) {
                 console.log(data.toString('utf8'));
@@ -117,7 +117,7 @@ class SipaCliServer {
                     `Starting live sass file watcher listening on {green *.scss} files to compile to {green *.css} files automatically`,
                     '',
                     `Watch paths: \n  - ${config.development_server.sass_watch_paths.map((e) => {
-                        return chalk.green(`app/${e}`);
+                        return chalk.green(`${SipaCliTools.projectBaseAppDir()}/${e}`);
                     }).join("\n  - ")}`,
                     '',
                     'If you want to modify the watch paths of the live development sass compilation server, edit {green sipa.json} in your project root directory.',
@@ -143,9 +143,9 @@ class SipaCliServer {
                 quote = '"';
             }
             if (el.startsWith('./')) {
-                return `${quote}./app/${el.substring(2)}${quote}`;
+                return `${quote}./${SipaCliTools.projectBaseAppDir()}/${el.substring(2)}${quote}`;
             } else {
-                return `${quote}./app/${el}${quote}`;
+                return `${quote}./${SipaCliTools.projectBaseAppDir()}/${el}${quote}`;
             }
         }).join(' ');
     }

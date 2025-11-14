@@ -1,5 +1,5 @@
 /**
- * Release build script for the Sipa web framework
+ * Release build script for the Sipa web framework itself
  */
 const fs = require("fs");
 const util = require('util');

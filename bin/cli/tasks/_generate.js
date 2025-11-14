@@ -41,11 +41,11 @@ class SipaCliGenerate {
                 break;
             case 'style':
             case 's':
-                self._generateAsset({ type: 'style', prefix: 'app/assets/style/'});
+                self._generateAsset({ type: 'style', prefix: `${SipaCliTools.projectBaseAppDir()}/assets/style/`});
                 break;
             case 'javascript':
             case 'j':
-                self._generateAsset({ type: 'javascript', prefix: 'app/assets/js/'});
+                self._generateAsset({ type: 'javascript', prefix: `${SipaCliTools.projectBaseAppDir()}/assets/js/`});
                 break;
         }
         console.log(commandLineUsage(self.SECTIONS.generate_created));
@@ -72,7 +72,7 @@ class SipaCliGenerate {
         // list existing pages
         console.log(commandLineUsage(self.SECTIONS['generate_example_' + plural_type]));
         console.log(commandLineUsage(self.SECTIONS['generate_existing_' + plural_type]));
-        let existing_views = self._listExistingFilesOrDirs(project_dir + `/app/views/${plural_type}/**/*.js`, { prefix: `app/views/${plural_type}/`, cut_file_names: true, print_paths: true });
+        let existing_views = self._listExistingFilesOrDirs(project_dir + `/${SipaCliTools.projectBaseAppDir()}/views/${plural_type}/**/*.js`, { prefix: `${SipaCliTools.projectBaseAppDir()}/views/${plural_type}/`, cut_file_names: true, print_paths: true });
         console.log();
         let view_input = self._prompt(`${singular_type} id`, existing_views);
         let view_id = CurlyBracketParser._replaceAll(view_input, "\\", '/').split('/').map((e) => {
@@ -81,7 +81,7 @@ class SipaCliGenerate {
         view_id = SipaHelper.cutLeadingCharacters(view_id, '/');
         view_id = SipaHelper.cutTrailingCharacters(view_id, '/');
         console.log(commandLineUsage(self.SECTIONS.generate_generate));
-        const final_page_dir = SipaCliTools.projectRootPath() + `/app/views/${plural_type}/` + view_id;
+        const final_page_dir = SipaCliTools.projectRootPath() + `/${SipaCliTools.projectBaseAppDir()}/views/${plural_type}/` + view_id;
         fs.mkdirSync(final_page_dir, {recursive: true});
         SipaCliTools.printLine(`Generate new ${chalk.green(singular_type)} by default ${singular_type} template ...`);
         SipaCliTools.printLine();
@@ -115,14 +115,14 @@ class SipaCliGenerate {
      *
      * @param {Object} options
      * @param {('javascript','style')} options.type='javascript' type to generate asset for
-     * @param {('app/assets/js/','app/assets/style/')} options.prefix
+     * @param {('<app_base_dir>/assets/js/','<app_base_dir>/assets/style/')} options.prefix
      * @private
      */
-    static _generateAsset(options = { type: 'javascript', prefix: 'app/assets/js/'}) {
+    static _generateAsset(options = { type: 'javascript', prefix: `${SipaCliTools.projectBaseAppDir()}/assets/js/`}) {
         const self = SipaCliGenerate;
         const default_options = {
           type: 'javascript',
-          prefix: 'app/assets/js'
+          prefix: `${SipaCliTools.projectBaseAppDir()}/assets/js`
         };
         options = SipaHelper.mergeOptions(default_options, options);
         const asset_name = `${options.type} asset`;
@@ -192,7 +192,7 @@ class SipaCliGenerate {
         // list existing components
         console.log(commandLineUsage(self.SECTIONS['generate_example_components']));
         console.log(commandLineUsage(self.SECTIONS['generate_existing_components']));
-        let existing_components = self._listExistingFilesOrDirs(project_dir + `/app/assets/components/**/*.js`, { prefix: `app/assets/components/`, cut_file_names: true, print_paths: true });
+        let existing_components = self._listExistingFilesOrDirs(project_dir + `/${SipaCliTools.projectBaseAppDir()}/assets/components/**/*.js`, { prefix: `${SipaCliTools.projectBaseAppDir()}/assets/components/`, cut_file_names: true, print_paths: true });
         console.log();
         let component_input = self._prompt(`component name`, existing_components);
         let component_id = CurlyBracketParser._replaceAll(component_input, "\\", '/').split('/').map((e) => {
@@ -201,7 +201,7 @@ class SipaCliGenerate {
         component_id = SipaHelper.cutLeadingCharacters(component_id, '/');
         component_id = SipaHelper.cutTrailingCharacters(component_id, '/');
         console.log(commandLineUsage(self.SECTIONS.generate_generate));
-        const final_component_dir = SipaCliTools.projectRootPath() + `/app/assets/components/` + component_id;
+        const final_component_dir = SipaCliTools.projectRootPath() + `/${SipaCliTools.projectBaseAppDir()}/assets/components/` + component_id;
         fs.mkdirSync(final_component_dir, {recursive: true});
         SipaCliTools.printLine(`Generate new ${chalk.green('component')} by default component template ...`);
         SipaCliTools.printLine();
