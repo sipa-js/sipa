@@ -516,7 +516,8 @@ class SipaOnsenPage {
     /**
      * Get the current page stack of ons-navigator.
      *
-     * @returns {*[]}
+     * @return {Array<Element>}
+     *
      * @private
      */
     static _getPageStack() {
