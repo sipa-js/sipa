@@ -9,6 +9,7 @@ const fse = require('fs-extra');
 const SipaCliVersion = require('./tasks/_version');
 const File = require("ruby-nice/file");
 const execSync = require("child_process").execSync;
+const Typifier = require('typifier');
 
 class SipaCliTools {
 
@@ -217,7 +218,7 @@ class SipaCliTools {
      */
     static filterDeepDirsOnly(dirs) {
         let filtered = [];
-        dirs.forEach((dir, i) => {
+        dirs.forEach((dir) => {
             if (dirs.filter((e) => {
                 return e.includes(dir);
             }).length === 1) {
@@ -292,7 +293,7 @@ class SipaCliTools {
      */
     static sipaConfigFilePath() {
         const self = SipaCliTools;
-        SipaCliTools.projectRootPath() + '/sipa.json'
+        return SipaCliTools.projectRootPath() + '/sipa.json'
     }
 
     /**
@@ -302,7 +303,7 @@ class SipaCliTools {
      */
     static packageJsonFilePath() {
         const self = SipaCliTools;
-        SipaCliTools.projectRootPath() + '/package.json'
+        return SipaCliTools.projectRootPath() + '/package.json'
     }
 
     /**
@@ -312,7 +313,7 @@ class SipaCliTools {
      */
     static projectIndexFilePath() {
         const self = SipaCliTools;
-        SipaCliTools.projectRootPath() + '/' + self.projectBaseAppDir() + '/index.html'
+        return SipaCliTools.projectRootPath() + '/' + self.projectBaseAppDir() + '/index.html'
     }
 
     static projectName() {
@@ -494,7 +495,9 @@ SipaCliTools.SECTIONS.not_inside_valid_project = [
         content: [
             '{red You can run this command at the root directory of a valid Sipa project only.}',
             '',
-            `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`
+            `Current directory:\n {green ${SipaCliTools.projectRootPath()}}`,
+            '',
+            `Searched for this file but did not find it:\n {green ${SipaCliTools.sipaConfigFilePath()}}`,
         ]
     }
 ];
