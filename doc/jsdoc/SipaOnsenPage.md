@@ -1,16 +1,19 @@
 <a name="String"></a>
 
 ## SipaOnsenPage
-SipaOnsenPageTool class with page loader with included router for OnsenUI
+SipaOnsenPage
+
+Tool class with page loader with included router for OnsenUI (mobile).
 
 * [SipaOnsenPage](#SipaOnsenPage)
-    * [.config](#SipaOnsenPage.config) : [<code>SipaOnsenPageConfig</code>](#SipaOnsenPageConfig)
+    * [.config](#SipaOnsenPage.config) : [<code>Config</code>](#SipaOnsenPage.Config)
     * [.load(page_id, options)](#SipaOnsenPage.load)
+    * [.getOnsenNavigator()](#SipaOnsenPage.getOnsenNavigator) &rarr; <code>Element</code>
     * [.extractIdOfTemplate(template, options)](#SipaOnsenPage.extractIdOfTemplate) &rarr; <code>string</code>
     * [.getClassNameOfTemplate(template, options)](#SipaOnsenPage.getClassNameOfTemplate) &rarr; <code>string</code>
     * [.typeOptions(type)](#SipaOnsenPage.typeOptions) &rarr; [<code>TypeOptionsType</code>](#TypeOptionsType)
-    * [.currentPageId()](#SipaOnsenPage.currentPageId) &rarr; <code>string</code>
-    * [.currentPageClass()](#SipaOnsenPage.currentPageClass) &rarr; <code>SipaBasicView</code>
+    * [.currentPageId()](#SipaOnsenPage.currentPageId) &rarr; <code>string</code> \| <code>undefined</code>
+    * [.currentPageClass()](#SipaOnsenPage.currentPageClass) &rarr; <code>SipaBasicView</code> \| <code>undefined</code>
     * [.currentLayoutId()](#SipaOnsenPage.currentLayoutId) &rarr; <code>string</code>
     * [.loadLayout(layout_id, options)](#SipaOnsenPage.loadLayout)
     * [.callMethodOfPage(page_id, method_name, parameters)](#SipaOnsenPage.callMethodOfPage)
@@ -21,11 +24,12 @@ SipaOnsenPageTool class with page loader with included router for OnsenUI
     * [.removeStatusBarMock()](#SipaOnsenPage.removeStatusBarMock)
     * [._initStatusBarMock()](#SipaOnsenPage._initStatusBarMock)
     * [.reset()](#SipaOnsenPage.reset)
+    * [.Config](#SipaOnsenPage.Config) : <code>Object</code>
     * [.OnsenOptions](#SipaOnsenPage.OnsenOptions) : <code>Object</code>
 
 <a name="SipaOnsenPage.config"></a>
 
-### SipaOnsenPage.config : [<code>SipaOnsenPageConfig</code>](#SipaOnsenPageConfig)
+### SipaOnsenPage.config : [<code>Config</code>](#SipaOnsenPage.Config)
 **Kind**: static property of [<code>SipaOnsenPage</code>](#SipaOnsenPage)  
 <a name="SipaOnsenPage.load"></a>
 
@@ -50,10 +54,33 @@ Load given page by page_id
 | options.error | <code>function</code> |  | function to be called after loading fails |
 | options.always | <code>function</code> |  | function to be called always after successful/erroneous loading |
 
+
+**Example**
+```js
+SipaOnsenPage.load('home', {
+  reset: true,
+  params: { user_id: 123 },
+  anchor: 'section2',
+  keep_params: false,
+  keep_anchor: false,
+  fade_effect: true,
+  onsen: { animation: 'fade' },
+  success: (data, text, response) => {
+    console.log("Page loaded successfully");
+  },
+  error: (response, text, data) => {
+    console.error("Error loading page");
+  }
+});
+```
+<a name="SipaOnsenPage.getOnsenNavigator"></a>
+
+### SipaOnsenPage.getOnsenNavigator() &rarr; <code>Element</code>
+Get the OnsenUI navigator element.
 <a name="SipaOnsenPage.extractIdOfTemplate"></a>
 
 ### SipaOnsenPage.extractIdOfTemplate(template, options) &rarr; <code>string</code>
-Get the id only of the given template
+Get the id only of the given template.
 
 **Returns**: <code>string</code> - absolute path  
 
@@ -63,10 +90,19 @@ Get the id only of the given template
 | options | <code>Object</code> |  |  |
 | options.type | <code>SipaPage.PageType</code> | <code>&#x27;page&#x27;</code> |  |
 
+
+**Example**
+```js
+SipaOnsenPage.extractIdOfTemplate('views/pages/test/test.html');
+// => 'test'
+
+SipaOnsenPage.extractIdOfTemplate('views/pages/group/children.html');
+// => 'group/children'
+```
 <a name="SipaOnsenPage.getClassNameOfTemplate"></a>
 
 ### SipaOnsenPage.getClassNameOfTemplate(template, options) &rarr; <code>string</code>
-Get the class name of the given template
+Get the class name of the given template.
 
 **Returns**: <code>string</code> - class name  
 
@@ -76,10 +112,22 @@ Get the class name of the given template
 | options | <code>Object</code> |  |  |
 | options.type | <code>SipaPage.PageType</code> | <code>&#x27;page&#x27;</code> |  |
 
+
+**Example**
+```js
+SipaOnsenPage.getClassNameOfTemplate('views/pages/test/test.html');
+// => 'TestPage'
+
+SipaOnsenPage.getClassNameOfTemplate('views/pages/group/children/children.html');
+// => 'GroupChildrenPage'
+
+SipaOnsenPage.getClassNameOfTemplate('views/layouts/main/main.html', {type: 'layout'});
+// => 'MainLayout'
+```
 <a name="SipaOnsenPage.typeOptions"></a>
 
 ### SipaOnsenPage.typeOptions(type) &rarr; [<code>TypeOptionsType</code>](#TypeOptionsType)
-Get the options of the given type
+Get the options of the given type.
 
 **Returns**: [<code>TypeOptionsType</code>](#TypeOptionsType) - type options  
 
@@ -87,24 +135,58 @@ Get the options of the given type
 | --- | --- |
 | type | <code>SipaPage.PageType</code> | 
 
+
+**Example**
+```js
+SipaOnsenPage.typeOptions('page');
+// => { prefix: 'views/pages/', file_ext: '.html' }
+
+SipaOnsenPage.typeOptions('layout');
+// => { prefix: 'views/layouts/', file_ext: '.html' }
+```
 <a name="SipaOnsenPage.currentPageId"></a>
 
-### SipaOnsenPage.currentPageId() &rarr; <code>string</code>
-Get page id of current loaded page
+### SipaOnsenPage.currentPageId() &rarr; <code>string</code> \| <code>undefined</code>
+Get page id of current loaded page.
 
-**Returns**: <code>string</code> - page id  
+If no page is loaded, return undefined.
+
+**Returns**: <code>string</code> \| <code>undefined</code> - page id  
+
+**Example**
+```js
+// page 'HomePage' is loaded
+SipaOnsenPage.currentPageId();
+// => 'home'
+```
 <a name="SipaOnsenPage.currentPageClass"></a>
 
-### SipaOnsenPage.currentPageClass() &rarr; <code>SipaBasicView</code>
-Get current page class
+### SipaOnsenPage.currentPageClass() &rarr; <code>SipaBasicView</code> \| <code>undefined</code>
+Get current page class.
+
+If no page is loaded, return undefined.
+
+**Example**
+```js
+// page with id 'home' is loaded
+SipaOnsenPage.currentPageClass();
+// => HomePage
+```
 <a name="SipaOnsenPage.currentLayoutId"></a>
 
 ### SipaOnsenPage.currentLayoutId() &rarr; <code>string</code>
-Get layout id of current loaded layout
+Get layout id of current loaded layout.
+
+**Example**
+```js
+// layout 'DefaultLayout' is loaded
+SipaOnsenPage.currentLayoutId();
+// => 'default-layout'
+```
 <a name="SipaOnsenPage.loadLayout"></a>
 
 ### SipaOnsenPage.loadLayout(layout_id, options)
-Load the given layout
+Load the given layout.
 
 | Param | Type | Default | Description |
 | --- | --- | --- | --- |
@@ -116,7 +198,7 @@ Load the given layout
 <a name="SipaOnsenPage.callMethodOfPage"></a>
 
 ### SipaOnsenPage.callMethodOfPage(page_id, method_name, parameters)
-Call the given method of the given page with given parameters (optional)
+Call the given method of the given page with given (optional) parameters.
 
 | Param | Type |
 | --- | --- |
@@ -124,10 +206,15 @@ Call the given method of the given page with given parameters (optional)
 | method_name | <code>string</code> | 
 | parameters | <code>Array</code> | 
 
+
+**Example**
+```js
+SipaOnsenPage.callMethodOfPage('home', 'myCustomMethod', [param1, param2]);
+```
 <a name="SipaOnsenPage.callMethodOfLayout"></a>
 
 ### SipaOnsenPage.callMethodOfLayout(layout_id, method_name, parameters)
-Call the given method of the given layout with given parameters (optional)
+Call the given method of the given layout with given (optional) parameters.
 
 | Param | Type |
 | --- | --- |
@@ -135,10 +222,15 @@ Call the given method of the given layout with given parameters (optional)
 | method_name | <code>string</code> | 
 | parameters | <code>Array</code> | 
 
+
+**Example**
+```js
+SipaOnsenPage.callMethodOfLayout('default-layout', 'myCustomMethod', [param1, param2]);
+```
 <a name="SipaOnsenPage.setConfig"></a>
 
 ### SipaOnsenPage.setConfig(config)
-Set the configuration of pages and layouts
+Set the configuration of pages and layouts.
 
 | Param | Type |
 | --- | --- |
@@ -149,34 +241,76 @@ Set the configuration of pages and layouts
 
 **Example**
 ```js
-SipaOnsenPage.setConfig({      // default layout for all pages      default_layout: 'default',      // specific layouts for some pages { <page-name>: <layout-name> }      default_layouts: {          // overwrites the layout for the page 'login-page' with layout 'mini-dialog'          'login-page': 'mini-dialog'      }  });
+SipaOnsenPage.setConfig({
+      // default layout for all pages
+      default_layout: 'default',
+      // specific layouts for some pages { <page-name>: <layout-name> }
+      default_layouts: {
+          // overwrites the layout for the page 'login-page' with layout 'mini-dialog'
+          'login-page': 'mini-dialog'
+      }
+  });
 ```
 <a name="SipaOnsenPage.popPage"></a>
 
 ### SipaOnsenPage.popPage(options) &rarr; <code>Promise</code>
-**Kind**: static method of [<code>SipaOnsenPage</code>](#SipaOnsenPage)  
+Pop the current page from the stack.
 
 | Param | Type | Description |
 | --- | --- | --- |
 | options | <code>Object</code> |  |
 | options.onsen | [<code>OnsenOptions</code>](#SipaOnsenPage.OnsenOptions) | options passed to original OnsenUI popPage |
 
+
+**Example**
+```js
+SipaOnsenPage.load("home");
+// some user interaction later
+
+SipaOnsenPage.load("details");
+// some user interaction later
+
+SipaOnsenPage.popPage();
+// now back to 'home'
+```
 <a name="SipaOnsenPage.addStatusBarMock"></a>
 
 ### SipaOnsenPage.addStatusBarMock()
-Add a status bar mock to the app
+Add a status bar mock to the app at the top.
+
+**Example**
+```js
+SipaOnsenPage.addStatusBarMock();
+```
 <a name="SipaOnsenPage.removeStatusBarMock"></a>
 
 ### SipaOnsenPage.removeStatusBarMock()
-Remove status bar mock of the app
+Remove status bar mock of the app at the top if available.
+
+**Example**
+```js
+SipaOnsenPage.removeStatusBarMock();
+```
 <a name="SipaOnsenPage._initStatusBarMock"></a>
 
 ### SipaOnsenPage.\_initStatusBarMock()
-Initialize status bar mock - do not run before first page is loaded!
+Initialize status bar mock - do NOT run before first page is loaded!
 <a name="SipaOnsenPage.reset"></a>
 
 ### SipaOnsenPage.reset()
-Reset all statesUseful for unit testing
+Reset all states
+
+Useful for unit testing.
+<a name="SipaOnsenPage.Config"></a>
+
+### SipaOnsenPage.Config : <code>Object</code>
+**Kind**: static typedef of [<code>SipaOnsenPage</code>](#SipaOnsenPage)  
+
+| Param | Type |
+| --- | --- |
+| default_layout | <code>string</code> | 
+| default_layouts | <code>Object</code> | 
+
 <a name="SipaOnsenPage.OnsenOptions"></a>
 
 ### SipaOnsenPage.OnsenOptions : <code>Object</code>
@@ -205,14 +339,4 @@ Custom type definitions for excellent IDE auto complete support
 | --- | --- |
 | prefix | <code>string</code> | 
 | file_ext | <code>string</code> | 
-
-<a name="SipaOnsenPageConfig"></a>
-
-## SipaOnsenPageConfig : <code>Object</code>
-**Kind**: global typedef  
-
-| Param | Type |
-| --- | --- |
-| default_layout | <code>string</code> | 
-| default_layouts | <code>Object</code> | 
 
