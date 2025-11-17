@@ -229,11 +229,14 @@ class SipaCliBuild {
         regex.lastIndex = 0;
         const regex_results = regex.exec(file_content);
         regex.lastIndex = 0;
+        if(regex_results === null) {
+            throw `Original index.html is malformed and cannot be parsed anymore! (1)`;
+        }
         const doc_beginning = regex_results[1] ? regex_results[1].toString().trim() : null;
         const doc_header = regex_results[2] ? regex_results[2] : null;
         const doc_body_open_tag = regex_results[3] ? regex_results[3] : null;
         if (!doc_beginning || !doc_header || !doc_body_open_tag) {
-            throw `Original index.html is malformed and cannot be parsed anymore!`;
+            throw `Original index.html is malformed and cannot be parsed anymore! (2)`;
         }
         const version = SipaCliTools.readProjectPackageJson().version;
         return `${self._removeWhiteSpacesBetweenLines(doc_beginning)}
