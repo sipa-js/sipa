@@ -72,9 +72,13 @@ class SipaCliBuild {
     static createMinifiedJsFile() {
         const self = SipaCliBuild;
         const index_js_files = SipaCliIndexManager.getJsEntries();
+        const ignored_build_files = SipaCliTools.readProjectSipaConfig().build?.ignored_files || [];
+        const final_js_files = index_js_files.filter((file) => {
+            return !ignored_build_files.includes(file);
+        });
         let final_js_file_content = "";
         SipaCliTools.printLine(`→ merge javascript files to minify ...`);
-        index_js_files.forEach((file) => {
+        final_js_files.forEach((file) => {
             SipaCliTools.printLine(`  - ${file} ... `);
             let file_content = SipaCliTools.readFile(SipaCliTools.projectBaseAppPath() + '/' + file);
             final_js_file_content += "\n" + file_content;
@@ -118,9 +122,13 @@ class SipaCliBuild {
         // compile SASS to CSS before processing
         SipaCliServer.runSass(`--update ${SipaCliServer._sassWatchPathsInline()} --no-source-map --style=compressed`, false, true);
         const index_css_files = SipaCliIndexManager.getStyleEntries();
+        const ignored_build_files = SipaCliTools.readProjectSipaConfig().build?.ignored_files || [];
+        const final_css_files = index_css_files.filter((file) => {
+            return !ignored_build_files.includes(file);
+        });
         let final_css_file_content = "";
         SipaCliTools.printLine(`→ merge stylesheet files to minify ...`);
-        index_css_files.forEach((file) => {
+        final_css_files.forEach((file) => {
             SipaCliTools.printLine(`  - ${file} ... `);
             let file_content = SipaCliTools.readFile(SipaCliTools.projectBaseAppPath() + '/' + file);
             final_css_file_content += "\n" + file_content;

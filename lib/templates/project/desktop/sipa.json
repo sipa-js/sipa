@@ -28,7 +28,9 @@
       "favicon.svg": "favicon.svg",
       "files": "files",
       "assets/img": "assets/img"
-    }
+    },
+    "ignored_files": [
+    ]
   },
   "indexer": {
     "ignored_files": [

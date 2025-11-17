@@ -29,7 +29,9 @@
       "manifest.json": "manifest.json",
       "files": "files",
       "assets/img": "assets/img"
-    }
+    },
+    "ignored_files": [
+    ]
   },
   "indexer": {
     "ignored_files": [

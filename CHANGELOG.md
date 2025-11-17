@@ -1,3 +1,10 @@
+# 0.9.46
+In your `sipa.json`, add the following default line in the `build` block:
+```json
+  "ignored_files": [],
+```
+So you can add files, which will not be included in the final app.js or apps.css build.
+
 # 0.9.44
 > [!CAUTION]
 > This is a refactoring release, `SipaComponent` is still in refactoring and may have some slightly different behaviors,
@@ -92,8 +99,8 @@ For example:
 ### New option in your app/config/config.js
 ```js
     /*
-        Preserve <link> and <script> children tags of body on layout loading
-        Useful when you inject scripts or stylesheets on the body dynamically
+        Preserve <link> and <script> children tags in your <body> on layout loading.
+        Useful when you inject scripts or stylesheets on the body dynamically and want to keep them on layout changes.
     */
     preserve_script_link_tags: false,
 ```
