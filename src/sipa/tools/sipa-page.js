@@ -362,6 +362,9 @@ class SipaPage {
                 self.callMethodOfLayout(last_layout_id, 'onDestroy', [{next_layout_id: layout_id}]);
             }
             j_body.hide();
+            /**
+             * Preserve existing script and link tags in body (e.g. for dynamically loaded CSS or JS)
+             */
             if(self.config.preserve_script_link_tags) {
                 j_body.children().not('script, link').remove();
                 j_body.prepend(data);
