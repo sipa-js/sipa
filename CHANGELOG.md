@@ -1,4 +1,8 @@
 # 0.9.44
+> [!CAUTION]
+> This is a refactoring release, `SipaComponent` is still in refactoring and may have some slightly different behaviors,
+> as some bugs have been fixed. Please check your components after updating.
+
 ## Migration steps from to 0.9.44
 ### New option to automatically open browser on `sipa s`
 In your `sipa.json`, add the following line in the `development_server` block:
