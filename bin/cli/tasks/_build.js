@@ -19,13 +19,13 @@ class SipaCliBuild {
         const self = SipaCliBuild;
         if (!SipaCliTools.isRunningInsideValidSipaProject()) {
             SipaCliTools.errorNotInsideValidSipaProject();
-            return;
+            process.exit(1);
         }
         if (SipaCliIndexManager.missingFilesOrEntriesCount() > 0) {
             let section = self.SECTIONS.unresolved_files;
             section[0].content[0] = section[0].content[0].replace('{{count}}', SipaCliIndexManager.missingFilesOrEntriesCount());
             console.log(commandLineUsage(section));
-            return;
+            process.exit(1);
         }
         console.log(commandLineUsage(self.SECTIONS.build));
         SipaCliTools.removePath(SipaCliTools.projectDefaultDistPath());
