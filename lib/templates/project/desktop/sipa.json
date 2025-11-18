@@ -6,6 +6,7 @@
     "port": "7000",
     "mount": "/",
     "open": true,
+    "open_url": "/?example=value",
     "sass_watch_paths": [
       "assets/style",
       "assets/components",

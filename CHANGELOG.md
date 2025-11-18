@@ -5,6 +5,12 @@ In your `sipa.json`, add the following default line in the `build` block:
 ```
 So you can add files, which will not be included in the final app.js or apps.css build.
 
+In addition, extend your `sipa.json` inside your`development_server` block with the following line:
+```json
+  "open_url": "/?example=value"
+```
+So you can define a custom URL to open when starting the development server with `sipa s`. There you can add parameters or even open a deep link directly.
+
 # 0.9.44
 > [!CAUTION]
 > This is a refactoring release, `SipaComponent` is still in refactoring and may have some slightly different behaviors,
