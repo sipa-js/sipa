@@ -53,7 +53,7 @@ class SipaCliServer {
             // open only if configured
             let open_param = '';
             if(config?.development_server?.open === true) {
-                open_param = '--open="${mount}"';
+                open_param = `--open="${mount}"`;
             }
             // final server command to start server
             const server_command = `node "${live_server_js_path}" --port=${port} --host=${host} --ignore=lang --mount="${mount}":./${SipaCliTools.projectBaseAppDir()} ${open_param}`;
