@@ -1,27 +1,22 @@
 /**
- * Release build script for the Sipa web framework itself
+ * Release build script for the Sipa web framework itself (ESM version)
  */
-const fs = require("fs");
-const util = require('util');
-const exec = require("child_process").exec;
-const exec_prom = util.promisify(exec);
-const { spawn } = require("child_process");
-const LuckyCase = require('lucky-case');
-const chalk = require('chalk');
-const File = require('ruby-nice/file');
-const Dir = require('ruby-nice/dir');
-const FileUtils = require('ruby-nice/file-utils');
-require('ruby-nice/array');
-require('ruby-nice/object');
+import fs from 'fs';
+import LuckyCase from 'lucky-case';
+import chalk from 'chalk';
+import File from 'ruby-nice/file';
+import FileUtils from 'ruby-nice/file-utils';
+import 'ruby-nice/array';
+import 'ruby-nice/object';
 
-const SipaCliTools = require('./cli/_tools');
+import SipaCliTools from './cli/_tools.js';
 
 const sipa_build_destination_dir = './lib/templates/project/desktop/app/assets/lib/sipa/';
 const sipa_onsen_build_destination_dir = './lib/templates/project/mobile/app/assets/lib/sipa/';
 
 const build_exclusion_markers = [
     /\/\/<!-- MODULE -->\/\/(.*?)\/\/<!-- \/MODULE -->\/\//gs,
-]
+];
 
 const version_regex = /"version":\s*"([^"]*)"/sgm;
 const date_regex = /"date":\s*"([^"]*)"/sgm;
@@ -79,7 +74,7 @@ const builds = {
             './src/sipa/sipa.js',
             './src/sipa/sipa-onsen.js',
         ]}
-}
+};
 
 const copy_static_files = [
     // 'desktop' project (default)
@@ -110,10 +105,10 @@ const copy_static_files = [
 
     ['./node_modules/lucky-case/dist/lucky-case.js', File.expandPath(sipa_onsen_build_destination_dir + '/../lucky-case/') + '/lucky-case.js'],
     ['./node_modules/lucky-case/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../lucky-case/') + '/LICENSE'],
-    
+
     ['./node_modules/fire-once/dist/fire-once.js', File.expandPath(sipa_onsen_build_destination_dir + '/../fire-once/') + '/fire-once.js'],
     ['./node_modules/fire-once/LICENSE', File.expandPath(sipa_onsen_build_destination_dir + '/../fire-once/') + '/LICENSE'],
-]
+];
 
 function version() {
     const package_json = SipaCliTools.readFile('./package.json');
@@ -135,7 +130,7 @@ function updateSipaVersion() {
     fs.writeFileSync('./package.json', package_json, 'utf8');
     // project class
     let project_js = fs.readFileSync('./src/sipa/sipa.js','utf8');
-    project_js = project_js.replace(/Sipa\._version\s*=\s*"[^"]+";/gm, `Sipa._version = "${new_version}";`)
+    project_js = project_js.replace(/Sipa\._version\s*=\s*"[^"]+";/gm, `Sipa._version = "${new_version}";`);
     fs.writeFileSync('./src/sipa/sipa.js', project_js, 'utf8');
     return new_version;
 }
@@ -150,13 +145,13 @@ function updateDate() {
 }
 
 console.log(chalk.yellow('###################################'));
-console.log(chalk.yellow('# Sipa build script'));
+console.log(chalk.yellow('# Sipa build script (ESM)'));
 console.log(chalk.yellow('###################################'));
 console.log(`Updating version from ${version()} ...`);
 console.log(`... to version ${updateSipaVersion()} @ ${updateDate()}`);
 console.log();
 console.log('Building JS ...');
-for(let build_key of Object.keys(builds)) {
+for (let build_key of Object.keys(builds)) {
     const build = builds[build_key];
     console.log(` ${chalk.yellow('-')} ${LuckyCase.toSentenceCase(build_key)} ...`);
     if (fs.existsSync(build.destination_file)) {
@@ -164,25 +159,25 @@ for(let build_key of Object.keys(builds)) {
     }
     console.log(`${chalk.yellow('    - transpile')} ...`);
     (function buildRawDestinationFile() {
-        let final_file = "";
+        let final_file = '';
         build.source_files.forEach((source_file) => {
-            final_file += SipaCliTools.readFile(source_file) + "\n";
+            final_file += SipaCliTools.readFile(source_file) + '\n';
         });
         build_exclusion_markers.forEach((regex) => {
-            final_file = final_file.replace(regex,'');
+            final_file = final_file.replace(regex, '');
         });
         SipaCliTools.writeFile(build.destination_file, releaseTemplate() + final_file);
     })();
 }
 console.log('Copy static files ...');
-copy_static_files.eachWithIndex((val, index) => {
+for (const val of copy_static_files) {
     const key = val[0];
     const value = val[1];
     console.log(` - ${key} -> ${value}`);
-    if(!File.isDirectory(File.getDirname(value))) {
+    if (!File.isDirectory(File.getDirname(value))) {
         FileUtils.mkdirP(File.getDirname(value));
     }
     FileUtils.copy(key, value);
-});
+}
 
 console.log(chalk.green('All done!'));
