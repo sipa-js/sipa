@@ -1,12 +1,12 @@
 /**
- * documentation generation script
+ * documentation generation script (ESM version)
  */
-const Fs = require("fs");
-const {exec} = require("child_process");
-const {execSync} = require("child_process");
 
-require('ruby-nice/array');
-require('lucky-case/string');
+import File from 'ruby-nice/file';
+import { execSync } from 'child_process';
+
+import 'ruby-nice/array';
+import 'lucky-case/string';
 
 const files_to_doc = [
     './src/sipa/core/sipa-basic-view.js',
@@ -39,7 +39,7 @@ function beautifyDoc(file) {
     const arrow_right_char_regex = /⇒/g;
     const class_name = file.split('/').getLast().split('.').getFirst().toPascalCase();
     const function_description_regex = new RegExp(`## Classes.*<a name="${class_name}"><\/a>`, 'gms');
-    let data = Fs.readFileSync(file, 'utf-8').toString();
+    let data = File.read(file);
     const first_method_name_match = data.match((new RegExp(`<a name="${class_name}\\+([^"]+)"><\/a>`,'')));
     const first_method_name = first_method_name_match && first_method_name_match[1] ? first_method_name_match[1] : null;
     data = data.replace(kind_line_regex,'');
@@ -51,7 +51,7 @@ function beautifyDoc(file) {
         const functions_regex = new RegExp(`<a name="${first_method_name}"><\/a>.*`,'gms');
         data = data.replace(functions_regex,'');
     }
-    Fs.writeFileSync(file, data, 'utf-8');
+    File.write(file, data);
 }
 
 console.log("Generate documentation ...");
