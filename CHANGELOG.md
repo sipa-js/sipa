@@ -1,4 +1,6 @@
 # 0.9.46
+From this version, the whole body of  `index.html` will be put into the dist build. Before the body was kept empty in the dist build.
+## Migration steps from 0.9.44 to 0.9.46
 In your `sipa.json`, add the following default line in the `build` block:
 ```json
   "ignored_files": [],

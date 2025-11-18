@@ -242,8 +242,8 @@ class SipaCliBuild {
         }
         const doc_beginning = regex_results[1] ? regex_results[1].toString().trim() : null;
         const doc_header = regex_results[2] ? regex_results[2] : null;
-        const doc_body_open_tag = regex_results[3] ? regex_results[3] : null;
-        if (!doc_beginning || !doc_header || !doc_body_open_tag) {
+        const doc_body = regex_results[3] ? regex_results[3] : null;
+        if (!doc_beginning || !doc_header || !doc_body) {
             throw `Original index.html is malformed and cannot be parsed anymore! (2)`;
         }
         const version = SipaCliTools.readProjectPackageJson().version;
@@ -252,8 +252,7 @@ ${self._removeWhiteSpacesBetweenLines(doc_header)}
 <script type="text/javascript" src="${self.paths.dist_index_minified_js}?v=${version}"></script>
 <link rel="stylesheet" href="${self.paths.dist_index_minified_css}?v=${version}">
 </head>
-${doc_body_open_tag}
-</body>
+${doc_body}
 </html>`;
     }
 
@@ -340,10 +339,10 @@ SipaCliBuild.supported_font_types = ['ttf', 'woff', 'woff2', 'eot', 'otf'];
 /**
  * group 1 - part at the beginning until including <head>, e.g. <!DOCTYPE html><html><head>
  * group 2 - header contents between HEADER and /HEADER
- * group 3 - body open tag including attributes
+ * group 3 - complete body with content
  * @type {RegExp}
  */
-SipaCliBuild.ORIGINAL_INDEX_SOURCES_REGEXP = /(.*)<![-]+[=]+\s*HEADER\s*[=]+[-]+>$(.*)<![-]+[=]+\s*\/HEADER\s*[=]+[-]+>.*(<body[^\n]*>$)/gms;
+SipaCliBuild.ORIGINAL_INDEX_SOURCES_REGEXP = /(.*)<![-]+[=]+\s*HEADER\s*[=]+[-]+>$(.*)<![-]+[=]+\s*\/HEADER\s*[=]+[-]+>.*(<body[^\n]*>.*<\/body>$)/gms;
 SipaCliBuild.CSS_URL_CONTENT_REGEXP = /url\s*\(\s*([^\)]+)\s*\)/gms;
 
 module.exports = SipaCliBuild;
