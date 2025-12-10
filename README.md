@@ -1,7 +1,7 @@
 ![SIPA Particularly simple web framework](doc/_assets/_raw/logo_doc.svg)<br>
 [![npm package](https://img.shields.io/npm/v/sipa?color=gray&style=plastic&logo=npm&logoColor=white&labelColor=red)](https://www.npmjs.com/package/sipa)
 ![downloads](https://img.shields.io/npm/dt/sipa?color=blue&style=plastic&label=Downloads&labelColor=beige)
-[![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-fabd09.svg?style=plastic&labelColor=beige)](LICENSE)
+[![License: LGPLv3](https://img.shields.io/badge/License-LGPLv3-gold.svg?style=plastic&labelColor=beige)](LICENSE)
 
 > Particularly simple old school single page lightweight web framework for clever javascript developers.
 
