@@ -170,18 +170,28 @@ class SipaCliIndexManager {
         return self.missingFiles().length + self.missingEntries().length;
     }
 
+    /**
+     * Return list of ignored indexer files from sipa.config.json
+     *
+     * They have relative paths from app/ directory and can contain glob patterns, that
+     * will be resolved before returning the list.
+     *
+     * @return {Array<String>}
+     */
     static ignoredFiles() {
         const self = SipaCliIndexManager;
-        return SipaCliTools.readProjectSipaConfig().indexer?.ignored_files || [];
+        const ignored_files = SipaCliTools.readProjectSipaConfig().indexer?.ignored_files || [];
+        // make sure paths are correct and resolve glob patterns
+        return SipaCliTools.resolveFiles(ignored_files);
     }
 
     /**
-     * Create a inclusion tag for js or css automatically based on the given path
+     * Create an inclusion tag for JS or CSS automatically based on the given path
      *
      * @param {string} path
      * @param {Object} options
      * @param {('page','layout','javascript','style','app-init')} options.type='page'
-     * @returns {string} html tag to include js or css
+     * @returns {string} HTML tag to include JS or CSS
      * @private
      */
     static _makeTag(path, options = {type: 'page'}) {

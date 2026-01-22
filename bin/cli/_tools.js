@@ -6,6 +6,7 @@ const prompt = require('prompt-sync')();
 const path = require('path');
 const fs = require('fs');
 const fse = require('fs-extra');
+const glob = require('glob');
 const SipaCliVersion = require('./tasks/_version');
 const File = require("ruby-nice/file");
 const execSync = require("child_process").execSync;
@@ -464,6 +465,35 @@ class SipaCliTools {
 
     static escapeRegExp(string) {
         return string.replace(/[$+.*?^(){}|[\]\\]/g, '\\$&');
+    }
+
+    /**
+     * Resolve file patterns (glob) to actual files
+     *
+     * By default, the project app dir prefix is cut from the beginning of the resolved files
+     *
+     * @param {Array<String>} files
+     * @param {string} dir_prefix to be cut from the beginning of resolved files to keep paths relative (default: project app dir)
+     * @return {Array<String>}
+     */
+    static resolveFiles(files, dir_prefix = SipaCliTools.projectBaseAppPath() + '/') {
+        let resolved_files = [];
+        files.forEach((path_pattern) => {
+            const dir_prefix = SipaCliTools.projectBaseAppPath() + '/';
+            let full_pattern = path_pattern;
+            if (!full_pattern.startsWith(dir_prefix)) {
+                full_pattern = dir_prefix + path_pattern;
+            }
+            let matched_files = glob.sync(full_pattern, {});
+            matched_files.forEach((matched_file) => {
+                let final_path = matched_file.slice(dir_prefix.length);
+                if (!resolved_files.includes(final_path)) {
+                    resolved_files.push(final_path);
+                }
+            });
+        });
+        // make unique
+        return resolved_files.filter((v, i, a) => a.indexOf(v) === i);
     }
 }
 

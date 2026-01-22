@@ -72,7 +72,7 @@ class SipaCliBuild {
     static createMinifiedJsFile() {
         const self = SipaCliBuild;
         const index_js_files = SipaCliIndexManager.getJsEntries();
-        const ignored_build_files = SipaCliTools.readProjectSipaConfig().build?.ignored_files || [];
+        const ignored_build_files = self.ignoredFiles();
         const final_js_files = index_js_files.filter((file) => {
             return !ignored_build_files.includes(file);
         });
@@ -122,7 +122,7 @@ class SipaCliBuild {
         // compile SASS to CSS before processing
         SipaCliServer.runSass(`--update ${SipaCliServer._sassWatchPathsInline()} --no-source-map --style=compressed`, false, true);
         const index_css_files = SipaCliIndexManager.getStyleEntries();
-        const ignored_build_files = SipaCliTools.readProjectSipaConfig().build?.ignored_files || [];
+        const ignored_build_files = self.ignoredFiles();
         const final_css_files = index_css_files.filter((file) => {
             return !ignored_build_files.includes(file);
         });
@@ -189,8 +189,8 @@ class SipaCliBuild {
     static copyViews() {
         const self = SipaCliBuild;
         SipaCliTools.printLine(`→ copy views ...`);
-        const static_files_to_copy = glob.sync(SipaCliTools.projectBaseAppPath() + '/views/**/*.html');
-        static_files_to_copy.forEach((src_file, index) => {
+        const view_files_to_copy = glob.sync(SipaCliTools.projectBaseAppPath() + '/views/**/*.html');
+        view_files_to_copy.forEach((src_file, index) => {
             let base_dir = SipaCliTools.projectBaseAppPath().replace(/\\/g,'/') // ensure ms win compatibility
             const dest_relative_path = src_file.replace(base_dir + '/','');
             const dest_path = SipaCliTools.projectDefaultDistPath() + '/' + dest_relative_path;
@@ -302,6 +302,44 @@ ${doc_body}
     static _finalDistCssStylePath() {
         const self = SipaCliBuild;
         return SipaCliTools.projectDefaultDistPath() + '/' + self.paths.dist_index_minified_css;
+    }
+
+    /**
+     * Return resolved list of ignored build files from sipa.config.json
+     *
+     * @return {Array<String>}
+     */
+    static ignoredFiles() {
+        const self = SipaCliBuild;
+        let ignored_files = SipaCliTools.readProjectSipaConfig().build?.ignored_files || [];
+        return SipaCliTools.resolveFiles(ignored_files);
+    }
+
+    /**
+     * Return resolved object of static files to copy from sipa.config.json
+     *
+     * Keys are resolved source paths, values are destination paths.
+     *
+     * {
+     *     "source/path/file.txt": "destination/path/file.txt",
+     *     "source/path/folder": "destination/path/folder"
+     * }
+     *
+     * @return {Object<string, string>}
+     */
+    static staticFilesToCopy() {
+        const self = SipaCliBuild;
+        const static_files = SipaCliTools.readProjectSipaConfig().build?.static_files_to_copy || {};
+        // resolve paths in keys (source), but not values (destination)
+        let resolved_files = {};
+        Object.keys(static_files).forEach((from_path) => {
+            const to_path = static_files[from_path];
+            const resolved_from_path = SipaCliTools.resolveFiles([from_path]);
+            resolved_from_path.forEach((from_path_resolved) => {
+                resolved_files[from_path_resolved] = to_path;
+            });
+        });
+        return resolved_files;
     }
 }
 
