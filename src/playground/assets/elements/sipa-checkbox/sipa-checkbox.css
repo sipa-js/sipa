@@ -1,0 +1,13 @@
+
+:root {
+    --sipa-checkbox-border: #999;
+}
+
+sipa-checkbox {
+    position: relative;
+    border: 1px solid var(--sipa-checkbox-border);
+}
+
+sipa-checkbox[checked] {
+    background-color: var(--sipa-checkbox-border);
+}
