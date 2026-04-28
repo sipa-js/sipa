@@ -74,7 +74,7 @@
     "prompt-sync": "^4.2.0",
     "ruby-nice": "^0.2.8",
     "sass": "^1.32.0",
-    "sipa-live-server": "^0.0.3",
+    "sipa-live-server": "^0.0.6",
     "terser": "^5.10.0",
     "typifier": "^0.2.1"
   },
