@@ -8,42 +8,71 @@ const LuckyCase = require('lucky-case/string');
 const CurlyBracketParser = require('curly-bracket-parser');
 
 const SipaCliTools = require('./../_tools');
+const SipaCliOptions = require('./../_cli-options');
 
 class SipaCliNew {
-    static run(argv) {
-        SipaCliNew.new();
+    static optionDefinitions() {
+        return [
+            { name: 'type', type: String, description: 'Project type: desktop or mobile' },
+            { name: 'name', type: String, description: 'Project name' },
+            { name: 'version', type: String, description: 'Initial version' },
+            { name: 'author', type: String, description: 'Author name' },
+            { name: 'email', type: String, description: 'Author email' },
+            { name: 'help', type: Boolean, description: 'Show help' },
+        ];
     }
 
-    static new() {
+    static run(argv) {
         const self = SipaCliNew;
+        const args = SipaCliOptions.parse(self.optionDefinitions(), argv);
+        if (args.help) {
+            console.log(commandLineUsage(self.SECTIONS.new_help));
+            return;
+        }
         let section = SipaCliTools.colorizeValues(self.SECTIONS.new_begin, ['desc'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
-        self._enterVariables();
+        self._enterVariables(args);
         self._createProjectStructure();
     }
 
-    static _enterVariables() {
+    static _enterVariables(args = {}) {
         const self = SipaCliNew;
-        let section = SipaCliTools.colorizeValues(self.SECTIONS.new_types, ['desc'], 'green');
-        let usage = commandLineUsage(section);
-        console.log(usage);
-        const options = ['desktop','mobile'];
-        self.project_type = SipaCliTools.cliQuestion(`Please choose your project type (${options.join(",")})`, options, 'desktop', true);
-        let project_name = null;
-        while (true) {
-            project_name = SipaCliTools.cliQuestion('Please enter your project name', null, null, true);
-            const project_dir = process.cwd() + '/' + project_name.toDashCase();
+        const options = ['desktop', 'mobile'];
+        let project_type = args.type;
+        if (project_type && !options.includes(project_type)) {
+            console.log(chalk.red(`  Invalid project type '${project_type}'. Valid options: ${options.join(', ')}`));
+            process.exit(1);
+        }
+        if (!project_type) {
+            let section = SipaCliTools.colorizeValues(self.SECTIONS.new_types, ['desc'], 'green');
+            console.log(commandLineUsage(section));
+            project_type = SipaCliTools.cliQuestion(`Please choose your project type (${options.join(",")})`, options, 'desktop', true);
+        }
+        self.project_type = project_type;
+
+        let project_name = args.name;
+        if (project_name) {
+            const project_dir = process.cwd() + '/' + LuckyCase.toDashCase(project_name);
             if (fs.existsSync(project_dir)) {
-                console.log(chalk.red(`  Invalid project name '${project_name}'. There is already a directory '${project_name.toDashCase()}'.`));
-            } else {
-                break;
+                console.log(chalk.red(`  Invalid project name '${project_name}'. There is already a directory '${LuckyCase.toDashCase(project_name)}'.`));
+                process.exit(1);
+            }
+        } else {
+            while (true) {
+                project_name = SipaCliTools.cliQuestion('Please enter your project name', null, null, true);
+                const project_dir = process.cwd() + '/' + LuckyCase.toDashCase(project_name);
+                if (fs.existsSync(project_dir)) {
+                    console.log(chalk.red(`  Invalid project name '${project_name}'. There is already a directory '${LuckyCase.toDashCase(project_name)}'.`));
+                } else {
+                    break;
+                }
             }
         }
         self.options.project_name = project_name;
-        self.options.project_version = SipaCliTools.cliQuestion('Please enter your initial project version', null, self.options.project_version);
-        self.options.author = SipaCliTools.cliQuestion('Please enter your project author name', null, '');
-        self.options.email = SipaCliTools.cliQuestion('Please enter your project author email address', null, '');
+        self.options.project_version = args.version || SipaCliTools.cliQuestion('Please enter your initial project version', null, self.options.project_version);
+        self.options.author = args.author || SipaCliTools.cliQuestion('Please enter your project author name', null, '');
+        self.options.email = args.email || SipaCliTools.cliQuestion('Please enter your project author email address', null, '');
     }
 
     static _createProjectStructure() {
@@ -52,7 +81,7 @@ class SipaCliNew {
         let usage = commandLineUsage(section);
         console.log(usage);
         // create project dir
-        const project_dir = process.cwd() + '/' + self.options.project_name.toDashCase();
+        const project_dir = process.cwd() + '/' + LuckyCase.toDashCase(self.options.project_name);
         SipaCliTools.print(`Creating project dir ...`);
         if (!fs.existsSync(project_dir)) {
             fs.mkdirSync(project_dir);
@@ -154,6 +183,22 @@ SipaCliNew.SECTIONS.new_types = [
             `When choosing '{green mobile}', your project will be created with a adjusted project template optimized and especially forged for and based on OnsenUI. {underline.blue https://onsen.io}`,
             '',
             "When choosing '{green desktop}', your project will be created with basic example to create web applications! Then you can add your CSS framework of choice later! In doubt, choose '{green desktop}'!",
+        ]
+    }
+];
+SipaCliNew.SECTIONS.new_help = [
+    {
+        header: 'sipa new',
+        content: 'Create a new Sipa project.'
+    },
+    {
+        header: 'Options',
+        optionList: [
+            { name: 'type', typeLabel: '{underline String}', description: 'Project type: desktop or mobile' },
+            { name: 'name', typeLabel: '{underline String}', description: 'Project name' },
+            { name: 'version', typeLabel: '{underline String}', description: 'Initial version' },
+            { name: 'author', typeLabel: '{underline String}', description: 'Author name' },
+            { name: 'email', typeLabel: '{underline String}', description: 'Author email' }
         ]
     }
 ];
