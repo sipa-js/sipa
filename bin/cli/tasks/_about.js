@@ -7,7 +7,16 @@ const fs = require('fs');
 const SipaCliTools = require('./../_tools');
 
 class SipaCliAbout {
-    static run(argv) {
+    static run(argv = []) {
+        if (argv.includes('--json')) {
+            const package_json = JSON.parse(SipaCliTools.readFile(__dirname + '/../../../package.json'));
+            console.log(JSON.stringify({
+                name: package_json.name,
+                description: package_json.description,
+                homepage: package_json.homepage,
+            }));
+            return;
+        }
         SipaCliAbout.about();
     }
 

@@ -6,7 +6,12 @@ const File = require('ruby-nice/file');
 var SipaCliTools = require('./../_tools');
 
 class SipaCliVersion {
-    static run(argv) {
+    static run(argv = []) {
+        if (argv.includes('--json')) {
+            const package_json = SipaCliVersion.getPackageJson();
+            console.log(JSON.stringify({ name: package_json.name, version: package_json.version }));
+            return;
+        }
         SipaCliVersion.printFullVersion();
     }
 
