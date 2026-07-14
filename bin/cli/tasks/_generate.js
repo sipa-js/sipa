@@ -8,17 +8,27 @@ const LuckyCase = require('lucky-case/string');
 const CurlyBracketParser = require('curly-bracket-parser');
 
 const SipaCliTools = require('./../_tools');
+const SipaCliOptions = require('./../_cli-options');
 const SipaIndexManager = require('./../_index-manager');
 const SipaHelper = require('./../../../src/sipa/tools/sipa-helper');
 const SipaPage = require('./../../../src/sipa/tools/sipa-page');
 
 class SipaCliGenerate {
-    static run(argv) {
-        SipaCliGenerate.generate();
+    static optionDefinitions() {
+        return [
+            { name: 'type', type: String, description: 'Asset type: page, layout, component, style, javascript' },
+            { name: 'name', type: String, description: 'Asset id or name' },
+            { name: 'help', type: Boolean, description: 'Show help' },
+        ];
     }
 
-    static generate() {
+    static run(argv) {
         const self = SipaCliGenerate;
+        const args = SipaCliOptions.parse(self.optionDefinitions(), argv);
+        if (args.help) {
+            console.log(commandLineUsage(self.SECTIONS.generate_help));
+            return;
+        }
         if (!SipaCliTools.isRunningInsideValidSipaProject()) {
             SipaCliTools.errorNotInsideValidSipaProject();
             return;
@@ -29,28 +39,34 @@ class SipaCliGenerate {
         const valid_options = [
             'page', 'p', 'component', 'c', 'layout', 'l', 'style', 's', 'javascript', 'j'
         ];
-        const choice = SipaCliTools.cliQuestion('Make your choice', valid_options, 'page', true);
+        let choice = args.type;
+        if (!choice) {
+            choice = SipaCliTools.cliQuestion('Make your choice', valid_options, 'page', true);
+        }
         switch (choice) {
             case 'page':
             case 'p':
-                self._generateView({ type: 'page'});
+                self._generateView({ type: 'page', name: args.name });
                 break;
             case 'component':
             case 'c':
-                self._generateComponent();
+                self._generateComponent({ name: args.name });
                 break;
             case 'layout':
             case 'l':
-                self._generateView({ type: 'layout'});
+                self._generateView({ type: 'layout', name: args.name });
                 break;
             case 'style':
             case 's':
-                self._generateAsset({ type: 'style', prefix: `${SipaCliTools.projectBaseAppDir()}/assets/style/`});
+                self._generateAsset({ type: 'style', name: args.name, prefix: `${SipaCliTools.projectBaseAppDir()}/assets/style/`});
                 break;
             case 'javascript':
             case 'j':
-                self._generateAsset({ type: 'javascript', prefix: `${SipaCliTools.projectBaseAppDir()}/assets/js/`});
+                self._generateAsset({ type: 'javascript', name: args.name, prefix: `${SipaCliTools.projectBaseAppDir()}/assets/js/`});
                 break;
+            default:
+                SipaCliTools.printLine(chalk.red(`Unknown generator type '${choice}'. Valid options: page, component, layout, style, javascript`));
+                process.exit(1);
         }
         console.log(commandLineUsage(self.SECTIONS.generate_created));
     }
@@ -78,7 +94,7 @@ class SipaCliGenerate {
         console.log(commandLineUsage(self.SECTIONS['generate_existing_' + plural_type]));
         let existing_views = self._listExistingFilesOrDirs(project_dir + `/${SipaCliTools.projectBaseAppDir()}/views/${plural_type}/**/*.js`, { prefix: `${SipaCliTools.projectBaseAppDir()}/views/${plural_type}/`, cut_file_names: true, print_paths: true });
         console.log();
-        let view_input = self._prompt(`${singular_type} id`, existing_views);
+        let view_input = options.name || self._prompt(`${singular_type} id`, existing_views);
         let view_id = CurlyBracketParser._replaceAll(view_input, "\\", '/').split('/').map((e) => {
             return LuckyCase.toDashCase(e);
         }).join('/');
@@ -143,7 +159,7 @@ class SipaCliGenerate {
         }
         let existing_views = self._listExistingFilesOrDirs(project_dir + `/${options.prefix}**/*.${asset_ext}`, { prefix: options.prefix, cut_file_names: false, cut_file_extensions: true, print_paths: true });
         console.log();
-        let input = self._prompt(asset_name, existing_views);
+        let input = options.name || self._prompt(asset_name, existing_views);
         let asset_id = CurlyBracketParser._replaceAll(input, "\\", '/').split('/').map((e) => {
             return LuckyCase.toDashCase(e);
         }).join('/');
@@ -198,7 +214,7 @@ class SipaCliGenerate {
         console.log(commandLineUsage(self.SECTIONS['generate_existing_components']));
         let existing_components = self._listExistingFilesOrDirs(project_dir + `/${SipaCliTools.projectBaseAppDir()}/assets/components/**/*.js`, { prefix: `${SipaCliTools.projectBaseAppDir()}/assets/components/`, cut_file_names: true, print_paths: true });
         console.log();
-        let component_input = self._prompt(`component name`, existing_components);
+        let component_input = options.name || self._prompt(`component name`, existing_components);
         let component_id = CurlyBracketParser._replaceAll(component_input, "\\", '/').split('/').map((e) => {
             return LuckyCase.toDashCase(e);
         }).join('/');
@@ -455,6 +471,19 @@ SipaCliGenerate.SECTIONS.generate_created = [
             'Your assets have been successfully generated and added to your project!',
             '',
             'All done 🧞️ ... 📦!',
+        ]
+    }
+];
+SipaCliGenerate.SECTIONS.generate_help = [
+    {
+        header: 'sipa generate',
+        content: 'Generate new project assets.'
+    },
+    {
+        header: 'Options',
+        optionList: [
+            { name: 'type', typeLabel: '{underline String}', description: 'Asset type: page, layout, component, style, javascript' },
+            { name: 'name', typeLabel: '{underline String}', description: 'Asset id or name' }
         ]
     }
 ];
