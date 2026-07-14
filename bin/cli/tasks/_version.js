@@ -9,7 +9,7 @@ class SipaCliVersion {
     static run(argv = []) {
         if (argv.includes('--json')) {
             const package_json = SipaCliVersion.getPackageJson();
-            console.log(JSON.stringify({ name: package_json.name, version: package_json.version }));
+            console.log(JSON.stringify({ name: package_json.name, version: package_json.version, date: package_json.date }));
             return;
         }
         SipaCliVersion.printFullVersion();

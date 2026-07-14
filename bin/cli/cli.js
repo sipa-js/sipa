@@ -54,10 +54,11 @@ const resolvedCommand = commandName || explicitTask;
 const taskConfig = resolvedCommand ? taskMap[resolvedCommand] : null;
 
 if (taskConfig) {
-    if (taskConfig.showLogo) logo();
+    const commandArgv = process.argv.slice(process.argv.indexOf(resolvedCommand) + 1);
+    const wantsJson = commandArgv.includes('--json');
+    if (taskConfig.showLogo && !wantsJson) logo();
     if (taskConfig.hooks && taskConfig.hooks.before) SipaCliTools.executeHook(taskConfig.hooks.before);
     if (resolvedCommand === 'server' || resolvedCommand === 's') server_was_running = true;
-    const commandArgv = process.argv.slice(process.argv.indexOf(resolvedCommand) + 1);
     const TaskModule = require(taskConfig.module);
     TaskModule.run(commandArgv);
     if (taskConfig.hooks && taskConfig.hooks.after) SipaCliTools.executeHook(taskConfig.hooks.after);

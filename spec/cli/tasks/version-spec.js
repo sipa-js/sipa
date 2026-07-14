@@ -11,6 +11,7 @@ describe('SipaCliVersion', () => {
         const parsed = JSON.parse(logged);
         expect(parsed.name).toEqual('sipa');
         expect(parsed.version).toMatch(/^\d+\.\d+\.\d+$/);
+        expect(parsed.date).toBeDefined();
     });
 
     it('prints full version without --json', () => {
