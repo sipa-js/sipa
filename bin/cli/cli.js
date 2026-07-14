@@ -67,7 +67,8 @@ if (taskConfig) {
 //
 else if (Object.keys(tasks).length === 0 || tasks.help || tasks.command && (tasks.command[0] === 'help' || tasks.command[0] === 'h')) {
     logo();
-    SipaCliHelp.help();
+    const sub_command = tasks.command && tasks.command[1] ? tasks.command[1] : null;
+    SipaCliHelp.help(sub_command);
 } else {
     logo();
     let unknown_option = tasks ? tasks.command ? tasks.command[0] : tasks._unknown[0].replace(/-/g,'') : tasks._unknown[0].replace(/-/g,'');

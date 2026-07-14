@@ -5,11 +5,46 @@ const commandLineUsage = require('command-line-usage');
 const SipaCliTools = require('./../_tools');
 
 class SipaCliHelp {
-    static help() {
+    static help(sub_command = null) {
         const self = SipaCliHelp;
+        if (sub_command) {
+            const task_help = self._taskHelp(sub_command);
+            if (task_help) {
+                console.log(commandLineUsage(task_help));
+                return;
+            }
+        }
         let section = SipaCliTools.colorizeValues(self.SECTIONS.help, ['name', 'alias', 'example'], 'green');
         const usage = commandLineUsage(section);
         console.log(usage);
+    }
+
+    static _taskHelp(sub_command) {
+        const module_map = {
+            new: './_new',
+            n: './_new',
+            generate: './_generate',
+            g: './_generate',
+            indexer: './_indexer',
+            i: './_indexer',
+            build: './_build',
+            b: './_build',
+            server: './_server',
+            s: './_server',
+        };
+        if (!module_map[sub_command]) return null;
+        const Task = require(module_map[sub_command]);
+        if (typeof Task.optionDefinitions !== 'function') return null;
+        const defs = Task.optionDefinitions();
+        const optionList = defs.map(d => ({
+            name: d.name,
+            type: d.type,
+            description: d.description || '',
+        }));
+        return [
+            { header: `sipa ${sub_command}`, content: `Help for sipa ${sub_command}.` },
+            { header: 'Options', optionList }
+        ];
     }
 
     static unknown(task) {
