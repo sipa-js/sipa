@@ -8,6 +8,7 @@ const glob = require("glob");
 const execSync = require("child_process").execSync;
 
 const SipaCliTools = require('./../_tools');
+const SipaCliOptions = require('./../_cli-options');
 const SipaCliServer = require('./../tasks/_server');
 const SipaCliIndexManager = require('./../_index-manager');
 const SipaCliVersion = require('./_version');
@@ -15,12 +16,33 @@ const File = require("ruby-nice/file");
 const Dir = require('ruby-nice/dir');
 
 class SipaCliBuild {
-    static build() {
+    static optionDefinitions() {
+        return [
+            { name: 'no-minify-js', type: Boolean, description: 'Skip javascript minification' },
+            { name: 'no-minify-css', type: Boolean, description: 'Skip stylesheet minification' },
+            { name: 'no-remove-comments', type: Boolean, description: 'Keep comments in output' },
+            { name: 'dist-path', type: String, description: 'Alternative output directory' },
+            { name: 'dry-run', type: Boolean, description: 'Preview build steps without writing files' },
+            { name: 'help', type: Boolean, description: 'Show help' },
+        ];
+    }
+
+    static run(argv) {
         const self = SipaCliBuild;
+        const args = SipaCliOptions.parse(self.optionDefinitions(), argv);
+        if (args.help) {
+            console.log(commandLineUsage(self.SECTIONS.build_help));
+            return;
+        }
         if (!SipaCliTools.isRunningInsideValidSipaProject()) {
             SipaCliTools.errorNotInsideValidSipaProject();
             process.exit(1);
         }
+        self.build(args);
+    }
+
+    static build(args = {}) {
+        const self = SipaCliBuild;
         if (SipaCliIndexManager.missingFilesOrEntriesCount() > 0) {
             let section = self.SECTIONS.unresolved_files;
             section[0].content[0] = section[0].content[0].replace('{{count}}', SipaCliIndexManager.missingFilesOrEntriesCount());
@@ -28,20 +50,29 @@ class SipaCliBuild {
             process.exit(1);
         }
         console.log(commandLineUsage(self.SECTIONS.build));
-        SipaCliTools.removePath(SipaCliTools.projectDefaultDistPath());
-        SipaCliTools.makeDir(SipaCliTools.projectDefaultDistPath());
-        self.createDistIndexHtml();
+        const target_dist = args['dist-path']
+            ? SipaCliTools.normalizePath(args['dist-path'])
+            : SipaCliTools.projectDefaultDistPath();
+
+        if (args['dry-run']) {
+            SipaCliTools.printLine(`Dry run. Would build to: ${target_dist}`);
+            return;
+        }
+
+        SipaCliTools.removePath(target_dist);
+        SipaCliTools.makeDir(target_dist);
+        self.createDistIndexHtml(target_dist);
         self.updateProjectVersion();
-        self.createMinifiedJsFile();
-        self.createMinifiedCssFile();
-        self.processFonts();
-        self.copyViews();
-        self.copyStaticFiles();
+        self.createMinifiedJsFile(args);
+        self.createMinifiedCssFile(args);
+        self.processFonts(target_dist);
+        self.copyViews(target_dist);
+        self.copyStaticFiles(target_dist);
     }
 
-    static createDistIndexHtml() {
+    static createDistIndexHtml(dist_path) {
         const self = SipaCliBuild;
-        const target_path = SipaCliTools.projectDefaultDistPath() + '/index.html';
+        const target_path = dist_path + '/index.html';
         SipaCliTools.printLine(`→ building ${chalk.green('index.html')} ...`);
         SipaCliTools.writeFile(target_path, self._generateDistIndexHtml());
     }
@@ -69,8 +100,9 @@ class SipaCliBuild {
         }
     }
 
-    static createMinifiedJsFile() {
+    static createMinifiedJsFile(args = {}) {
         const self = SipaCliBuild;
+        const config = SipaCliTools.readProjectSipaConfig();
         const index_js_files = SipaCliIndexManager.getJsEntries();
         const ignored_build_files = self.ignoredFiles();
         const final_js_files = index_js_files.filter((file) => {
@@ -83,15 +115,22 @@ class SipaCliBuild {
             let file_content = SipaCliTools.readFile(SipaCliTools.projectBaseAppPath() + '/' + file);
             final_js_file_content += "\n" + file_content;
         });
-        const final_file_path = SipaCliTools.projectDefaultDistPath() + '/' + self.paths.dist_index_minified_js;
-        if(SipaCliTools.readProjectSipaConfig().build?.minify?.js?.remove_comments) {
+        const target_dist = args['dist-path'] ? SipaCliTools.normalizePath(args['dist-path']) : SipaCliTools.projectDefaultDistPath();
+        const final_file_path = target_dist + '/' + self.paths.dist_index_minified_js;
+        const should_remove_comments = args['no-remove-comments']
+            ? false
+            : (config.build?.minify?.js?.remove_comments || false);
+        if(should_remove_comments) {
             // remove any single line comments
             final_js_file_content = final_js_file_content.replace(/^\s*\/\/[^\n]*$/gms, '');
             // remove any multi line comments
             final_js_file_content = final_js_file_content.replace(/^\s*\/\*[^*]*\*+([^\/][^*]*\*+)*\//gms, '');
         }
         SipaCliTools.writeFile(final_file_path, final_js_file_content);
-        if(SipaCliTools.readProjectSipaConfig().build?.minify?.js?.compress) {
+        const should_compress = args['no-minify-js']
+            ? false
+            : (config.build?.minify?.js?.compress || false);
+        if(should_compress) {
             const green_path = chalk.green(`${final_file_path.substring(final_file_path.lastIndexOf('assets/'))}`);
             SipaCliTools.printLine(`    → minify javascript to ${green_path} ...`);
             let terser_path = null;
@@ -104,7 +143,7 @@ class SipaCliBuild {
             else if(File.isExisting((yarn_path))) {
                 terser_path = yarn_path;
             } else {
-                throw new Error(`Could not locate sass.js`);
+                throw new Error(`Could not locate terser`);
             }
             const minify_command = `node "${terser_path}" "${final_file_path}" -m -c evaluate=false -o "${final_file_path}"`;
             // workaround for systems with bash if they are run without bin/bash shell path explicitly, e.g. Jenkins runs on /bin/sh by default
@@ -117,8 +156,10 @@ class SipaCliBuild {
         }
     }
 
-    static createMinifiedCssFile() {
+    static createMinifiedCssFile(args = {}) {
         const self = SipaCliBuild;
+        const config = SipaCliTools.readProjectSipaConfig();
+        const target_dist = args['dist-path'] ? SipaCliTools.normalizePath(args['dist-path']) : SipaCliTools.projectDefaultDistPath();
         // compile SASS to CSS before processing
         SipaCliServer.runSass(`--update ${SipaCliServer._sassWatchPathsInline()} --no-source-map --style=compressed`, false, true);
         const index_css_files = SipaCliIndexManager.getStyleEntries();
@@ -133,21 +174,28 @@ class SipaCliBuild {
             let file_content = SipaCliTools.readFile(SipaCliTools.projectBaseAppPath() + '/' + file);
             final_css_file_content += "\n" + file_content;
         });
-        if(SipaCliTools.readProjectSipaConfig().build?.minify?.css?.remove_comments) {
+        const should_remove_comments = args['no-remove-comments']
+            ? false
+            : (config.build?.minify?.css?.remove_comments || false);
+        if(should_remove_comments) {
             // remove any multi line comments
             final_css_file_content = final_css_file_content.replace(/\/\*[^*]*\*+([^\/][^*]*\*+)*\//gms, '');
         }
-        SipaCliTools.writeFile(self._finalDistCssStylePath(), final_css_file_content);
-        if(SipaCliTools.readProjectSipaConfig().build?.minify?.css?.compress) {
-            const green_path = chalk.green(`${self._finalDistCssStylePath().substring(self._finalDistCssStylePath().lastIndexOf('assets/'))}`);
+        SipaCliTools.writeFile(self._finalDistCssStylePath(target_dist), final_css_file_content);
+        const should_compress = args['no-minify-css']
+            ? false
+            : (config.build?.minify?.css?.compress || false);
+        if(should_compress) {
+            const final_css_path = self._finalDistCssStylePath(target_dist);
+            const green_path = chalk.green(`${final_css_path.substring(final_css_path.lastIndexOf('assets/'))}`);
             SipaCliTools.printLine(`    → minify css to ${green_path} ...`);
-            SipaCliServer.runSass(`"${self._finalDistCssStylePath()}" --no-source-map --style=compressed "${self._finalDistCssStylePath()}"`, false, true);
+            SipaCliServer.runSass(`"${final_css_path}" --no-source-map --style=compressed "${final_css_path}"`, false, true);
         }
         // remove zero width white spaces and utf8 line breaks from css
         // https://stackoverflow.com/questions/11305797/remove-zero-width-space-characters-from-a-javascript-string
-        final_css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
+        final_css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath(target_dist));
         final_css_file_content = final_css_file_content.replace(/[\u200B-\u200D\uFEFF\u2028\u2029]/g, '');
-        SipaCliTools.writeFile(self._finalDistCssStylePath(), final_css_file_content);
+        SipaCliTools.writeFile(self._finalDistCssStylePath(target_dist), final_css_file_content);
     }
 
     /**
@@ -155,9 +203,9 @@ class SipaCliBuild {
      *
      * After that, paths inside CSS of copied fonts are fixed automatically, if option in config is set.
      */
-    static processFonts() {
+    static processFonts(dist_path) {
         const self = SipaCliBuild;
-        const fonts_in_css = self._cssFontFilesBaseNames();
+        const fonts_in_css = self._cssFontFilesBaseNames(dist_path);
         const app_fonts_pattern = SipaCliTools.projectBaseAppPath() + `/assets/**/*.{${self.supported_font_types.join(',')}}`;
         const fonts_in_app_font_folder = glob.sync(app_fonts_pattern);
         const used_fonts_in_app_folder = fonts_in_app_font_folder.filter((font) => {
@@ -168,39 +216,39 @@ class SipaCliBuild {
         });
         SipaCliTools.printLine(`→ copy fonts used inside css ...`);
         used_fonts_in_app_folder.forEach((used_font) => {
-            const dest_file = SipaCliTools.projectDefaultDistPath() + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font);
+            const dest_file = dist_path + '/' + self.paths.fonts_base_dir + '/' + path.basename(used_font);
             SipaCliTools.copyFile(used_font, dest_file);
             SipaCliTools.printLine(`  - ${chalk.green(self.paths.fonts_base_dir + '/' + path.basename(used_font))} ...`);
         });
         if(SipaCliTools.readProjectSipaConfig().build?.auto_fix_font_paths_in_css) {
             SipaCliTools.printLine(`→ auto fix font paths in css ...`);
-            let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
-            const copied_fonts = glob.sync(SipaCliTools.projectDefaultDistPath() + '/assets/fonts/*');
+            let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath(dist_path));
+            const copied_fonts = glob.sync(dist_path + '/assets/fonts/*');
             copied_fonts.forEach((font) => {
                const font_regex = new RegExp(`url\\s*\\(\\s*['"]([^\\)]+${SipaCliTools.escapeRegExp(path.basename(font))})([#?][^)]*)*['"]\\s*\\)`,'gms');
                css_file_content = css_file_content.replace(font_regex, `url("${self.paths.fonts_production_style_dir}/${path.basename(font)}` + '$2")');
             });
-            SipaCliTools.writeFile(self._finalDistCssStylePath(), css_file_content);
+            SipaCliTools.writeFile(self._finalDistCssStylePath(dist_path), css_file_content);
         } else {
             SipaCliTools.printLine(`→ auto fix font paths in css ... ${chalk.red('skipped')}`);
         }
     }
 
-    static copyViews() {
+    static copyViews(dist_path) {
         const self = SipaCliBuild;
         SipaCliTools.printLine(`→ copy views ...`);
         const view_files_to_copy = glob.sync(SipaCliTools.projectBaseAppPath() + '/views/**/*.html');
         view_files_to_copy.forEach((src_file, index) => {
             let base_dir = SipaCliTools.projectBaseAppPath().replace(/\\/g,'/') // ensure ms win compatibility
             const dest_relative_path = src_file.replace(base_dir + '/','');
-            const dest_path = SipaCliTools.projectDefaultDistPath() + '/' + dest_relative_path;
+            const dest_path = dist_path + '/' + dest_relative_path;
             SipaCliTools.printLine(`  - ${chalk.green(dest_relative_path)} ...`);
             SipaCliTools.makeDirOfFile(dest_path);
             SipaCliTools.copyFile(src_file, dest_path);
         });
     }
 
-    static copyStaticFiles() {
+    static copyStaticFiles(dist_path) {
         const self = SipaCliBuild;
         SipaCliTools.printLine(`→ copy static files ...`);
         const static_files_to_copy = SipaCliTools.readProjectSipaConfig().build?.static_files_to_copy;
@@ -209,11 +257,11 @@ class SipaCliBuild {
             if(SipaCliTools.pathExists(SipaCliTools.projectBaseAppPath() + '/' + from_path)) {
                 SipaCliTools.printLine(`  - ${from_path} > ${chalk.green(to_path)} ...`);
                 if(SipaCliTools.isDir(SipaCliTools.projectBaseAppPath() + '/' + from_path)) {
-                    SipaCliTools.makeDir(SipaCliTools.projectDefaultDistPath() + '/' + to_path);
+                    SipaCliTools.makeDir(dist_path + '/' + to_path);
                 } else if(SipaCliTools.isFile(SipaCliTools.projectBaseAppPath() + '/' + from_path)) {
-                    SipaCliTools.makeDirOfFile(SipaCliTools.projectDefaultDistPath() + '/' + to_path);
+                    SipaCliTools.makeDirOfFile(dist_path + '/' + to_path);
                 }
-                SipaCliTools.copy(SipaCliTools.projectBaseAppPath() + '/' + from_path, SipaCliTools.projectDefaultDistPath() + '/' + to_path);
+                SipaCliTools.copy(SipaCliTools.projectBaseAppPath() + '/' + from_path, dist_path + '/' + to_path);
             } else {
                 SipaCliTools.printLine(`  - ${chalk.red(from_path)} > ${to_path}`);
                 throw chalk.red(`Invalid path! Path does not exist: '${SipaCliTools.projectBaseAppPath() + '/' + from_path}'`)
@@ -269,9 +317,9 @@ ${doc_body}
      * @returns {Array<String>}
      * @private
      */
-    static _cssFontFilesBaseNames() {
+    static _cssFontFilesBaseNames(dist_path) {
         const self = SipaCliBuild;
-        let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath());
+        let css_file_content = SipaCliTools.readFile(self._finalDistCssStylePath(dist_path));
         const regex = self.CSS_URL_CONTENT_REGEXP;
         regex.lastIndex = 0;
         let matches = [];
@@ -299,9 +347,9 @@ ${doc_body}
         return matches;
     }
 
-    static _finalDistCssStylePath() {
+    static _finalDistCssStylePath(dist_path = SipaCliTools.projectDefaultDistPath()) {
         const self = SipaCliBuild;
-        return SipaCliTools.projectDefaultDistPath() + '/' + self.paths.dist_index_minified_css;
+        return dist_path + '/' + self.paths.dist_index_minified_css;
     }
 
     /**
@@ -361,6 +409,22 @@ SipaCliBuild.SECTIONS.unresolved_files = [
             `{red Found {{count}} unresolved file(s) inside the project!}`,
             '',
             `Run {green sipa indexer} to resolve project files before running {green build} task!`
+        ]
+    }
+];
+SipaCliBuild.SECTIONS.build_help = [
+    {
+        header: 'sipa build',
+        content: 'Create a production build.'
+    },
+    {
+        header: 'Options',
+        optionList: [
+            { name: 'no-minify-js', type: Boolean, description: 'Skip javascript minification' },
+            { name: 'no-minify-css', type: Boolean, description: 'Skip stylesheet minification' },
+            { name: 'no-remove-comments', type: Boolean, description: 'Keep comments in output' },
+            { name: 'dist-path', type: String, description: 'Alternative output directory' },
+            { name: 'dry-run', type: Boolean, description: 'Preview build steps without writing files' }
         ]
     }
 ];

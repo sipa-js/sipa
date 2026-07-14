@@ -12,29 +12,50 @@ const exec_prom = util.promisify(exec);
 const File = require('ruby-nice/file');
 
 const SipaCliTools = require('./../_tools');
+const SipaCliOptions = require('./../_cli-options');
 
 class SipaCliServer {
-    static server() {
+    static optionDefinitions() {
+        return [
+            { name: 'host', type: String, description: 'Server host' },
+            { name: 'port', type: String, description: 'Server port' },
+            { name: 'no-open', type: Boolean, description: 'Do not open browser' },
+            { name: 'mount', type: String, description: 'Mount point' },
+            { name: 'help', type: Boolean, description: 'Show help' },
+        ];
+    }
+
+    static run(argv) {
         const self = SipaCliServer;
-        if (SipaCliTools.isRunningInsideValidSipaProject()) {
-            if (SipaCliTools.invalidConfigPaths().length === 0) {
-                const usage = commandLineUsage(self._sectionServerStart());
-                console.log(usage);
-                self._runLiveServerAndSass();
-            } else {
-                SipaCliTools.errorInvalidConfigPaths();
-            }
-        } else {
+        const args = SipaCliOptions.parse(self.optionDefinitions(), argv);
+        if (args.help) {
+            console.log(commandLineUsage(self.SECTIONS.server_help));
+            return;
+        }
+        if (!SipaCliTools.isRunningInsideValidSipaProject()) {
             SipaCliTools.errorNotInsideValidSipaProject();
+            return;
+        }
+        self.server(args);
+    }
+
+    static server(args = {}) {
+        const self = SipaCliServer;
+        if (SipaCliTools.invalidConfigPaths().length === 0) {
+            const usage = commandLineUsage(self._sectionServerStart(args));
+            console.log(usage);
+            self._runLiveServerAndSass(args);
+        } else {
+            SipaCliTools.errorInvalidConfigPaths();
         }
     }
 
-    static _runLiveServerAndSass() {
+    static _runLiveServerAndSass(args = {}) {
         const self = SipaCliServer;
         (async function run() {
             const config = SipaCliTools.readProjectSipaConfig();
-            const host = config?.development_server?.host || '0.0.0.0';
-            const port = config?.development_server?.port || '7000';
+            const host = args.host || config?.development_server?.host || '0.0.0.0';
+            const port = args.port || config?.development_server?.port || '7000';
             const npm_path = `${SipaCliTools.sipaRootPath()}/node_modules/sipa-live-server/bin/sipa-live-server.js`;
             const yarn_path = File.expandPath(`${SipaCliTools.sipaRootPath()}/../../node_modules/sipa-live-server/bin/sipa-live-server.js`);
             let live_server_js_path = null;
@@ -48,11 +69,12 @@ class SipaCliServer {
                 throw new Error(`Could not locate sipa-live-server.js`);
             }
             // configure mount point
-            let mount = config?.development_server?.mount?.trim() || '/';
+            let mount = args.mount || config?.development_server?.mount?.trim() || '/';
             if (!mount.endsWith('/')) mount += '/';
-            // open only if configured
+            // open only if configured and not disabled by CLI
             let open_param = '';
-            if(config?.development_server?.open === true) {
+            const should_open = !args['no-open'] && (config?.development_server?.open === true);
+            if (should_open) {
                 let open_url = config?.development_server?.open_url?.trim() || mount;
                 open_param = `--open="${open_url}"`;
             }
@@ -100,13 +122,15 @@ class SipaCliServer {
         return sass_process;
     }
 
-    static _sectionServerStart() {
+    static _sectionServerStart(args = {}) {
         const config = SipaCliTools.readProjectSipaConfig();
+        const host = args.host || config?.development_server?.host || '0.0.0.0';
+        const port = args.port || config?.development_server?.port || '7000';
         return [
             {
                 header: 'Running live development web server',
                 content: [
-                    `Starting live web server listening on {green ${config.development_server.host}} at port {green ${config.development_server.port}}`,
+                    `Starting live web server listening on {green ${host}} at port {green ${port}}`,
                     '',
                     'If you want to modify the {green host} or {green port} of the live development web server, edit {green sipa.json} in your project root directory.',
                     '',
@@ -153,5 +177,20 @@ class SipaCliServer {
 }
 
 SipaCliServer.SECTIONS = {};
+SipaCliServer.SECTIONS.server_help = [
+    {
+        header: 'sipa server',
+        content: 'Run the development server.'
+    },
+    {
+        header: 'Options',
+        optionList: [
+            { name: 'host', type: String, description: 'Server host' },
+            { name: 'port', type: String, description: 'Server port' },
+            { name: 'no-open', type: Boolean, description: 'Do not open browser' },
+            { name: 'mount', type: String, description: 'Mount point' }
+        ]
+    }
+];
 
 module.exports = SipaCliServer;
