@@ -7,6 +7,10 @@ const fs = require('fs');
 const SipaCliTools = require('./../_tools');
 
 class SipaCliAbout {
+    static run(argv) {
+        SipaCliAbout.about();
+    }
+
     static about() {
         const self = SipaCliAbout;
         let section = self.SECTIONS.about; // SipaCliTools.colorizeValues(self.SECTIONS.about,['desc'],'green');

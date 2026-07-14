@@ -10,6 +10,10 @@ const CurlyBracketParser = require('curly-bracket-parser');
 const SipaCliTools = require('./../_tools');
 
 class SipaCliNew {
+    static run(argv) {
+        SipaCliNew.new();
+    }
+
     static new() {
         const self = SipaCliNew;
         let section = SipaCliTools.colorizeValues(self.SECTIONS.new_begin, ['desc'], 'green');

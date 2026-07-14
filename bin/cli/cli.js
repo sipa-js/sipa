@@ -21,6 +21,25 @@ const taskDefinitions = [
 
 const tasks = commandLineArgs(taskDefinitions, {partial: true});
 
+const taskMap = {
+    about: { module: './tasks/_about', showLogo: true, hooks: null },
+    a: { module: './tasks/_about', showLogo: true, hooks: null },
+    build: { module: './tasks/_build', showLogo: true, hooks: { before: 'before_build', after: 'after_build' } },
+    b: { module: './tasks/_build', showLogo: true, hooks: { before: 'before_build', after: 'after_build' } },
+    generate: { module: './tasks/_generate', showLogo: true, hooks: { before: 'before_generate', after: 'after_generate' } },
+    g: { module: './tasks/_generate', showLogo: true, hooks: { before: 'before_generate', after: 'after_generate' } },
+    indexer: { module: './tasks/_indexer', showLogo: true, hooks: { before: 'before_indexer', after: 'after_indexer' } },
+    i: { module: './tasks/_indexer', showLogo: true, hooks: { before: 'before_indexer', after: 'after_indexer' } },
+    license: { module: './tasks/_license', showLogo: true, hooks: null },
+    l: { module: './tasks/_license', showLogo: true, hooks: null },
+    new: { module: './tasks/_new', showLogo: true, hooks: null },
+    n: { module: './tasks/_new', showLogo: true, hooks: null },
+    server: { module: './tasks/_server', showLogo: true, hooks: { before: 'before_server', after: 'after_server' } },
+    s: { module: './tasks/_server', showLogo: true, hooks: { before: 'before_server', after: 'after_server' } },
+    version: { module: './tasks/_version', showLogo: false, hooks: null },
+    v: { module: './tasks/_version', showLogo: false, hooks: null },
+};
+
 let server_was_running = null;
 
 SipaCliTools.executeHook('before_all');
@@ -29,76 +48,19 @@ function logo() {
     console.log(SipaCliTools.logo());
 }
 
-//
-// about
-//
-if (tasks.about || tasks.command && (tasks.command[0] === 'about' || tasks.command[0] === 'a')) {
-    logo();
-    const SipaCliAbout = require('./tasks/_about');
-    SipaCliAbout.about();
-}
-//
-// build
-//
-else if (tasks.build || tasks.command && (tasks.command[0] === 'build' || tasks.command[0] === 'b')) {
-    logo();
-    SipaCliTools.executeHook('before_build');
-    const SipaCliBuild = require('./tasks/_build');
-    SipaCliBuild.build();
-    SipaCliTools.executeHook('after_build');
-}
-//
-// indexer
-//
-else if (tasks.indexer || tasks.command && (tasks.command[0] === 'indexer' || tasks.command[0] === 'i')) {
-    logo();
-    SipaCliTools.executeHook('before_indexer');
-    const SipaCliIndexer = require('./tasks/_indexer');
-    SipaCliIndexer.index();
-    SipaCliTools.executeHook('after_indexer');
-}
-//
-// version
-//
-else if (tasks.version || tasks.command && (tasks.command[0] === 'version' || tasks.command[0] === 'v')) {
-    const SipaCliVersion = require('./tasks/_version');
-    SipaCliVersion.printFullVersion();
-}
-//
-// license
-//
-else if (tasks.license || tasks.command && (tasks.command[0] === 'license' || tasks.command[0] === 'l')) {
-    logo();
-    const SipaCliLicense = require('./tasks/_license');
-    SipaCliLicense.license();
-}
-//
-// new
-//
-else if (tasks.new || tasks.command && (tasks.command[0] === 'new' || tasks.command[0] === 'n')) {
-    logo();
-    const SipaCliNew = require('./tasks/_new');
-    SipaCliNew.new();
-}
-//
-// generate
-//
-else if (tasks.generate || tasks.command && (tasks.command[0] === 'generate' || tasks.command[0] === 'g')) {
-    logo();
-    SipaCliTools.executeHook('before_generate');
-    const SipaCliGenerate = require('./tasks/_generate');
-    SipaCliGenerate.generate();
-    SipaCliTools.executeHook('after_generate');
-}
-//
-// server
-//
-else if (tasks.server || tasks.command && (tasks.command[0] === 'server' || tasks.command[0] === 's')) {
-    logo();
-    SipaCliTools.executeHook('before_server');
-    server_was_running = true;
-    const SipaCliServer = require('./tasks/_server');
-    SipaCliServer.server();
+const commandName = tasks.command ? tasks.command[0] : null;
+const explicitTask = ['about','build','generate','indexer','license','new','server','version'].find(name => tasks[name] === true);
+const resolvedCommand = commandName || explicitTask;
+const taskConfig = resolvedCommand ? taskMap[resolvedCommand] : null;
+
+if (taskConfig) {
+    if (taskConfig.showLogo) logo();
+    if (taskConfig.hooks && taskConfig.hooks.before) SipaCliTools.executeHook(taskConfig.hooks.before);
+    if (resolvedCommand === 'server' || resolvedCommand === 's') server_was_running = true;
+    const commandArgv = process.argv.slice(process.argv.indexOf(resolvedCommand) + 1);
+    const TaskModule = require(taskConfig.module);
+    TaskModule.run(commandArgv);
+    if (taskConfig.hooks && taskConfig.hooks.after) SipaCliTools.executeHook(taskConfig.hooks.after);
 }
 //
 // help

@@ -8,6 +8,10 @@ const SipaCliTools = require('./../_tools');
 const SipaIndexManager = require('./../_index-manager');
 
 class SipaCliIndexer {
+    static run(argv) {
+        SipaCliIndexer.index();
+    }
+
     static index() {
         const self = SipaCliIndexer;
         const sim = SipaIndexManager;

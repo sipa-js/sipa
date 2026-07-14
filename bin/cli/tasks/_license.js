@@ -7,6 +7,10 @@ const commandLineUsage = require('command-line-usage');
 const SipaCliTools = require('./../_tools');
 
 class SipaCliLicense {
+    static run(argv) {
+        SipaCliLicense.license();
+    }
+
     static license() {
         const self = SipaCliLicense;
         let section = SipaCliTools.colorizeValues(self.SECTIONS.license,['desc'],'green');

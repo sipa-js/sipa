@@ -13,6 +13,10 @@ const SipaHelper = require('./../../../src/sipa/tools/sipa-helper');
 const SipaPage = require('./../../../src/sipa/tools/sipa-page');
 
 class SipaCliGenerate {
+    static run(argv) {
+        SipaCliGenerate.generate();
+    }
+
     static generate() {
         const self = SipaCliGenerate;
         if (!SipaCliTools.isRunningInsideValidSipaProject()) {

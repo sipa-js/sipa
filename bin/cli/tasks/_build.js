@@ -15,6 +15,10 @@ const File = require("ruby-nice/file");
 const Dir = require('ruby-nice/dir');
 
 class SipaCliBuild {
+    static run(argv) {
+        SipaCliBuild.build();
+    }
+
     static build() {
         const self = SipaCliBuild;
         if (!SipaCliTools.isRunningInsideValidSipaProject()) {

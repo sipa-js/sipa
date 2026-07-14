@@ -14,6 +14,10 @@ const File = require('ruby-nice/file');
 const SipaCliTools = require('./../_tools');
 
 class SipaCliServer {
+    static run(argv) {
+        SipaCliServer.server();
+    }
+
     static server() {
         const self = SipaCliServer;
         if (SipaCliTools.isRunningInsideValidSipaProject()) {
