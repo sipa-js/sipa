@@ -21,7 +21,7 @@
  *    // ...
  *
  *    events() {
- *           return this._events ??= new SipaEvents(['click','delete','update']);
+ *           return this._events ??= new SipaEvents('click','delete','update');
  *    }
  *
  *    onClick() {
@@ -58,7 +58,7 @@ class SipaEvents {
      *
      * const my_sipa_events = new SipaEvents('click','delete','update');
      *
-     * @param {...string} [valid_event_names] define the available, valid event names
+     * @param {...string} [valid_event_names] define the available, valid event names. Pass them as individual arguments (preferred). Passing a single array of names is also supported for legacy compatibility.
      */
     constructor(...valid_event_names) {
         if(valid_event_names.length === 0) {
